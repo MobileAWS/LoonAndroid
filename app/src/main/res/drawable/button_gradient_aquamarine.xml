@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="rectangle" >
+            <stroke android:color="@color/light_aquamarine" android:width="2dp"></stroke>
+            <solid android:color="@color/light_aquamarine"/>
+            <corners android:radius="10dp"></corners>
+        </shape>
+    </item>
+    <item android:drawable="@drawable/gradient_aquamarine"></item>
+</selector>

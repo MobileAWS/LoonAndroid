@@ -16,6 +16,14 @@ import android.support.v4.widget.DrawerLayout;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.enums.FragmentType;
 import com.maws.loonandroid.fragments.NavigationDrawerFragment;
+import com.maws.loonandroid.fragments.PushNotificationsFragment;
+import com.maws.loonandroid.fragments.SensorFragment;
+import com.maws.loonandroid.fragments.UploadToCloudFragment;
+import com.maws.loonandroid.models.Sensor;
+import com.maws.loonandroid.models.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -52,11 +60,17 @@ public class MainActivity extends ActionBarActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment toReplace = null;
         switch (type){
+            case SENSOR:
+                toReplace = SensorFragment.newInstance();
+                break;
+            case PUSH_NOTIFICATION:
+                toReplace = PushNotificationsFragment.newInstance();
+                break;
+            case UPLOAD:
+                toReplace = UploadToCloudFragment.newInstance();
+                break;
             case LOGOUT:
                 logout();
-                break;
-            default:
-                toReplace = PlaceholderFragment.newInstance(1);
                 break;
         }
 
@@ -67,26 +81,14 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-    public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = getString(R.string.navigation_sensors);
-                break;
-            case 2:
-                mTitle = getString(R.string.navigation_push_notification);
-                break;
-            case 3:
-                mTitle = getString(R.string.navigation_log_out);
-                break;
-        }
-    }
-
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
     }
+
+
 
 
     @Override
@@ -110,9 +112,9 @@ public class MainActivity extends ActionBarActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_change_background) {
+        /*if (id == R.id.action_change_background) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -123,44 +125,50 @@ public class MainActivity extends ActionBarActivity
         this.finish();
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
+    private static List<Sensor> sensors = null;
+    public List<Sensor> getSensors(){
 
-        public PlaceholderFragment() {
-        }
+        if(sensors == null) {
+            sensors = new ArrayList<Sensor>();
+            Sensor bedSensor = new Sensor();
+            bedSensor.setName("Bed Sensor");
+            bedSensor.setCode("Sensor LM01");
+            sensors.add(bedSensor);
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
+            Sensor chairSensor = new Sensor();
+            chairSensor.setName("Chair Sensor");
+            chairSensor.setCode("Sensor LM02");
+            sensors.add(chairSensor);
 
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
+            Sensor toiletSensor = new Sensor();
+            toiletSensor.setName("Toilet Sensor");
+            toiletSensor.setCode("Sensor LM03");
+            sensors.add(toiletSensor);
+
+            Sensor callSensor = new Sensor();
+            callSensor.setName("Call Button");
+            callSensor.setCode("Sensor LM04");
+            sensors.add(callSensor);
+
+            Sensor incontinenceSensor = new Sensor();
+            incontinenceSensor.setName("Incontinence Sensor");
+            incontinenceSensor.setCode("Sensor LM05");
+            sensors.add(incontinenceSensor);
         }
+        return sensors;
+    }
+
+    private static List<User> users = null;
+    public List<User> getUsers(){
+        if(users == null) {
+            users = new ArrayList<User>();
+            users.add(new User("Andres J.", "andres@mobileaws.com"));
+            users.add(new User("Joel G.", "joel@mobileaws.com"));
+            users.add(new User("Mike A.", "mike@mobileaws.com"));
+            users.add(new User("Edison G.", "edison@mobileaws.com"));
+        }
+        return users;
     }
 
 }

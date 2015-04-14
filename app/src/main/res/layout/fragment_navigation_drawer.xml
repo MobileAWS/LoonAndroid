@@ -1,6 +1,19 @@
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:choiceMode="singleChoice"
-    android:divider="@android:color/transparent" android:dividerHeight="0dp"
-    android:background="#cccc"
-    tools:context="com.maws.loonandroid.fragments.NavigationDrawerFragment" />
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.maws.loonandroid.fragments.NavigationDrawerFragment"
+    android:background="@color/aquamarine"
+    >
+    <ListView
+        android:id="@+id/navigationLV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:choiceMode="singleChoice"
+        android:divider="@color/aquamarine"
+        android:dividerHeight="2px"
+        android:background="@color/lighten_50"
+        android:layout_centerVertical="true"
+    />
+</RelativeLayout>

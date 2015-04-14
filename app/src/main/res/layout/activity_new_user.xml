@@ -5,7 +5,7 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".LoginActivity"
-    android:background="@drawable/gradient_blue">
+    android:background="@drawable/login_background_tiled">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -65,14 +65,12 @@
         android:orientation="horizontal"
         android:layout_marginTop="16dp"
         >
-        <Button android:id="@+id/createUserBtn"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            android:background="@drawable/button_gradient_orange"
+        <Button
+            style="@style/Button.aquamarine"
+            android:id="@+id/createUserBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/create_user"
-            android:padding="20dp"
         />
     </LinearLayout>
 
