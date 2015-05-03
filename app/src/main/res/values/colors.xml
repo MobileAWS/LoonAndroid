@@ -14,4 +14,12 @@
     <color name="orange">#F07709</color>
     <color name="aquamarine">#3db39e</color>
     <color name="light_aquamarine">#6AE5CF</color>
+
+    <color name="toast_success_border">#a6ca8a</color>
+    <color name="toast_success">#e9ffd9</color>
+    <color name="toast_warning_border">#f2c779</color>
+    <color name="toast_warning">#fff8c4</color>
+    <color name="toast_error_border">#f5aca6</color>
+    <color name="toast_error">#ffecec</color>
+
 </resources>

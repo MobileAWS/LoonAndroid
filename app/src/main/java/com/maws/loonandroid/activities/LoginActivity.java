@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,6 +28,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.listener.StandardRequestListener;
+import com.maws.loonandroid.requests.UserRequestHandler;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +43,7 @@ import java.util.List;
 public class LoginActivity extends Activity implements OnClickListener {
 
     // UI references.
+    private static final String TAG = "LOGIN";
     private EditText emailET, passwordET, clientNumberET, siteIdET;
     private TextView forgotPasswordTV, newUserTV;
     private Button loginBtn, loginNoCloudBtn;
@@ -72,8 +79,28 @@ public class LoginActivity extends Activity implements OnClickListener {
             Intent forgotPwdIntent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
             startActivity(forgotPwdIntent);
         }else if(v == newUserTV){
-            Intent newUserIntent = new Intent(LoginActivity.this, NewUserActivity.class);
-            startActivity(newUserIntent);
+
+            UserRequestHandler.generateUserId(this, new StandardRequestListener() {
+                @Override
+                public void onSuccess(JSONObject jsonObject) {
+                    try {
+                        JSONObject responseObj = jsonObject.getJSONObject("response");
+                        JSONArray customerObj = responseObj.getJSONArray("customer_id");
+                        long customerId = ((JSONObject)customerObj.get(0)).getLong("nextval");
+                        Intent newUserIntent = new Intent(LoginActivity.this, NewUserActivity.class);
+                        newUserIntent.putExtra("customerId", customerId);
+                        startActivity(newUserIntent);
+                    } catch (Exception ex) {
+                        onFailure(ex.toString());
+                    }
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    Log.d(TAG, error);
+                }
+            });
+
         }else if(v == loginBtn){
             Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(newUserIntent);

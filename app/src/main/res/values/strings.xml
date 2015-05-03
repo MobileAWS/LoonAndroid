@@ -27,5 +27,17 @@
     <string name="action_send_notification">Send Notification</string>
     <string name="action_upload">Upload</string>
     <string name="forgot_password_explanation">Enter your email and press \'Reset Password\'. You should get instructions to recover your passwords on your email.</string>
+    <string name="prompt_confirm_email">Confirm Email</string>
+    <string name="email_confirmation_must_match">Email confirmation must match. </string>
+    <string name="password_confirmation_must_match">Password confirmation must match. </string>
+    <string name="customer_id">Customer ID: %1$s</string>
+    <string name="validation_email_required">Email is required.</string>
+    <string name="validation_password_required">Password is required.</string>
+    <string name="validation_site_required">Site is required.</string>
+    <string name="success_password_reset">Instructions on how to reset your password have been sent to your email.</string>
+    <string name="error_password_reset">It was not possible to reset your password. Please try again later.</string>
+    <string name="generating_user_id">Getting Customer Id</string>
+    <string name="creating_user">Creating Account</string>
+    <string name="resetting_password">Resetting Password</string>
 
 </resources>
