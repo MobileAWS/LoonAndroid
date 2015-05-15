@@ -1,6 +1,8 @@
 package com.maws.loonandroid.adapters;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +49,12 @@ public class DrawerListAdapter extends ArrayAdapter<IconTextOption> {
         ImageView imageView = (ImageView) convertView.findViewById(R.id.drawer_item_image);
         TextView textView = (TextView) convertView.findViewById(R.id.drawer_item_text);
         imageView.setImageResource(items[position].getIcon());
+        imageView.setColorFilter(Color.WHITE);
+        //imageView.setImageTintList(ColorStateList.valueOf(R.color.white));
+
         textView.setText(items[position].getText());
+        //textView.setBackground( getContext().getResources().getDrawable(R.drawable.button_navigation_drawer) );
+        textView.setMinHeight(50);
         return convertView;
     }
 }

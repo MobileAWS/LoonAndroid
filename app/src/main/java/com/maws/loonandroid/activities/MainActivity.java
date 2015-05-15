@@ -129,27 +129,27 @@ public class MainActivity extends ActionBarActivity
         if(sensors == null) {
             sensors = new ArrayList<Sensor>();
             Sensor bedSensor = new Sensor();
-            bedSensor.setName("Bed Sensor");
+            bedSensor.setName("Mom's Room");
             bedSensor.setCode("Sensor LM01");
             sensors.add(bedSensor);
 
             Sensor chairSensor = new Sensor();
-            chairSensor.setName("Chair Sensor");
+            chairSensor.setName("Room 101");
             chairSensor.setCode("Sensor LM02");
             sensors.add(chairSensor);
 
             Sensor toiletSensor = new Sensor();
-            toiletSensor.setName("Toilet Sensor");
+            toiletSensor.setName("Room 102");
             toiletSensor.setCode("Sensor LM03");
             sensors.add(toiletSensor);
 
             Sensor callSensor = new Sensor();
-            callSensor.setName("Call Button");
+            callSensor.setName("Room 103");
             callSensor.setCode("Sensor LM04");
             sensors.add(callSensor);
 
             Sensor incontinenceSensor = new Sensor();
-            incontinenceSensor.setName("Incontinence Sensor");
+            incontinenceSensor.setName("Bathroom Sensor");
             incontinenceSensor.setCode("Sensor LM05");
             sensors.add(incontinenceSensor);
         }
@@ -160,10 +160,10 @@ public class MainActivity extends ActionBarActivity
     public List<User> getUsers(){
         if(users == null) {
             users = new ArrayList<User>();
-            users.add(new User("Andres J.", "andres@mobileaws.com"));
-            users.add(new User("Joel G.", "joel@mobileaws.com"));
-            users.add(new User("Mike A.", "mike@mobileaws.com"));
-            users.add(new User("Edison G.", "edison@mobileaws.com"));
+            users.add(new User("Andres J.", "andres@mobileaws.com", "password", "maws"));
+            users.add(new User("Joel G.", "joel@mobileaws.com", "password", "maws"));
+            users.add(new User("Mike A.", "mike@mobileaws.com", "password", "maws"));
+            users.add(new User("Edison G.", "edison@mobileaws.com", "password", "maws"));
         }
         return users;
     }

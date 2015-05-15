@@ -50,7 +50,12 @@ public class ForgotPasswordActivity extends Activity implements View.OnClickList
 
             @Override
             public void onFailure(String error) {
-                CustomToast.showAlert(ForgotPasswordActivity.this, getString(R.string.error_password_reset), CustomToast._TYPE_ERROR);
+                try{
+                    JSONObject object = new JSONObject(error);
+                    CustomToast.showAlert(ForgotPasswordActivity.this, object.getString("message"), CustomToast._TYPE_ERROR);
+                }catch(Exception ex) {
+                    CustomToast.showAlert(ForgotPasswordActivity.this, getString(R.string.error_password_reset), CustomToast._TYPE_ERROR);
+                }
             }
         }, email);
     };

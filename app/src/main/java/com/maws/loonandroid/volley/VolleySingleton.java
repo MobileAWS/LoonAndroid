@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
 
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
@@ -13,6 +14,12 @@ import com.maws.loonandroid.LoonAndroid;
 public class VolleySingleton {
 
     public static final String SERVER_URL = "https://caresentinel-maws.herokuapp.com/";
+    public static final String ENVIRONMENT = "production"; //"development";
+
+    /*public static final String SERVER_URL = "http://mike.caresentinel.ngrok.io/";
+    public static final String ENVIRONMENT = "development";*/
+    public static final String DEFAULT_PARAMS_ENCODING = "UTF-8";
+
     private static final int NUM_RETRIES = 3;
 
     private static final VolleySingleton instance = new VolleySingleton(LoonAndroid.globalApplicationContext);
@@ -54,6 +61,14 @@ public class VolleySingleton {
 
     public ImageLoader getImageLoader() {
         return imageLoader;
+    }
+
+    public static String getResponseData(NetworkResponse response){
+        try{
+            return new String(response.data);
+        }catch (Exception ex){
+            return response.toString();
+        }
     }
 }
 

@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.adapters.DrawerListAdapter;
 import com.maws.loonandroid.enums.FragmentType;
 import com.maws.loonandroid.models.IconTextOption;
 
@@ -60,6 +61,7 @@ public class NavigationDrawerFragment extends Fragment {
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
+    private DrawerListAdapter adapter;
 
     private static IconTextOption[] menuOptions;
 
@@ -97,23 +99,15 @@ public class NavigationDrawerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView =  inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         mDrawerListView = (ListView) rootView.findViewById(R.id.navigationLV);
-
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectItem(position);
             }
         });
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
-                getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                new String[]{
-                        getMenuOptions()[0].getText(),
-                        getMenuOptions()[1].getText(),
-                        getMenuOptions()[2].getText(),
-                        getMenuOptions()[3].getText()
-                }));
+
+        adapter = new DrawerListAdapter(this.getActivity(), R.layout.drawer_item, this.getMenuOptions() );
+        mDrawerListView.setAdapter(adapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return rootView;
     }
@@ -280,11 +274,11 @@ public class NavigationDrawerFragment extends Fragment {
 
     private IconTextOption[] getMenuOptions(){
         if( menuOptions == null ) {
-            menuOptions = new IconTextOption[4];
-            menuOptions[0] = new IconTextOption( getString(R.string.navigation_sensors), R.drawable.ic_launcher, FragmentType.SENSOR );
-            menuOptions[1] = new IconTextOption( getString(R.string.navigation_push_notification), R.drawable.ic_launcher, FragmentType.PUSH_NOTIFICATION );
-            menuOptions[2] = new IconTextOption( getString(R.string.navigation_upload_to_cloud), R.drawable.ic_launcher, FragmentType.UPLOAD );
-            menuOptions[3] = new IconTextOption( getString(R.string.navigation_log_out), R.drawable.ic_launcher, FragmentType.LOGOUT );
+            menuOptions = new IconTextOption[3];
+            menuOptions[0] = new IconTextOption( getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor, FragmentType.SENSOR );
+            //menuOptions[1] = new IconTextOption( getString(R.string.navigation_push_notification), R.drawable.ic_launcher, FragmentType.PUSH_NOTIFICATION );
+            menuOptions[1] = new IconTextOption( getString(R.string.navigation_upload_to_cloud), R.drawable.ic_action_upload_to_cloud, FragmentType.UPLOAD );
+            menuOptions[2] = new IconTextOption( getString(R.string.navigation_log_out), R.drawable.ic_action_logout, FragmentType.LOGOUT );
         }
         return menuOptions;
     }

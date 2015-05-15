@@ -79,6 +79,10 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
             errors.append( getString(R.string.password_confirmation_must_match) );
             errors.append( " " );
         }
+        if( password.length() < 8) {
+            errors.append( getString(R.string.validation_password_char_length) );
+            errors.append( " " );
+        }
 
         if(errors.length() > 0){
             CustomToast.showAlert(this, errors.toString(), CustomToast._TYPE_ERROR);
@@ -86,13 +90,25 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
             UserRequestHandler.signUp(this, new StandardRequestListener() {
                 @Override
                 public void onSuccess(JSONObject jsonObject) {
-                    Log.d(TAG, jsonObject.toString());
-                    jsonObject.toString();
+
+                    try {
+                        if (jsonObject.getString("response").equalsIgnoreCase("done")) {
+                            CustomToast.showAlert(NewUserActivity.this, NewUserActivity.this.getString(R.string.message_account_creation_success), CustomToast._TYPE_SUCCESS);
+                            finish();
+                        }
+                    }catch(Exception ex){
+                        onFailure(ex.getMessage());
+                    }
                 }
 
                 @Override
                 public void onFailure(String error) {
-                    Log.d(TAG, error);
+                    try{
+                        JSONObject object = new JSONObject(error);
+                        CustomToast.showAlert(NewUserActivity.this, object.getString("message"), CustomToast._TYPE_ERROR);
+                    }catch(Exception ex) {
+                        CustomToast.showAlert(NewUserActivity.this, NewUserActivity.this.getString(R.string.default_request_error_message), CustomToast._TYPE_ERROR);
+                    }
                 }
             }, email, password, customerId, site);
         }

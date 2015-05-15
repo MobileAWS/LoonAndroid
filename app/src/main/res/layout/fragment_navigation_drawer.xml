@@ -4,16 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.maws.loonandroid.fragments.NavigationDrawerFragment"
-    android:background="@color/aquamarine"
+    android:background="@color/dark_green"
     >
     <ListView
         android:id="@+id/navigationLV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:choiceMode="singleChoice"
-        android:divider="@color/aquamarine"
-        android:dividerHeight="2px"
-        android:background="@color/lighten_50"
+        android:dividerHeight="0px"
         android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
     />
 </RelativeLayout>

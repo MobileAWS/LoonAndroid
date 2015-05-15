@@ -15,7 +15,7 @@
     <string name="create_user">Create User</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="navigation_sensors">Sensors</string>
+    <string name="navigation_sensors">Monitors</string>
     <string name="navigation_push_notification">Push Notification</string>
     <string name="navigation_log_out">Log Out</string>
     <string name="action_example">Example action</string>
@@ -34,10 +34,27 @@
     <string name="validation_email_required">Email is required.</string>
     <string name="validation_password_required">Password is required.</string>
     <string name="validation_site_required">Site is required.</string>
+    <string name="validation_password_char_length">Your password must be at least 8 characters long.</string>
     <string name="success_password_reset">Instructions on how to reset your password have been sent to your email.</string>
     <string name="error_password_reset">It was not possible to reset your password. Please try again later.</string>
     <string name="generating_user_id">Getting Customer Id</string>
     <string name="creating_user">Creating Account</string>
     <string name="resetting_password">Resetting Password</string>
+    <string name="default_request_error_message">There was an error. Please try again later.</string>
+    <string name="message_account_creation_success">Account Created. Please confirm the account on your email before attempting to login.</string>
+    <string name="signing_in">Signing In...</string>
+    <string name="add_sensor_instructions"><![CDATA[Enter a description (e.g. Jacket Activator) & tap \"Use It\". If the device is not yours, tap \"Not Mine\" to ignore.]]></string>
+    <string name="sensor_found_name">Found: Sensor LM01</string>
+    <string name="sensor_found_label">Found:</string>
+    <string name="sensor_serial_label">S/N:</string>
+    <string name="sensor_found_description_hint">Write a description for this device</string>
+    <string name="use_it">Register</string>
+    <string name="ignore">Ignore</string>
+    <string name="active_sensors">Active Monitors</string>
+    <string name="inactive_sensors">Ignored Monitors</string>
+    <string name="action_remove_sensors">Remove Monitors</string>
+    <string name="no_sensors_found">No Monitors Found</string>
+    <string name="empty_sensor_add_instructions">To add Monitors, press \"Scan for Devices\" in the top bar.</string>
+    <string name="sensors">Sensors</string>
 
 </resources>

@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.listener.StandardRequestListener;
 import com.maws.loonandroid.requests.UserRequestHandler;
+import com.maws.loonandroid.views.CustomToast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,7 +45,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 
     // UI references.
     private static final String TAG = "LOGIN";
-    private EditText emailET, passwordET, clientNumberET, siteIdET;
+    private EditText emailET, passwordET, siteIdET;
     private TextView forgotPasswordTV, newUserTV;
     private Button loginBtn, loginNoCloudBtn;
 
@@ -56,7 +57,6 @@ public class LoginActivity extends Activity implements OnClickListener {
         // Set up the login form.
         emailET = (EditText) findViewById(R.id.emailET);
         passwordET = (EditText) findViewById(R.id.passwordET);
-        clientNumberET = (EditText) findViewById(R.id.clientNumberET);
         siteIdET = (EditText) findViewById(R.id.siteIdET);
         forgotPasswordTV = (TextView) findViewById(R.id.forgotPasswordTV);
         newUserTV = (TextView) findViewById(R.id.newUserTV);
@@ -70,7 +70,54 @@ public class LoginActivity extends Activity implements OnClickListener {
     }
 
     private void attemptLogin(){
+        String email = emailET.getText().toString();
+        String password = passwordET.getText().toString();
+        String siteId = siteIdET.getText().toString();
 
+        StringBuilder errors = new StringBuilder();
+        if(TextUtils.isEmpty(email)){
+            errors.append( getString(R.string.validation_email_required) );
+            errors.append( " " );
+        }
+        if(TextUtils.isEmpty(password)){
+            errors.append( getString(R.string.validation_password_required) );
+            errors.append( " " );
+        }
+        if(TextUtils.isEmpty(siteId)){
+            errors.append( getString(R.string.validation_site_required) );
+            errors.append( " " );
+        }
+
+        if(errors.length() > 0){
+            CustomToast.showAlert(this, errors.toString(), CustomToast._TYPE_ERROR);
+        }else{
+            UserRequestHandler.login(this, new UserRequestHandler.LoginListener() {
+                @Override
+                public void onSuccess(JSONObject jsonObject, String email, String password, String site) {
+
+                    try {
+                        JSONObject response = jsonObject.getJSONObject("response");
+
+                        if (jsonObject.getString("response").equalsIgnoreCase("done")) {
+                            CustomToast.showAlert(LoginActivity.this, LoginActivity.this.getString(R.string.message_account_creation_success), CustomToast._TYPE_SUCCESS);
+                            finish();
+                        }
+                    } catch (Exception ex) {
+                        onFailure(ex.getMessage());
+                    }
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    try {
+                        JSONObject object = new JSONObject(error);
+                        CustomToast.showAlert(LoginActivity.this, object.getString("message"), CustomToast._TYPE_ERROR);
+                    } catch (Exception ex) {
+                        CustomToast.showAlert(LoginActivity.this, LoginActivity.this.getString(R.string.default_request_error_message), CustomToast._TYPE_ERROR);
+                    }
+                }
+            }, email, password, siteId);
+        }
     };
 
     @Override
@@ -97,20 +144,28 @@ public class LoginActivity extends Activity implements OnClickListener {
 
                 @Override
                 public void onFailure(String error) {
-                    Log.d(TAG, error);
+                    try{
+                        JSONObject object = new JSONObject(error);
+                        CustomToast.showAlert(LoginActivity.this, object.getString("message"), CustomToast._TYPE_ERROR);
+                    }catch(Exception ex) {
+                        CustomToast.showAlert(LoginActivity.this, getString(R.string.default_request_error_message), CustomToast._TYPE_ERROR);
+                    }
                 }
             });
 
         }else if(v == loginBtn){
-            Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
+            attemptLogin();
+            /*Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(newUserIntent);
-            this.finish();
+            this.finish();*/
         }else if(v == loginNoCloudBtn){
             Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(newUserIntent);
             this.finish();
         }
     }
+
+
 
 }
 

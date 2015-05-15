@@ -24,7 +24,7 @@ public class SensorListAdapter extends BaseAdapter {
     private final List<Sensor> items;
 
     static class ViewHolder {
-        TextView nameTV;
+        TextView nameTV, serialTV;
         ImageView checkIV;
     }
 
@@ -43,7 +43,7 @@ public class SensorListAdapter extends BaseAdapter {
     }
     @Override
     public long getItemId(int position) {
-        return position;
+        return items.get(position).getId();
     }
 
     @Override
@@ -57,6 +57,7 @@ public class SensorListAdapter extends BaseAdapter {
             // well set up the ViewHolder
             viewHolder = new ViewHolder();
             viewHolder.nameTV = (TextView) convertView.findViewById(R.id.nameTV);
+            viewHolder.serialTV = (TextView) convertView.findViewById(R.id.serialTV);
             viewHolder.checkIV = (ImageView) convertView.findViewById(R.id.checkIV);
 
             // store the holder with the view.
@@ -70,6 +71,7 @@ public class SensorListAdapter extends BaseAdapter {
 
         Sensor thisSensor = items.get(position);
         viewHolder.nameTV.setText(thisSensor.getName());
+        viewHolder.serialTV.setText(thisSensor.getSerial());
 
         return convertView;
     }

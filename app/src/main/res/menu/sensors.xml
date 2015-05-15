@@ -8,4 +8,9 @@
         android:orderInCategory="100"
         app:showAsAction="always" />
 
+    <item android:id="@+id/action_remove_sensors"
+        android:title="@string/action_remove_sensors"
+        android:orderInCategory="200"
+        app:showAsAction="never" />
+
 </menu>
