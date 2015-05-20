@@ -20,13 +20,13 @@ public class SensorDao {
 
     // Contacts Table Columns names
     public static final String KEY_ID = "id";
-    private static final String KEY_NAME = "name";
-    private static final String KEY_CODE = "code";
-    private static final String KEY_SERIAL = "serial";
-    private static final String KEY_VERSION = "version";
-    private static final String KEY_DESCRIPTION = "description";
-    private static final String KEY_MAC_ADDRESS = "mac";
-    private static final String KEY_ACTIVE = "active";
+    public static final String KEY_NAME = "name";
+    public static final String KEY_CODE = "code";
+    public static final String KEY_SERIAL = "serial";
+    public static final String KEY_VERSION = "version";
+    public static final String KEY_DESCRIPTION = "description";
+    public static final String KEY_MAC_ADDRESS = "mac";
+    public static final String KEY_ACTIVE = "active";
 
     private Context context;
 
@@ -251,6 +251,9 @@ public class SensorDao {
 
     public void deleteAll(SQLiteDatabase db){
         db.delete(TABLE_NAME, null, null);
+        db.delete(SensorServiceDao.TABLE_NAME, null, null);
+        db.delete(AlertDao.TABLE_NAME, null, null);
+
     }
 }
 

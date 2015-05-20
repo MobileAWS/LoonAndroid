@@ -22,10 +22,10 @@ public class SensorServiceDao {
 
     // Contacts Table Columns names
     public static final String KEY_ID = "id";
-    private static final String KEY_SENSOR_ID = "sensorId";
-    private static final String KEY_NAME = "name";
-    private static final String KEY_ALARM = "alarm";
-    private static final String KEY_ON = "active";
+    public static final String KEY_SENSOR_ID = "sensorId";
+    public static final String KEY_NAME = "name";
+    public static final String KEY_ALARM = "alarm";
+    public static final String KEY_ON = "active";
 
     private Context context;
 

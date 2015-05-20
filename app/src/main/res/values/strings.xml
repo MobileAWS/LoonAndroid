@@ -56,5 +56,7 @@
     <string name="no_sensors_found">No Monitors Found</string>
     <string name="empty_sensor_add_instructions">To add Monitors, press \"Scan for Devices\" in the top bar.</string>
     <string name="sensors">Sensors</string>
+    <string name="action_generate_random_alert">Generate Random Alert</string>
+    <string name="alarm_notification_text">Alert generated for %1$s</string>
 
 </resources>

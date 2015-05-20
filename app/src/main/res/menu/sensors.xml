@@ -13,4 +13,9 @@
         android:orderInCategory="200"
         app:showAsAction="never" />
 
+    <item android:id="@+id/action_generate_random_alert"
+        android:title="@string/action_generate_random_alert"
+        android:orderInCategory="300"
+        app:showAsAction="never" />
+
 </menu>

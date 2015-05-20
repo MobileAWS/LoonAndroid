@@ -1,7 +1,11 @@
 package com.maws.loonandroid.models;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.maws.loonandroid.dao.LoonMedicalDao;
+import com.maws.loonandroid.dao.SensorServiceDao;
 
 import java.util.Date;
 import java.util.List;
@@ -169,9 +173,16 @@ public class Sensor implements Parcelable {
         sensor.setMacAddress("00-00-00-00");
         sensor.setBatteryStatus(3);
         sensor.setSignalStrength(5);
-        sensor.setTemperature("80°");
+        sensor.setTemperature("80");
         sensor.setActive(true);
         sensor.setSensorServices( SensorService.createFakeSensorServices() );
         return sensor;
+    }
+
+    public void loadServices(Context context){
+
+        LoonMedicalDao lDao = new LoonMedicalDao(context);
+        SensorServiceDao sDao = new SensorServiceDao(context);
+        this.sensorServices = sDao.getAllBySensorId(this.id, lDao.getReadableDatabase());
     }
 }

@@ -69,5 +69,19 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
+
+        <receiver android:name=".receivers.AlertReceiver" >
+            <intent-filter>
+                <action android:name="com.maws.loonandroid.alert" />
+            </intent-filter>
+        </receiver>
+
+        <provider
+            android:name=".contentproviders.AlertContentProvider"
+            android:authorities="com.maws.loonandroid.contentproviders.AlertContentProvider"
+            android:exported="false"
+            android:enabled="true"
+        />
+
     </application>
 </manifest>

@@ -4,7 +4,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
+
+import com.maws.loonandroid.contentproviders.AlertContentProvider;
 import com.maws.loonandroid.models.Alert;
+import com.maws.loonandroid.models.SensorService;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,13 +20,13 @@ import java.util.List;
 public class AlertDao {
 
     // Contacts table name
-    private static final String TABLE_NAME = "tblAlert";
+    public static final String TABLE_NAME = "tblAlert";
 
     // Contacts Table Columns names
-    private static final String KEY_ID = "id";
-    private static final String KEY_SENSOR_SERVICE_ID = "sensorServiceId";
-    private static final String KEY_ALERT_DATE = "dateInMillis";
-    private static final String KEY_DISMISSED = "dismissed";
+    public static final String KEY_ID = "_id";
+    public static final String KEY_SENSOR_SERVICE_ID = "sensorServiceId";
+    public static final String KEY_ALERT_DATE = "dateInMillis";
+    public static final String KEY_DISMISSED = "dismissed";
 
     private Context context;
 
@@ -51,17 +56,13 @@ public class AlertDao {
     }
 
     // Adding new object
-    public void create(Alert alert, SQLiteDatabase db) {
+    public void create(Alert alert) {
 
         ContentValues values = new ContentValues();
         values.put(KEY_SENSOR_SERVICE_ID, alert.getSensorServiceId());
         values.put(KEY_ALERT_DATE, alert.getAlertDate() == null ? null : alert.getAlertDate().getTime());
-        values.put(KEY_DISMISSED, alert.isDismissed()?1:0);
-
-        // Inserting Row
-        db.insert(TABLE_NAME, null, values);
-        db.close(); // Closing database connection
-
+        values.put(KEY_DISMISSED, alert.isDismissed() ? 1 : 0);
+        context.getContentResolver().insert(AlertContentProvider.CONTENT_URI, values);
     }
 
     // Getting single object
@@ -130,13 +131,24 @@ public class AlertDao {
         ContentValues values = new ContentValues();
         values.put(KEY_SENSOR_SERVICE_ID, alert.getSensorServiceId());
         values.put(KEY_ALERT_DATE, alert.getAlertDate() == null ? null : alert.getAlertDate().getTime());
-        values.put(KEY_DISMISSED, alert.isDismissed()? 1:0 );
+        values.put(KEY_DISMISSED, alert.isDismissed() ? 1 : 0);
 
         // updating row
         int toReturn =  db.update(TABLE_NAME, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(alert.getId()) });
 
         return toReturn;
+    }
+
+    // Updating single object
+    public void dismiss(Alert alert, SQLiteDatabase db) {
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_DISMISSED, 1);
+
+        // updating row
+        db.update(TABLE_NAME, values, KEY_ID + " = ?", new String[] { String.valueOf(alert.getId()) });
+
     }
 
     // Deleting single object
@@ -147,6 +159,34 @@ public class AlertDao {
 
     public void deleteAll(SQLiteDatabase db){
         db.delete(TABLE_NAME, null, null);
+    }
+
+    public Cursor getUndismissedAlertInfo(SQLiteDatabase db, long sensorId){
+
+        final SQLiteQueryBuilder todayShiftQueryBuilder = new SQLiteQueryBuilder();
+        todayShiftQueryBuilder.setTables(AlertDao.TABLE_NAME
+                        + " JOIN " + SensorServiceDao.TABLE_NAME+ " ON(" + AlertDao.TABLE_NAME + "." + AlertDao.KEY_SENSOR_SERVICE_ID
+                        + "=" + SensorServiceDao.TABLE_NAME + "." + SensorServiceDao.KEY_ID + ")"
+                        + " JOIN " + SensorDao.TABLE_NAME+ " ON(" + SensorDao.TABLE_NAME + "." + SensorDao.KEY_ID
+                        + "=" + SensorServiceDao.TABLE_NAME + "." + SensorServiceDao.KEY_SENSOR_ID + ")"
+        );
+        String[] projection = {
+                AlertDao.TABLE_NAME + "." + AlertDao.KEY_ID + ", "
+                + AlertDao.TABLE_NAME + "." + AlertDao.KEY_ALERT_DATE +  ", "
+                + AlertDao.TABLE_NAME + "." + AlertDao.KEY_SENSOR_SERVICE_ID +  ", "
+                + AlertDao.TABLE_NAME + "." + AlertDao.KEY_DISMISSED +  ", "
+                + SensorServiceDao.TABLE_NAME + "." + SensorServiceDao.KEY_NAME +  " AS Service, "
+                + SensorServiceDao.TABLE_NAME + "." + SensorServiceDao.KEY_SENSOR_ID +  ", "
+                + SensorDao.TABLE_NAME + "." + SensorDao.KEY_NAME +  " AS Sensor, "
+                + SensorDao.TABLE_NAME + "." + SensorDao.KEY_CODE +  " AS SensorCode, "
+                + SensorDao.TABLE_NAME + "." + SensorDao.KEY_DESCRIPTION + " AS SensorDescription"
+        };
+        String selection = AlertDao.TABLE_NAME + "." + AlertDao.KEY_DISMISSED + "=? AND " +
+                SensorDao.TABLE_NAME + "." + SensorDao.KEY_ID + "=?";
+        String[] selectArgs = {"0", String.valueOf(sensorId)};
+
+        Cursor cursor = todayShiftQueryBuilder.query( db, projection, selection, selectArgs, null, null, null );
+        return cursor;
     }
 
 }

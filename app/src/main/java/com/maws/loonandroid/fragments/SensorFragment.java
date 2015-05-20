@@ -1,9 +1,13 @@
 package com.maws.loonandroid.fragments;
 
+
 import android.content.Intent;
-import android.support.v4.app.DialogFragment;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,23 +17,24 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.maws.loonandroid.R;
-import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.activities.MonitorActivity;
 import com.maws.loonandroid.adapters.SensorListAdapter;
-import com.maws.loonandroid.adapters.UploadSensorListAdapter;
+import com.maws.loonandroid.contentproviders.AlertContentProvider;
+import com.maws.loonandroid.dao.AlertDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
 import com.maws.loonandroid.dao.SensorDao;
 import com.maws.loonandroid.models.Sensor;
-
-import java.util.ArrayList;
+import com.maws.loonandroid.models.SensorService;
+import com.maws.loonandroid.util.Util;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Andrexxjc on 12/04/2015.
  */
-public class SensorFragment extends Fragment {
+public class SensorFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     private View emptyLayout;
     private TextView activeSensorHeaderTV, inactiveSensorHeaderTV;
@@ -65,13 +70,16 @@ public class SensorFragment extends Fragment {
             }
         });
 
-
         inactiveSensorsLV = (ListView) rootView.findViewById(R.id.inactiveSensorsLV);
         activeSensorHeaderTV = (TextView) rootView.findViewById(R.id.activeSensorHeaderTV);
         inactiveSensorHeaderTV = (TextView) rootView.findViewById(R.id.inactiveSensorHeaderTV);
         emptyLayout = rootView.findViewById(R.id.emptyLayout);
 
-        loadSensors();
+        //loadSensors();
+
+        //i need a loader to listen to alarm changes on the db
+        getLoaderManager().initLoader(0, null, this);
+
         return rootView;
     }
 
@@ -131,6 +139,10 @@ public class SensorFragment extends Fragment {
                 removeSensors();
                 return true;
 
+            case R.id.action_generate_random_alert:
+                generateRandomAlert();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -165,6 +177,47 @@ public class SensorFragment extends Fragment {
         LoonMedicalDao loonDao = new LoonMedicalDao(this.getActivity());
         SensorDao sDao = new SensorDao(this.getActivity());
         sDao.deleteAll(loonDao.getWritableDatabase());
+        loadSensors();
+    }
+
+    private void generateRandomAlert(){
+        //let's pick one of the sensors at random
+        if(adapter != null && adapter.getCount() > 0){
+
+            Random ran = new Random();
+            int x = ran.nextInt(adapter.getCount());
+            Sensor sSensor = (Sensor)adapter.getItem(x);
+            sSensor.loadServices(this.getActivity());
+
+            if(sSensor.getSensorServices().size() > 0) {
+                //now, once inside the sensor, i need to randomly pick a service
+                SensorService sService = sSensor.getSensorServices().get(ran.nextInt(sSensor.getSensorServices().size()));
+
+                //now we generate a random alert
+                Util.generateAlarm(
+                        this.getActivity(),
+                        sSensor,
+                        sService);
+            }
+        }
+    }
+
+    // creates a new loader after the initLoader () call
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {AlertDao.KEY_ID, AlertDao.KEY_SENSOR_SERVICE_ID, AlertDao.KEY_ALERT_DATE, AlertDao.KEY_DISMISSED};
+        CursorLoader cursorLoader = new CursorLoader(this.getActivity(),
+                AlertContentProvider.CONTENT_URI, projection, null, null, null);
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        loadSensors();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
         loadSensors();
     }
 
