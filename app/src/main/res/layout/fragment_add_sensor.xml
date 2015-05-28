@@ -42,11 +42,11 @@
             android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sensor_serial_label"
+            android:text="@string/sensor_address"
             android:textSize="18sp"
         />
         <TextView
-            android:id="@+id/sensorSerialTV"
+            android:id="@+id/sensorAddressTV"
             android:layout_marginLeft="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/ignore"
+            android:text="@string/cancel"
         />
 
         <Button

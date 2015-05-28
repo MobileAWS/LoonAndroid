@@ -74,9 +74,9 @@ public class SensorDao {
 
         // Inserting Row
         long sensorId =  db.insert(TABLE_NAME, null, values);
+        sensor.setId(sensorId);
 
-        if(sensorId >= 0) {
-            sensor.setId(sensorId);
+        if(sensorId >= 0 && sensor.getSensorServices() != null) {
 
             //if the sensor has services, we need to create them too
             SensorServiceDao ssDao = new SensorServiceDao(this.context);
@@ -85,9 +85,7 @@ public class SensorDao {
                 ssDao.create(sService, db, false);
             }
         }
-
         db.close(); // Closing database connection
-
     }
 
     // Getting single object
@@ -109,7 +107,48 @@ public class SensorDao {
                         String.valueOf(id)
                 },
                 null, null, null, null);
-        if (cursor != null) {
+        if (cursor != null  && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+        }else{
+            return null;
+        }
+
+        Sensor sensor = new Sensor();
+        sensor.setId(cursor.getInt(0));
+        sensor.setName(cursor.getString(1));
+        sensor.setCode(cursor.getString(2));
+        sensor.setSerial(cursor.getString(3));
+        sensor.setVersion(cursor.getString(4));
+        sensor.setDescription(cursor.getString(5));
+        sensor.setMacAddress(cursor.getString(6));
+        sensor.setActive(cursor.getInt(7) == 1);
+        db.close();
+        cursor.close();
+
+        // return object
+        return sensor;
+    }
+
+    // Getting single object
+    public Sensor findByMacAddress(String macAddress, SQLiteDatabase db) {
+
+        Cursor cursor = db.query(TABLE_NAME,
+                new String[] {
+                        KEY_ID,
+                        KEY_NAME,
+                        KEY_CODE,
+                        KEY_SERIAL,
+                        KEY_VERSION,
+                        KEY_DESCRIPTION,
+                        KEY_MAC_ADDRESS,
+                        KEY_ACTIVE
+                },
+                KEY_MAC_ADDRESS + "=?",
+                new String[] {
+                        macAddress
+                },
+                null, null, null, null);
+        if (cursor != null && cursor.getCount() > 0 ) {
             cursor.moveToFirst();
         }else{
             return null;
@@ -234,7 +273,7 @@ public class SensorDao {
         values.put(KEY_VERSION, sensor.getVersion());
         values.put(KEY_DESCRIPTION, sensor.getDescription());
         values.put(KEY_MAC_ADDRESS, sensor.getMacAddress());
-        values.put(KEY_ACTIVE, sensor.isActive()? 1:0);
+        values.put(KEY_ACTIVE, sensor.isActive() ? 1 : 0);
 
         // updating row
         int toReturn =  db.update(TABLE_NAME, values, KEY_ID + " = ?",
@@ -242,6 +281,8 @@ public class SensorDao {
 
         return toReturn;
     }
+
+
 
     // Deleting single object
     public void delete(Sensor sensor, SQLiteDatabase db) {

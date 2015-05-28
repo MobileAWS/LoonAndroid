@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+    >
+
+        <TextView
+            android:id="@+id/nameTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_big"
+            android:textStyle="bold"
+            android:layout_marginRight="10dp"
+            android:text="Sensor 01"
+        />
+
+        <TextView
+            android:id="@+id/serialTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_medium"
+            android:text="123456"
+        />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/alreadyAddedTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:textColor="@color/green"
+        android:textStyle="italic"
+        android:text="@string/device_already_added"
+        android:visibility="gone"
+    />
+
+    <Button
+        android:id="@+id/addBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/use_it"
+        android:background="@drawable/toast_green"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@+id/ignoreBtn"
+        android:layout_centerVertical="true"
+        android:drawableLeft="@drawable/check_green"
+    />
+
+    <Button
+        android:id="@+id/ignoreBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ignore"
+        android:background="@drawable/toast_red"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:drawableLeft="@drawable/x_red"
+    />
+
+</RelativeLayout>

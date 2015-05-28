@@ -3,6 +3,7 @@ package com.maws.loonandroid.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -34,8 +35,8 @@ public class SensorListAdapter extends BaseAdapter {
     private final List<Sensor> items;
 
     static class ViewHolder {
-        TextView nameTV, serialTV;
-        ImageView checkIV;
+        TextView nameTV, addressTV;
+        ImageView checkIV, signalIV, batteryIV;
         LinearLayout alarmsLL;
     }
 
@@ -68,8 +69,10 @@ public class SensorListAdapter extends BaseAdapter {
             // well set up the ViewHolder
             viewHolder = new ViewHolder();
             viewHolder.nameTV = (TextView) convertView.findViewById(R.id.nameTV);
-            viewHolder.serialTV = (TextView) convertView.findViewById(R.id.serialTV);
+            viewHolder.addressTV = (TextView) convertView.findViewById(R.id.addressTV);
             viewHolder.checkIV = (ImageView) convertView.findViewById(R.id.checkIV);
+            viewHolder.signalIV = (ImageView) convertView.findViewById(R.id.signalIV);
+            viewHolder.batteryIV = (ImageView) convertView.findViewById(R.id.batteryIV);
             viewHolder.alarmsLL = (LinearLayout) convertView.findViewById(R.id.alarmsLL);
 
             // store the holder with the view.
@@ -82,8 +85,20 @@ public class SensorListAdapter extends BaseAdapter {
         }
 
         Sensor thisSensor = items.get(position);
-        viewHolder.nameTV.setText(thisSensor.getName());
-        viewHolder.serialTV.setText(thisSensor.getSerial());
+
+        if(thisSensor.isActive()){
+            viewHolder.nameTV.setText( TextUtils.isEmpty(thisSensor.getDescription())? thisSensor.getName():thisSensor.getDescription() );
+            viewHolder.addressTV.setText(thisSensor.getName());
+            viewHolder.checkIV.setVisibility(View.VISIBLE);
+            viewHolder.signalIV.setVisibility(View.VISIBLE);
+            viewHolder.batteryIV.setVisibility(View.VISIBLE);
+        }else{
+            viewHolder.nameTV.setText( thisSensor.getName() );
+            viewHolder.addressTV.setText(thisSensor.getMacAddress());
+            viewHolder.checkIV.setVisibility(View.GONE);
+            viewHolder.signalIV.setVisibility(View.GONE);
+            viewHolder.batteryIV.setVisibility(View.GONE);
+        }
 
         //i need to look for this item's active alarms and list them
         AlertDao aDao = new AlertDao(context);

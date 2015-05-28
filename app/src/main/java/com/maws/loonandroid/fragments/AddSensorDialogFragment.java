@@ -24,7 +24,6 @@ public class AddSensorDialogFragment extends DialogFragment {
 
     public interface AddSensorDialogListener{
         public void onSensorAdded(Sensor sensor);
-        public void onSensorIgnored(Sensor sensor);
     }
 
     public static AddSensorDialogFragment newInstance(Sensor sensor, AddSensorDialogListener listener) {
@@ -48,7 +47,7 @@ public class AddSensorDialogFragment extends DialogFragment {
 
         View v = inflater.inflate(R.layout.fragment_add_sensor, container, false);
         ((TextView) v.findViewById(R.id.sensorNameTV)).setText(sensor.getName());
-        ((TextView) v.findViewById(R.id.sensorNameTV)).setText(sensor.getName());
+        ((TextView) v.findViewById(R.id.sensorAddressTV)).setText(sensor.getMacAddress());
         descriptionET = (EditText) v.findViewById(R.id.sensorDescriptionET);
 
         Button okBtn = (Button)v.findViewById(R.id.okBtn);
@@ -65,8 +64,6 @@ public class AddSensorDialogFragment extends DialogFragment {
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sensor.setDescription(descriptionET.getText().toString());
-                listener.onSensorIgnored(sensor);
                 dismiss();
             }
         });

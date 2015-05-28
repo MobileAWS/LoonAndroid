@@ -2,6 +2,7 @@ package com.maws.loonandroid.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -55,8 +56,8 @@ public class MonitorActivity extends ActionBarActivity {
         Sensor currentSensor = sDao.get(sensorId, lDao.getReadableDatabase());
         if(currentSensor != null) {
             SensorServiceDao ssDao = new SensorServiceDao(this);
-            nameTV.setText(currentSensor.getName());
-            codeTV.setText(currentSensor.getSerial());
+            nameTV.setText(TextUtils.isEmpty(currentSensor.getDescription())?currentSensor.getName():currentSensor.getDescription());
+            codeTV.setText(currentSensor.getName());
 
             List<SensorService> services = ssDao.getAllBySensorId(currentSensor.getId(), lDao.getReadableDatabase());
             adapter = new SensorServiceListAdapter(this,services);

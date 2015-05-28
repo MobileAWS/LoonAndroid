@@ -1,5 +1,6 @@
 package com.maws.loonandroid.models;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public class Sensor implements Parcelable {
 
-    private long id;
+    private long id = -1;
     private String name;
     private String code;
     private String serial;
@@ -29,6 +30,11 @@ public class Sensor implements Parcelable {
     private List<SensorService> sensorServices;
 
     public Sensor(){}
+
+    public Sensor(BluetoothDevice device){
+        this.name = device.getName();
+        this.macAddress = device.getAddress();
+    }
 
     public String getName() {
         return name;
@@ -170,7 +176,7 @@ public class Sensor implements Parcelable {
         sensor.setSerial(currentTimeStr);
         sensor.setVersion("v1");
         sensor.setDescription("");
-        sensor.setMacAddress("00-00-00-00");
+        sensor.setMacAddress("00-00-" + currentTimeStr.substring(currentTimeStr.length() - 4, currentTimeStr.length() - 2 ) + "-"+ currentTimeStr.substring(currentTimeStr.length() - 2));
         sensor.setBatteryStatus(3);
         sensor.setSignalStrength(5);
         sensor.setTemperature("80");

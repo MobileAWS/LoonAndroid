@@ -1,17 +1,13 @@
 package com.maws.loonandroid.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.enums.FragmentType;
@@ -19,14 +15,17 @@ import com.maws.loonandroid.fragments.NavigationDrawerFragment;
 import com.maws.loonandroid.fragments.PushNotificationsFragment;
 import com.maws.loonandroid.fragments.SensorFragment;
 import com.maws.loonandroid.fragments.UploadToCloudFragment;
-import com.maws.loonandroid.models.Sensor;
 import com.maws.loonandroid.models.User;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+
+    public final static int REQUEST_SCAN = 1002;
+    public static final String TAG_SENSOR = "ss";
+    public static final String TAG_PUSH_NOTIFICATION = "pn";
+    public static final String TAG_UPLOAD = "up";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -51,6 +50,7 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
     }
 
     @Override
@@ -59,15 +59,19 @@ public class MainActivity extends ActionBarActivity
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment toReplace = null;
+        String tag = "";
         switch (type){
             case SENSOR:
                 toReplace = SensorFragment.newInstance();
+                tag = TAG_SENSOR;
                 break;
             case PUSH_NOTIFICATION:
                 toReplace = PushNotificationsFragment.newInstance();
+                tag = TAG_PUSH_NOTIFICATION;
                 break;
             case UPLOAD:
                 toReplace = UploadToCloudFragment.newInstance();
+                tag = TAG_UPLOAD;
                 break;
             case LOGOUT:
                 logout();
@@ -76,7 +80,7 @@ public class MainActivity extends ActionBarActivity
 
         if(toReplace != null) {
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, toReplace)
+                    .replace(R.id.container, toReplace, tag)
                     .commit();
         }
     }
@@ -107,12 +111,11 @@ public class MainActivity extends ActionBarActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        /*if (id == R.id.action_change_background) {
-            return true;
+        /*switch (item.getItemId()) {
+            case R.id.action_start_scan:
+                scanForMonitors();
+                return true;
         }*/
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -120,40 +123,6 @@ public class MainActivity extends ActionBarActivity
         Intent logOutIntent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(logOutIntent);
         this.finish();
-    }
-
-
-    private static List<Sensor> sensors = null;
-    public List<Sensor> getSensors(){
-
-        if(sensors == null) {
-            sensors = new ArrayList<Sensor>();
-            Sensor bedSensor = new Sensor();
-            bedSensor.setName("Mom's Room");
-            bedSensor.setCode("Sensor LM01");
-            sensors.add(bedSensor);
-
-            Sensor chairSensor = new Sensor();
-            chairSensor.setName("Room 101");
-            chairSensor.setCode("Sensor LM02");
-            sensors.add(chairSensor);
-
-            Sensor toiletSensor = new Sensor();
-            toiletSensor.setName("Room 102");
-            toiletSensor.setCode("Sensor LM03");
-            sensors.add(toiletSensor);
-
-            Sensor callSensor = new Sensor();
-            callSensor.setName("Room 103");
-            callSensor.setCode("Sensor LM04");
-            sensors.add(callSensor);
-
-            Sensor incontinenceSensor = new Sensor();
-            incontinenceSensor.setName("Bathroom Sensor");
-            incontinenceSensor.setCode("Sensor LM05");
-            sensors.add(incontinenceSensor);
-        }
-        return sensors;
     }
 
     private static List<User> users = null;
@@ -168,4 +137,14 @@ public class MainActivity extends ActionBarActivity
         return users;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+
+        //for now, let's just refresh the monitors fragment if it's visible
+        Fragment f = getSupportFragmentManager().findFragmentByTag(TAG_SENSOR);
+        if(f != null && f instanceof SensorFragment && f.isVisible()){
+            ((SensorFragment)f).loadSensors();
+        }
+
+    }
 }

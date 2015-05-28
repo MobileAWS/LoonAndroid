@@ -46,11 +46,7 @@ public class UploadToCloudFragment extends Fragment {
         sensorsLV = (ListView) rootView.findViewById(R.id.sensorsLV);
 
         List<Sensor> sensors = null;
-        if(getActivity() instanceof MainActivity){
-            sensors = ((MainActivity)getActivity()).getSensors();
-        }else{
-            sensors = new ArrayList<Sensor>();
-        }
+        sensors = new ArrayList<Sensor>();
 
         adapter = new UploadSensorListAdapter(this.getActivity(), sensors);
         sensorsLV.setAdapter(adapter);

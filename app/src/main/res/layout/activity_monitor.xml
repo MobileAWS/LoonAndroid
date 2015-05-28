@@ -20,7 +20,7 @@
                 android:id="@+id/nameTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="@dimen/font_big"
                 android:textStyle="bold"
                 android:text="Sensor Name"/>
 
@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sensor Code"
-                android:textSize="16sp"
+                android:textSize="@dimen/font_medium"
                 />
         </LinearLayout>
 

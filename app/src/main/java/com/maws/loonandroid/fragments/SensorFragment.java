@@ -1,9 +1,15 @@
 package com.maws.loonandroid.fragments;
 
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -18,7 +24,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.activities.MonitorActivity;
+import com.maws.loonandroid.activities.ScanDevicesActivity;
+import com.maws.loonandroid.adapters.BluetoothDeviceAdapter;
 import com.maws.loonandroid.adapters.SensorListAdapter;
 import com.maws.loonandroid.contentproviders.AlertContentProvider;
 import com.maws.loonandroid.dao.AlertDao;
@@ -40,6 +49,8 @@ public class SensorFragment extends Fragment implements
     private TextView activeSensorHeaderTV, inactiveSensorHeaderTV;
     private ListView sensorsLV, inactiveSensorsLV;
     private SensorListAdapter adapter, inactiveAdapter;
+
+
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -75,15 +86,12 @@ public class SensorFragment extends Fragment implements
         inactiveSensorHeaderTV = (TextView) rootView.findViewById(R.id.inactiveSensorHeaderTV);
         emptyLayout = rootView.findViewById(R.id.emptyLayout);
 
-        //loadSensors();
-
         //i need a loader to listen to alarm changes on the db
         getLoaderManager().initLoader(0, null, this);
-
         return rootView;
     }
 
-    private void loadSensors(){
+    public void loadSensors(){
 
         //get database
         LoonMedicalDao loonDao = new LoonMedicalDao(this.getActivity());
@@ -131,8 +139,10 @@ public class SensorFragment extends Fragment implements
     public boolean onOptionsItemSelected(MenuItem item) {
         // handle item selection
         switch (item.getItemId()) {
+
             case R.id.action_start_scan:
-                showSensorDialog();
+                Intent scanIntent = new Intent(this.getActivity(), ScanDevicesActivity.class);
+                startActivityForResult(scanIntent, MainActivity.REQUEST_SCAN);
                 return true;
 
             case R.id.action_remove_sensors:
@@ -146,31 +156,6 @@ public class SensorFragment extends Fragment implements
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    public void showSensorDialog(){
-        //for now, let's create a random sensor and add it to the dialog
-        AddSensorDialogFragment newFragment = AddSensorDialogFragment.newInstance(Sensor.createFakeSensor(), new AddSensorDialogFragment.AddSensorDialogListener() {
-            @Override
-            public void onSensorAdded(Sensor sensor) {
-                sensor.setActive(true);
-                saveSensor(sensor);
-            }
-
-            @Override
-            public void onSensorIgnored(Sensor sensor) {
-                sensor.setActive(false);
-                saveSensor(sensor);
-            }
-        });
-        newFragment.show(getFragmentManager(), "dialog");
-    }
-
-    private void saveSensor(Sensor sensor){
-        LoonMedicalDao loonDao = new LoonMedicalDao(this.getActivity());
-        SensorDao sDao = new SensorDao(this.getActivity());
-        sDao.create(sensor, loonDao.getWritableDatabase());
-        loadSensors();
     }
 
     private void removeSensors(){

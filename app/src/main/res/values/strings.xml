@@ -43,10 +43,11 @@
     <string name="default_request_error_message">There was an error. Please try again later.</string>
     <string name="message_account_creation_success">Account Created. Please confirm the account on your email before attempting to login.</string>
     <string name="signing_in">Signing In...</string>
-    <string name="add_sensor_instructions"><![CDATA[Enter a description (e.g. Jacket Activator) & tap \"Use It\". If the device is not yours, tap \"Not Mine\" to ignore.]]></string>
+    <string name="add_sensor_instructions"><![CDATA[Enter a description (e.g. Jacket Activator) & tap \"Register\".]]></string>
     <string name="sensor_found_name">Found: Sensor LM01</string>
     <string name="sensor_found_label">Found:</string>
     <string name="sensor_serial_label">S/N:</string>
+    <string name="sensor_address">Address:</string>
     <string name="sensor_found_description_hint">Write a description for this device</string>
     <string name="use_it">Register</string>
     <string name="ignore">Ignore</string>
@@ -58,5 +59,16 @@
     <string name="sensors">Sensors</string>
     <string name="action_generate_random_alert">Generate Random Alert</string>
     <string name="alarm_notification_text">Alert generated for %1$s</string>
+    <string name="add">Add</string>
+    <string name="stop_scanning">Stop Scanning</string>
+    <string name="scanning">Looking for devices...</string>
+    <string name="title_scan_devices">Scan Devices</string>
+    <string name="ble_not_supported">This device does not support Low Energy Bluetooth</string>
+    <string name="scan_zero_found">No devices were found.</string>
+    <string name="scan_one_found">A device was found. Register it to receive alarms from it.</string>
+    <string name="scan_many_found">%1$s devices were found. Register them to receive alerts.</string>
+    <string name="scan_again">Scan Again</string>
+    <string name="cancel">Cancel</string>
+    <string name="device_already_added">Already Added</string>
 
 </resources>
