@@ -23,6 +23,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.activities.MonitorActivity;
@@ -30,11 +32,13 @@ import com.maws.loonandroid.activities.ScanDevicesActivity;
 import com.maws.loonandroid.adapters.BluetoothDeviceAdapter;
 import com.maws.loonandroid.adapters.SensorListAdapter;
 import com.maws.loonandroid.contentproviders.AlertContentProvider;
+import com.maws.loonandroid.contentproviders.SensorContentProvider;
 import com.maws.loonandroid.dao.AlertDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
 import com.maws.loonandroid.dao.SensorDao;
 import com.maws.loonandroid.models.Sensor;
 import com.maws.loonandroid.models.SensorService;
+import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
 import java.util.List;
 import java.util.Random;
@@ -49,8 +53,6 @@ public class SensorFragment extends Fragment implements
     private TextView activeSensorHeaderTV, inactiveSensorHeaderTV;
     private ListView sensorsLV, inactiveSensorsLV;
     private SensorListAdapter adapter, inactiveAdapter;
-
-
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -86,8 +88,10 @@ public class SensorFragment extends Fragment implements
         inactiveSensorHeaderTV = (TextView) rootView.findViewById(R.id.inactiveSensorHeaderTV);
         emptyLayout = rootView.findViewById(R.id.emptyLayout);
 
-        //i need a loader to listen to alarm changes on the db
+        //i need a loader to listen to alarm changes on the db alerts
         getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(1, null, this);
+
         return rootView;
     }
 
@@ -97,7 +101,7 @@ public class SensorFragment extends Fragment implements
         LoonMedicalDao loonDao = new LoonMedicalDao(this.getActivity());
         SensorDao sDao = new SensorDao(this.getActivity());
 
-        List<Sensor> sensors = sDao.getAllActive(loonDao.getReadableDatabase());
+        List<Sensor> sensors = sDao.getAllActive();
         if(sensors.size() > 0) {
             adapter = new SensorListAdapter(this.getActivity(), sensors);
             sensorsLV.setAdapter(adapter);
@@ -109,7 +113,7 @@ public class SensorFragment extends Fragment implements
             activeSensorHeaderTV.setVisibility(View.GONE);
         }
 
-        List<Sensor> inactiveSensors = sDao.getAllInactive(loonDao.getReadableDatabase());
+        List<Sensor> inactiveSensors = sDao.getAllInactive();
         if(inactiveSensors.size() > 0) {
             inactiveAdapter = new SensorListAdapter(this.getActivity(), inactiveSensors);
             inactiveSensorsLV.setAdapter(inactiveAdapter);
@@ -131,7 +135,11 @@ public class SensorFragment extends Fragment implements
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.sensors, menu);
+        if(!LoonAndroid.demoMode) {
+            inflater.inflate(R.menu.sensors, menu);
+        }else{
+            inflater.inflate(R.menu.sensors_demo, menu);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -143,6 +151,13 @@ public class SensorFragment extends Fragment implements
             case R.id.action_start_scan:
                 Intent scanIntent = new Intent(this.getActivity(), ScanDevicesActivity.class);
                 startActivityForResult(scanIntent, MainActivity.REQUEST_SCAN);
+                return true;
+
+            case R.id.action_restart_service:
+                BLEService service = BLEService.getInstance();
+                if(service != null){
+                    service.restart();
+                }
                 return true;
 
             case R.id.action_remove_sensors:
@@ -190,10 +205,35 @@ public class SensorFragment extends Fragment implements
     // creates a new loader after the initLoader () call
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String[] projection = {AlertDao.KEY_ID, AlertDao.KEY_SENSOR_SERVICE_ID, AlertDao.KEY_ALERT_DATE, AlertDao.KEY_DISMISSED};
-        CursorLoader cursorLoader = new CursorLoader(this.getActivity(),
-                AlertContentProvider.CONTENT_URI, projection, null, null, null);
-        return cursorLoader;
+
+        if(id == 0) {
+            String[] projection = {
+                    AlertDao.KEY_ID,
+                    AlertDao.KEY_SENSOR_SERVICE_ID,
+                    AlertDao.KEY_ALERT_DATE,
+                    AlertDao.KEY_DISMISSED
+            };
+            CursorLoader cursorLoader = new CursorLoader(this.getActivity(),
+                    AlertContentProvider.CONTENT_URI, projection, null, null, null);
+            return cursorLoader;
+
+        } else if(id == 1){
+            String[] projection = {
+                    SensorDao.KEY_ID,
+                    SensorDao.KEY_NAME,
+                    SensorDao.KEY_CODE,
+                    SensorDao.KEY_SERIAL,
+                    SensorDao.KEY_VERSION,
+                    SensorDao.KEY_DESCRIPTION,
+                    SensorDao.KEY_MAC_ADDRESS,
+                    SensorDao.KEY_ACTIVE,
+                    SensorDao.KEY_CONNECTED
+            };
+            CursorLoader cursorLoader = new CursorLoader(this.getActivity(),
+                    SensorContentProvider.CONTENT_URI, projection, null, null, null);
+            return cursorLoader;
+        }
+        return null;
     }
 
     @Override

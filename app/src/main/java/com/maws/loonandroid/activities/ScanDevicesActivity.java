@@ -16,15 +16,14 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.BluetoothDeviceAdapter;
-import com.maws.loonandroid.dao.LoonMedicalDao;
 import com.maws.loonandroid.dao.SensorDao;
 import com.maws.loonandroid.fragments.AddSensorDialogFragment;
 import com.maws.loonandroid.models.Sensor;
 import com.maws.loonandroid.views.CustomToast;
-
-import java.util.List;
 
 /**
  * Created by Andrexxjc on 27/05/2015.
@@ -32,7 +31,7 @@ import java.util.List;
 public class ScanDevicesActivity extends ActionBarActivity {
 
     // Stops scanning after 10 seconds.
-    private static final long SCAN_PERIOD = 10000;
+    private static final long SCAN_PERIOD = LoonAndroid.demoMode? 4000:10000;
     public static final int REQUEST_ENABLE_BT = 1001;
 
     private Handler mHandler;
@@ -40,6 +39,7 @@ public class ScanDevicesActivity extends ActionBarActivity {
     private ListView sensorsLV;
     private ProgressBar scanPB;
     private TextView scanTV;
+    private boolean discovering = false; //this is used only for demo mode
 
     private BluetoothDeviceAdapter scanAdapter;
     private BluetoothAdapter mBluetoothAdapter;
@@ -50,7 +50,7 @@ public class ScanDevicesActivity extends ActionBarActivity {
 
         // Use this check to determine whether BLE is supported on the device.  Then you can
         // selectively disable BLE-related features.
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+        if (!LoonAndroid.demoMode && !getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             CustomToast.showAlert(this, getString(R.string.ble_not_supported), CustomToast._TYPE_ERROR);
             finish();
         }
@@ -78,28 +78,32 @@ public class ScanDevicesActivity extends ActionBarActivity {
     }
 
     public void startScanning(){
+        scanAdapter.clear();
 
-        if(mBluetoothAdapter == null) {
+        if(!LoonAndroid.demoMode && mBluetoothAdapter == null) {
             // Initializes Bluetooth adapter.
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         }
         // Checks if Bluetooth is supported on the device.
-        if (mBluetoothAdapter == null) {
+        if (!LoonAndroid.demoMode && mBluetoothAdapter == null) {
             CustomToast.showAlert(this, getString(R.string.ble_not_supported), CustomToast._TYPE_ERROR);
             finish();
             return;
         }
         // Checks if Bluetooth is enabled, or asks to make it enabled.
-        if (!mBluetoothAdapter.isEnabled()) {
+        if (!LoonAndroid.demoMode && !mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             return;
         }
 
-        if(!mBluetoothAdapter.isDiscovering()) {
-            mBluetoothAdapter.startDiscovery();
+        if( LoonAndroid.demoMode ||!mBluetoothAdapter.isDiscovering()) {
+            if(!LoonAndroid.demoMode) {
+                mBluetoothAdapter.startDiscovery();
+            }
+            discovering = true;
             invalidateOptionsMenu();
-            scanTV.setText( getString(R.string.scanning) );
+            scanTV.setText(getString(R.string.scanning));
             scanPB.setVisibility(View.VISIBLE);
 
             // Stops scanning after a pre-defined scan period.
@@ -115,7 +119,22 @@ public class ScanDevicesActivity extends ActionBarActivity {
     }
 
     private void stopScanning(){
-        if (!isFinishing() && mBluetoothAdapter != null && mBluetoothAdapter.isDiscovering()) {
+        if(LoonAndroid.demoMode && !isFinishing()){
+            discovering = false;
+            scanAdapter.add(Sensor.createFakeSensor());
+            scanPB.setVisibility(View.GONE);
+            try{
+                if(scanAdapter.getCount() == 0){
+                    scanTV.setText( getString(R.string.scan_zero_found) );
+                }else if(scanAdapter.getCount() == 1){
+                    scanTV.setText( getString(R.string.scan_one_found) );
+                }else if(scanAdapter.getCount() > 1){
+                    scanTV.setText( String.format( getString(R.string.scan_many_found), scanAdapter.getCount() ));
+                }
+            }catch(Exception ex){
+                //probably this activity already finished
+            }
+        }else if (!isFinishing() && mBluetoothAdapter != null && mBluetoothAdapter.isDiscovering()) {
             mBluetoothAdapter.cancelDiscovery();
             scanPB.setVisibility(View.GONE);
 
@@ -146,9 +165,8 @@ public class ScanDevicesActivity extends ActionBarActivity {
                 short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, defaultShort);
 
                 //i need to know if this device is already on our database
-                LoonMedicalDao lDao = new LoonMedicalDao(ScanDevicesActivity.this);
                 SensorDao sDao = new SensorDao(ScanDevicesActivity.this);
-                Sensor mSensor = sDao.findByMacAddress(device.getAddress(), lDao.getReadableDatabase());
+                Sensor mSensor = sDao.findByMacAddress(device.getAddress());
                 if(mSensor == null){
                     mSensor = new Sensor(device);
                 }
@@ -182,10 +200,18 @@ public class ScanDevicesActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.scan, menu);
-        if (mBluetoothAdapter != null && !mBluetoothAdapter.isDiscovering()) {
-            menu.findItem(R.id.action_scan).setVisible(true);
-        } else {
-            menu.findItem(R.id.action_scan).setVisible(false);
+        if(LoonAndroid.demoMode){
+            if(!discovering){
+                menu.findItem(R.id.action_scan).setVisible(true);
+            }else{
+                menu.findItem(R.id.action_scan).setVisible(false);
+            }
+        }else {
+            if (mBluetoothAdapter != null && !mBluetoothAdapter.isDiscovering()) {
+                menu.findItem(R.id.action_scan).setVisible(true);
+            } else {
+                menu.findItem(R.id.action_scan).setVisible(false);
+            }
         }
         return true;
     }
@@ -240,9 +266,8 @@ public class ScanDevicesActivity extends ActionBarActivity {
     }
 
     private void saveSensor(Sensor sensor){
-        LoonMedicalDao loonDao = new LoonMedicalDao(this);
         SensorDao sDao = new SensorDao(this);
-        sDao.create(sensor, loonDao.getWritableDatabase());
+        sDao.create(sensor);
         scanAdapter.notifyDataSetChanged();
     }
 

@@ -23,6 +23,7 @@ public class Sensor implements Parcelable {
     private String version;
     private String description;
     private String macAddress;
+    private boolean connected = false;
     private boolean active = true;
     private float batteryStatus;
     private int signalStrength;
@@ -116,6 +117,14 @@ public class Sensor implements Parcelable {
         this.sensorServices = sensorServices;
     }
 
+    public boolean isConnected() {
+        return connected;
+    }
+
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+    }
+
     //methods to handle the parcelable implementation
     @Override
     public int describeContents() {
@@ -135,7 +144,8 @@ public class Sensor implements Parcelable {
         pc.writeFloat(this.batteryStatus);
         pc.writeInt(this.signalStrength);
         pc.writeString(this.temperature);
-        pc.writeInt(this.active ? 1: 0);
+        pc.writeInt(this.active ? 1 : 0);
+        pc.writeInt(this.connected ? 1: 0);
     }
 
     /** Static field used to regenerate object, individually or as arrays */
@@ -164,6 +174,7 @@ public class Sensor implements Parcelable {
         this.signalStrength = pc.readInt();
         this.temperature = pc.readString();
         this.active = pc.readInt() == 1;
+        this.connected = pc.readInt() == 1;
     }
 
     public static Sensor createFakeSensor(){
@@ -181,7 +192,9 @@ public class Sensor implements Parcelable {
         sensor.setSignalStrength(5);
         sensor.setTemperature("80");
         sensor.setActive(true);
-        sensor.setSensorServices( SensorService.createFakeSensorServices() );
+        sensor.setConnected(false);
+        sensor.setSensorServices( SensorService.createDefaultSensorServices() );
+
         return sensor;
     }
 

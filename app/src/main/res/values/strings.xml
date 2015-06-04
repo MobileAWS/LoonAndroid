@@ -70,5 +70,7 @@
     <string name="scan_again">Scan Again</string>
     <string name="cancel">Cancel</string>
     <string name="device_already_added">Already Added</string>
+    <string name="connect">Connect</string>
+    <string name="action_restart_service">Restart Service</string>
 
 </resources>

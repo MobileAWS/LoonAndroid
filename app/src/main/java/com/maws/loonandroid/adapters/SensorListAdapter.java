@@ -1,25 +1,34 @@
 package com.maws.loonandroid.adapters;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.AlertDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
 import com.maws.loonandroid.dao.SensorServiceDao;
+import com.maws.loonandroid.gatt.GattManager;
+import com.maws.loonandroid.gatt.operations.GattConnectOperation;
 import com.maws.loonandroid.ifaces.MultipleSelectionAdapter;
 import com.maws.loonandroid.models.Alert;
 import com.maws.loonandroid.models.Sensor;
+import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.views.CustomToast;
 
 import java.util.ArrayList;
@@ -31,10 +40,12 @@ import java.util.List;
  */
 public class SensorListAdapter extends BaseAdapter {
 
+    private static final String TAG = "SensorListAdapter";
     private final Context context;
     private final List<Sensor> items;
 
     static class ViewHolder {
+        Button connectBtn;
         TextView nameTV, addressTV;
         ImageView checkIV, signalIV, batteryIV;
         LinearLayout alarmsLL;
@@ -74,6 +85,7 @@ public class SensorListAdapter extends BaseAdapter {
             viewHolder.signalIV = (ImageView) convertView.findViewById(R.id.signalIV);
             viewHolder.batteryIV = (ImageView) convertView.findViewById(R.id.batteryIV);
             viewHolder.alarmsLL = (LinearLayout) convertView.findViewById(R.id.alarmsLL);
+            viewHolder.connectBtn = (Button) convertView.findViewById(R.id.connectBtn);
 
             // store the holder with the view.
             convertView.setTag(viewHolder);
@@ -86,15 +98,75 @@ public class SensorListAdapter extends BaseAdapter {
 
         Sensor thisSensor = items.get(position);
 
-        if(thisSensor.isActive()){
+        if(!thisSensor.isConnected() && !LoonAndroid.demoMode){
             viewHolder.nameTV.setText( TextUtils.isEmpty(thisSensor.getDescription())? thisSensor.getName():thisSensor.getDescription() );
             viewHolder.addressTV.setText(thisSensor.getName());
+            viewHolder.connectBtn.setVisibility(View.VISIBLE);
+            viewHolder.checkIV.setVisibility(View.GONE);
+            viewHolder.signalIV.setVisibility(View.GONE);
+            viewHolder.batteryIV.setVisibility(View.GONE);
+            viewHolder.connectBtn.setTag(thisSensor.getMacAddress());
+            viewHolder.connectBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    /*BLEService instance = BLEService.getInstance();
+                    if (instance != null) {
+                        instance.connect(v.getTag().toString());
+                    }*/
+                    String address = v.getTag().toString();
+                    BluetoothAdapter mBluetoothAdapter = null;
+                    BluetoothManager mBluetoothManager = null;
+                    //let's first try to initialize the adapter
+                    // For API level 18 and above, get a reference to BluetoothAdapter through
+                    // BluetoothManager.
+                    if (mBluetoothManager == null) {
+                        mBluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+                        if (mBluetoothManager == null) {
+                            Log.e(TAG, "Unable to initialize BluetoothManager.");
+                            return;
+                        }
+                    }
+
+                    mBluetoothAdapter = mBluetoothManager.getAdapter();
+                    if (mBluetoothAdapter == null) {
+                        Log.e(TAG, "Unable to obtain a BluetoothAdapter.");
+                        return;
+                    }
+
+                    if (mBluetoothAdapter == null || address == null) {
+                        Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
+                        return;
+                    }
+
+                    BluetoothDevice device = null;
+                    try {
+                        device = mBluetoothAdapter.getRemoteDevice(address);
+                    } catch (Exception ex) {
+                        //just don't connect to the device if the mac address is weird
+                    }
+
+                    if (device == null) {
+                        Log.w(TAG, "Device not found.  Unable to connect.");
+                        return;
+                    }
+
+                    GattManager manager = new GattManager();
+                    GattConnectOperation operation = new GattConnectOperation(device);
+                    manager.queue(operation);
+                }
+            });
+
+        }else if( LoonAndroid.demoMode || (thisSensor.isActive() && thisSensor.isConnected()) ){
+            viewHolder.nameTV.setText( TextUtils.isEmpty(thisSensor.getDescription())? thisSensor.getName():thisSensor.getDescription() );
+            viewHolder.addressTV.setText(thisSensor.getName());
+            viewHolder.connectBtn.setVisibility(View.GONE);
             viewHolder.checkIV.setVisibility(View.VISIBLE);
             viewHolder.signalIV.setVisibility(View.VISIBLE);
             viewHolder.batteryIV.setVisibility(View.VISIBLE);
         }else{
             viewHolder.nameTV.setText( thisSensor.getName() );
             viewHolder.addressTV.setText(thisSensor.getMacAddress());
+            viewHolder.connectBtn.setVisibility(View.GONE);
             viewHolder.checkIV.setVisibility(View.GONE);
             viewHolder.signalIV.setVisibility(View.GONE);
             viewHolder.batteryIV.setVisibility(View.GONE);

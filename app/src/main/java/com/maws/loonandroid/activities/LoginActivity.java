@@ -27,9 +27,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.listener.StandardRequestListener;
 import com.maws.loonandroid.requests.UserRequestHandler;
+import com.maws.loonandroid.services.BLEService;
+import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomToast;
 
 import org.json.JSONArray;
@@ -67,6 +70,11 @@ public class LoginActivity extends Activity implements OnClickListener {
         newUserTV.setOnClickListener(this);
         loginBtn.setOnClickListener(this);
         loginNoCloudBtn.setOnClickListener(this);
+
+        if(!Util.isMyServiceRunning(this, BLEService.class ) && !LoonAndroid.demoMode){
+            Intent intent = new Intent(this,BLEService.class);
+            this.startService(intent);
+        }
     }
 
     private void attemptLogin(){

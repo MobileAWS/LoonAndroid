@@ -53,7 +53,6 @@
         android:layout_marginRight="10dp"
         android:layout_toLeftOf="@+id/ignoreBtn"
         android:layout_centerVertical="true"
-        android:drawableLeft="@drawable/check_green"
     />
 
     <Button
@@ -64,7 +63,6 @@
         android:background="@drawable/toast_red"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:drawableLeft="@drawable/x_red"
     />
 
 </RelativeLayout>

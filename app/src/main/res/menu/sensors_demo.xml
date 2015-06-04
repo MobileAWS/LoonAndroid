@@ -11,7 +11,8 @@
     <item android:id="@+id/action_restart_service"
         android:title="@string/action_restart_service"
         android:orderInCategory="200"
-        app:showAsAction="never" />
+        app:showAsAction="never"
+        android:visible="false" />
 
     <item android:id="@+id/action_remove_sensors"
         android:title="@string/action_remove_sensors"
@@ -22,6 +23,6 @@
         android:title="@string/action_generate_random_alert"
         android:orderInCategory="300"
         app:showAsAction="never"
-        android:visible="false"/>
+    />
 
 </menu>

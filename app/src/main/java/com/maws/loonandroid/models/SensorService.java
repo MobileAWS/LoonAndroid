@@ -2,12 +2,25 @@ package com.maws.loonandroid.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Andrexxjc on 10/05/2015.
  * This object holds the configuration of each one of the services inside the sensor
  */
 public class SensorService {
+
+    //let's map the UUIDs of the services here
+    private static final UUID UUID_BATTERY_SERVICE =
+            UUID.fromString("0000180f-0000-1000-8000-00805f9b34fb");
+    private static final UUID UUID_DEVICE_INFORMATION =
+            UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb");
+    private static final UUID UUID_THERMOMETER_SERVICE =
+            UUID.fromString("00001809-0000-1000-8000-00805f9b34fb");
+    private static final UUID UUID_GENERIC_ACCESS =
+            UUID.fromString("00001800-0000-1000-8000-00805f9b34fb");
+    private static final UUID UUID_SOMETHING =
+            UUID.fromString("79f7744a-f8e6-4810-8f16-140b6974835d");
 
     private static final int ALARM_SOUND_1 = 0;
     private static final int ALARM_SOUND_2 = 1;
@@ -47,7 +60,7 @@ public class SensorService {
 
     public void setSensorId(long sensorId) { this.sensorId = sensorId; }
 
-    public static List<SensorService> createFakeSensorServices(){
+    public static List<SensorService> createDefaultSensorServices(){
 
         List<SensorService> toReturn = new ArrayList<SensorService>();
         toReturn.add(new SensorService("Bed Sensor"));
@@ -55,4 +68,6 @@ public class SensorService {
         toReturn.add(new SensorService("Toilet Sensor"));
         return toReturn;
     }
+
+
 }

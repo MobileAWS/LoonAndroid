@@ -53,7 +53,7 @@ public class MonitorActivity extends ActionBarActivity {
         LoonMedicalDao lDao = new LoonMedicalDao(this);
         SensorDao sDao = new SensorDao(this);
 
-        Sensor currentSensor = sDao.get(sensorId, lDao.getReadableDatabase());
+        Sensor currentSensor = sDao.get(sensorId);
         if(currentSensor != null) {
             SensorServiceDao ssDao = new SensorServiceDao(this);
             nameTV.setText(TextUtils.isEmpty(currentSensor.getDescription())?currentSensor.getName():currentSensor.getDescription());

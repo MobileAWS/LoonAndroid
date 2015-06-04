@@ -2,6 +2,7 @@ package com.maws.loonandroid.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.maws.loonandroid.contentproviders.SensorContentProvider;
 import com.maws.loonandroid.models.Sensor;
 import com.maws.loonandroid.models.SensorService;
 
@@ -9,6 +10,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 
 /**
  * Created by Andrexxjc on 07/05/2015.
@@ -27,6 +29,7 @@ public class SensorDao {
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_MAC_ADDRESS = "mac";
     public static final String KEY_ACTIVE = "active";
+    public static final String KEY_CONNECTED = "connected";
 
     private Context context;
 
@@ -45,7 +48,8 @@ public class SensorDao {
                 KEY_VERSION + " TEXT," +
                 KEY_DESCRIPTION + " TEXT," +
                 KEY_ACTIVE + " TINYINT," +
-                KEY_MAC_ADDRESS + " TEXT" + ")";
+                KEY_MAC_ADDRESS + " TEXT," +
+                KEY_CONNECTED + " TINYINT" + ")";
 
         db.execSQL(CREATE_TABLE);
 
@@ -61,7 +65,7 @@ public class SensorDao {
     }
 
     // Adding new object
-    public void create(Sensor sensor, SQLiteDatabase db) {
+    public void create(Sensor sensor) {
 
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, sensor.getName());
@@ -70,29 +74,26 @@ public class SensorDao {
         values.put(KEY_VERSION, sensor.getVersion());
         values.put(KEY_DESCRIPTION, sensor.getDescription());
         values.put(KEY_MAC_ADDRESS, sensor.getMacAddress());
-        values.put(KEY_ACTIVE, sensor.isActive());
+        values.put(KEY_ACTIVE, sensor.isActive()?1:0);
+        values.put(KEY_CONNECTED, sensor.isConnected() ? 1 : 0);
+        Uri uri = context.getContentResolver().insert(SensorContentProvider.CONTENT_URI, values);
+        long sensorId = Long.valueOf(uri.getLastPathSegment());
 
-        // Inserting Row
-        long sensorId =  db.insert(TABLE_NAME, null, values);
-        sensor.setId(sensorId);
-
-        if(sensorId >= 0 && sensor.getSensorServices() != null) {
-
-            //if the sensor has services, we need to create them too
-            SensorServiceDao ssDao = new SensorServiceDao(this.context);
-            for (SensorService sService : sensor.getSensorServices()) {
+        if(sensor.getSensorServices() != null){
+            LoonMedicalDao lDao = new LoonMedicalDao(context);
+            SensorServiceDao ssDao = new SensorServiceDao(context);
+            for(SensorService sService: sensor.getSensorServices()){
                 sService.setSensorId(sensorId);
-                ssDao.create(sService, db, false);
+                ssDao.create(sService, lDao.getWritableDatabase());
             }
         }
-        db.close(); // Closing database connection
     }
 
     // Getting single object
-    public Sensor get(long id, SQLiteDatabase db) {
+    public Sensor get(long id) {
 
-        Cursor cursor = db.query(TABLE_NAME,
-                new String[] {
+        Cursor cursor = context.getContentResolver().query(SensorContentProvider.CONTENT_URI,
+                new String[]{
                         KEY_ID,
                         KEY_NAME,
                         KEY_CODE,
@@ -100,13 +101,16 @@ public class SensorDao {
                         KEY_VERSION,
                         KEY_DESCRIPTION,
                         KEY_MAC_ADDRESS,
-                        KEY_ACTIVE
+                        KEY_ACTIVE,
+                        KEY_CONNECTED
                 },
                 KEY_ID + "=?",
-                new String[] {
+                new String[]{
                         String.valueOf(id)
                 },
-                null, null, null, null);
+                null
+        );
+
         if (cursor != null  && cursor.getCount() > 0) {
             cursor.moveToFirst();
         }else{
@@ -114,15 +118,15 @@ public class SensorDao {
         }
 
         Sensor sensor = new Sensor();
-        sensor.setId(cursor.getInt(0));
-        sensor.setName(cursor.getString(1));
-        sensor.setCode(cursor.getString(2));
-        sensor.setSerial(cursor.getString(3));
-        sensor.setVersion(cursor.getString(4));
-        sensor.setDescription(cursor.getString(5));
-        sensor.setMacAddress(cursor.getString(6));
-        sensor.setActive(cursor.getInt(7) == 1);
-        db.close();
+        sensor.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
+        sensor.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+        sensor.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
+        sensor.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
+        sensor.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
+        sensor.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+        sensor.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
+        sensor.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
+        sensor.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
         cursor.close();
 
         // return object
@@ -130,24 +134,27 @@ public class SensorDao {
     }
 
     // Getting single object
-    public Sensor findByMacAddress(String macAddress, SQLiteDatabase db) {
+    public Sensor findByMacAddress(String macAddress) {
 
-        Cursor cursor = db.query(TABLE_NAME,
-                new String[] {
-                        KEY_ID,
-                        KEY_NAME,
-                        KEY_CODE,
-                        KEY_SERIAL,
-                        KEY_VERSION,
-                        KEY_DESCRIPTION,
-                        KEY_MAC_ADDRESS,
-                        KEY_ACTIVE
-                },
-                KEY_MAC_ADDRESS + "=?",
-                new String[] {
+        Cursor cursor = context.getContentResolver().query(SensorContentProvider.CONTENT_URI,
+            new String[]{
+                KEY_ID,
+                KEY_NAME,
+                KEY_CODE,
+                KEY_SERIAL,
+                KEY_VERSION,
+                KEY_DESCRIPTION,
+                KEY_MAC_ADDRESS,
+                KEY_ACTIVE,
+                KEY_CONNECTED
+            },
+            KEY_MAC_ADDRESS + "=?",
+                new String[]{
                         macAddress
-                },
-                null, null, null, null);
+            },
+            null
+        );
+
         if (cursor != null && cursor.getCount() > 0 ) {
             cursor.moveToFirst();
         }else{
@@ -155,15 +162,15 @@ public class SensorDao {
         }
 
         Sensor sensor = new Sensor();
-        sensor.setId(cursor.getInt(0));
-        sensor.setName(cursor.getString(1));
-        sensor.setCode(cursor.getString(2));
-        sensor.setSerial(cursor.getString(3));
-        sensor.setVersion(cursor.getString(4));
-        sensor.setDescription(cursor.getString(5));
-        sensor.setMacAddress(cursor.getString(6));
-        sensor.setActive(cursor.getInt(7) == 1);
-        db.close();
+        sensor.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
+        sensor.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+        sensor.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
+        sensor.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
+        sensor.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
+        sensor.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+        sensor.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
+        sensor.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
+        sensor.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
         cursor.close();
 
         // return object
@@ -171,26 +178,41 @@ public class SensorDao {
     }
 
     // Getting All objects
-    public List<Sensor> getAll(SQLiteDatabase db) {
+    public List<Sensor> getAll() {
 
         List<Sensor> toReturnList = new ArrayList<Sensor>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_NAME + " ORDER BY " + KEY_NAME;
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = context.getContentResolver().query(SensorContentProvider.CONTENT_URI,
+                new String[]{
+                        KEY_ID,
+                        KEY_NAME,
+                        KEY_CODE,
+                        KEY_SERIAL,
+                        KEY_VERSION,
+                        KEY_DESCRIPTION,
+                        KEY_MAC_ADDRESS,
+                        KEY_ACTIVE,
+                        KEY_CONNECTED
+                },
+                null,
+                null,
+                KEY_NAME
+        );
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
 
                 Sensor sensor = new Sensor();
-                sensor.setId(cursor.getInt(0));
-                sensor.setName(cursor.getString(1));
-                sensor.setCode(cursor.getString(2));
-                sensor.setSerial(cursor.getString(3));
-                sensor.setVersion(cursor.getString(4));
-                sensor.setDescription(cursor.getString(5));
-                sensor.setActive(cursor.getInt(6) == 1);
-                sensor.setMacAddress(cursor.getString(7));
+                sensor.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
+                sensor.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+                sensor.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
+                sensor.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
+                sensor.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
+                sensor.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                sensor.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
+                sensor.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
+                sensor.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
                 toReturnList.add(sensor);
 
             } while (cursor.moveToNext());
@@ -202,26 +224,43 @@ public class SensorDao {
     }
 
     // Getting All objects
-    public List<Sensor> getAllActive(SQLiteDatabase db) {
+    public List<Sensor> getAllActive() {
 
         List<Sensor> toReturnList = new ArrayList<Sensor>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_NAME + " WHERE "+KEY_ACTIVE+" = 1 ORDER BY " + KEY_NAME;
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = context.getContentResolver().query(SensorContentProvider.CONTENT_URI,
+                new String[]{
+                        KEY_ID,
+                        KEY_NAME,
+                        KEY_CODE,
+                        KEY_SERIAL,
+                        KEY_VERSION,
+                        KEY_DESCRIPTION,
+                        KEY_MAC_ADDRESS,
+                        KEY_ACTIVE,
+                        KEY_CONNECTED
+                },
+                KEY_ACTIVE + "=?",
+                new String[]{
+                        "1"
+                },
+                KEY_NAME
+        );
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
 
                 Sensor sensor = new Sensor();
-                sensor.setId(cursor.getInt(0));
-                sensor.setName(cursor.getString(1));
-                sensor.setCode(cursor.getString(2));
-                sensor.setSerial(cursor.getString(3));
-                sensor.setVersion(cursor.getString(4));
-                sensor.setDescription(cursor.getString(5));
-                sensor.setActive(cursor.getInt(6) == 1);
-                sensor.setMacAddress(cursor.getString(7));
+                sensor.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
+                sensor.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+                sensor.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
+                sensor.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
+                sensor.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
+                sensor.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                sensor.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
+                sensor.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
+                sensor.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
                 toReturnList.add(sensor);
 
             } while (cursor.moveToNext());
@@ -233,26 +272,43 @@ public class SensorDao {
     }
 
     // Getting All objects
-    public List<Sensor> getAllInactive(SQLiteDatabase db) {
+    public List<Sensor> getAllInactive() {
 
         List<Sensor> toReturnList = new ArrayList<Sensor>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_NAME + " WHERE "+KEY_ACTIVE+" = 0 ORDER BY " + KEY_NAME;
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = context.getContentResolver().query(SensorContentProvider.CONTENT_URI,
+                new String[]{
+                        KEY_ID,
+                        KEY_NAME,
+                        KEY_CODE,
+                        KEY_SERIAL,
+                        KEY_VERSION,
+                        KEY_DESCRIPTION,
+                        KEY_MAC_ADDRESS,
+                        KEY_ACTIVE,
+                        KEY_CONNECTED
+                },
+                KEY_ACTIVE + "=?",
+                new String[]{
+                        "0"
+                },
+                KEY_NAME
+        );
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
 
                 Sensor sensor = new Sensor();
-                sensor.setId(cursor.getInt(0));
-                sensor.setName(cursor.getString(1));
-                sensor.setCode(cursor.getString(2));
-                sensor.setSerial(cursor.getString(3));
-                sensor.setVersion(cursor.getString(4));
-                sensor.setDescription(cursor.getString(5));
-                sensor.setActive(cursor.getInt(6) == 1);
-                sensor.setMacAddress(cursor.getString(7));
+                sensor.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
+                sensor.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+                sensor.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
+                sensor.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
+                sensor.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
+                sensor.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                sensor.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
+                sensor.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
+                sensor.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
                 toReturnList.add(sensor);
 
             } while (cursor.moveToNext());
@@ -264,7 +320,7 @@ public class SensorDao {
     }
 
     // Updating single object
-    public int update(Sensor sensor, SQLiteDatabase db) {
+    public long update(Sensor sensor) {
 
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, sensor.getName());
@@ -274,24 +330,47 @@ public class SensorDao {
         values.put(KEY_DESCRIPTION, sensor.getDescription());
         values.put(KEY_MAC_ADDRESS, sensor.getMacAddress());
         values.put(KEY_ACTIVE, sensor.isActive() ? 1 : 0);
+        values.put(KEY_CONNECTED, sensor.isConnected() ? 1 : 0);
 
-        // updating row
-        int toReturn =  db.update(TABLE_NAME, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(sensor.getId()) });
+        context.getContentResolver().update(SensorContentProvider.CONTENT_URI,
+                values,
+                KEY_ID + "=?",
+                new String[]{
+                        String.valueOf(sensor.getId())
+                }
+        );
+        return sensor.getId();
+    }
 
-        return toReturn;
+    // Updating single object
+    public void disconnectAllSensors() {
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_CONNECTED, 0);
+        context.getContentResolver().update(SensorContentProvider.CONTENT_URI,
+                values,
+                null,
+                null
+        );
     }
 
 
 
     // Deleting single object
-    public void delete(Sensor sensor, SQLiteDatabase db) {
-        db.delete(TABLE_NAME, KEY_ID + " = ?",
-                new String[] { String.valueOf(sensor.getId()) });
+    public void delete(Sensor sensor) {
+        context.getContentResolver().delete(SensorContentProvider.CONTENT_URI,
+                KEY_ID + "=?",
+                new String[]{
+                        String.valueOf(sensor.getId())
+                }
+        );
     }
 
     public void deleteAll(SQLiteDatabase db){
-        db.delete(TABLE_NAME, null, null);
+        context.getContentResolver().delete(SensorContentProvider.CONTENT_URI,
+                null,
+                null
+        );
         db.delete(SensorServiceDao.TABLE_NAME, null, null);
         db.delete(AlertDao.TABLE_NAME, null, null);
 
