@@ -3,8 +3,6 @@ package com.maws.loonandroid.activities;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -13,9 +11,9 @@ import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.SensorServiceListAdapter;
 import com.maws.loonandroid.dao.LoonMedicalDao;
 import com.maws.loonandroid.dao.SensorDao;
-import com.maws.loonandroid.dao.SensorServiceDao;
+import com.maws.loonandroid.dao.SensorCharacteristicDao;
 import com.maws.loonandroid.models.Sensor;
-import com.maws.loonandroid.models.SensorService;
+import com.maws.loonandroid.models.SensorCharacteristic;
 
 import java.util.List;
 
@@ -50,18 +48,16 @@ public class MonitorActivity extends ActionBarActivity {
     }
 
     private void loadInformation(){
-        LoonMedicalDao lDao = new LoonMedicalDao(this);
         SensorDao sDao = new SensorDao(this);
-
         Sensor currentSensor = sDao.get(sensorId);
         if(currentSensor != null) {
-            SensorServiceDao ssDao = new SensorServiceDao(this);
+            SensorCharacteristicDao ssDao = new SensorCharacteristicDao(this);
             nameTV.setText(TextUtils.isEmpty(currentSensor.getDescription())?currentSensor.getName():currentSensor.getDescription());
             codeTV.setText(currentSensor.getName());
 
-            List<SensorService> services = ssDao.getAllBySensorId(currentSensor.getId(), lDao.getReadableDatabase());
+            /*List<SensorCharacteristic> services = ssDao.getAllBySensorId(currentSensor.getId(), lDao.getReadableDatabase());
             adapter = new SensorServiceListAdapter(this,services);
-            sensorServicesLV.setAdapter(adapter);
+            sensorServicesLV.setAdapter(adapter);*/
         }
     }
 }

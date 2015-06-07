@@ -1,7 +1,6 @@
 package com.maws.loonandroid.adapters;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -10,8 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.maws.loonandroid.R;
-import com.maws.loonandroid.models.Sensor;
-import com.maws.loonandroid.models.SensorService;
+import com.maws.loonandroid.models.SensorCharacteristic;
 
 import java.util.List;
 
@@ -21,14 +19,14 @@ import java.util.List;
 public class SensorServiceListAdapter extends BaseAdapter {
 
     private final Context context;
-    private final List<SensorService> items;
+    private final List<SensorCharacteristic> items;
 
     static class ViewHolder {
         TextView nameTV;
         ImageView soundIV;
     }
 
-    public SensorServiceListAdapter(Context context, List<SensorService> values) {
+    public SensorServiceListAdapter(Context context, List<SensorCharacteristic> values) {
         this.context = context;
         this.items = values;
     }
@@ -68,16 +66,16 @@ public class SensorServiceListAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        SensorService sService = items.get(position);
+        SensorCharacteristic sService = items.get(position);
         viewHolder.nameTV.setText(sService.getName());
 
-        if(sService.isOn()){
+        /*if(sService.isOn()){
             viewHolder.soundIV.setColorFilter( R.color.green );
             viewHolder.soundIV.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_audio_on));
         }else{
             viewHolder.soundIV.setColorFilter( R.color.dark_orange );
             viewHolder.soundIV.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_audio_off));
-        }
+        }*/
 
 
         return convertView;

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import com.maws.loonandroid.contentproviders.SensorContentProvider;
 import com.maws.loonandroid.models.Sensor;
-import com.maws.loonandroid.models.SensorService;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -21,7 +20,7 @@ public class SensorDao {
     public static final String TABLE_NAME = "tblSensor";
 
     // Contacts Table Columns names
-    public static final String KEY_ID = "id";
+    public static final String KEY_ID = "_id";
     public static final String KEY_NAME = "name";
     public static final String KEY_CODE = "code";
     public static final String KEY_SERIAL = "serial";
@@ -78,15 +77,7 @@ public class SensorDao {
         values.put(KEY_CONNECTED, sensor.isConnected() ? 1 : 0);
         Uri uri = context.getContentResolver().insert(SensorContentProvider.CONTENT_URI, values);
         long sensorId = Long.valueOf(uri.getLastPathSegment());
-
-        if(sensor.getSensorServices() != null){
-            LoonMedicalDao lDao = new LoonMedicalDao(context);
-            SensorServiceDao ssDao = new SensorServiceDao(context);
-            for(SensorService sService: sensor.getSensorServices()){
-                sService.setSensorId(sensorId);
-                ssDao.create(sService, lDao.getWritableDatabase());
-            }
-        }
+        sensor.setId(sensorId);
     }
 
     // Getting single object
@@ -371,7 +362,7 @@ public class SensorDao {
                 null,
                 null
         );
-        db.delete(SensorServiceDao.TABLE_NAME, null, null);
+        db.delete(SensorCharacteristicDao.TABLE_NAME, null, null);
         db.delete(AlertDao.TABLE_NAME, null, null);
 
     }

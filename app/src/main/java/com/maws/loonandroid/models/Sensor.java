@@ -1,15 +1,10 @@
 package com.maws.loonandroid.models;
 
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.maws.loonandroid.dao.LoonMedicalDao;
-import com.maws.loonandroid.dao.SensorServiceDao;
-
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Andrexxjc on 12/04/2015.
@@ -28,7 +23,6 @@ public class Sensor implements Parcelable {
     private float batteryStatus;
     private int signalStrength;
     private String temperature;
-    private List<SensorService> sensorServices;
 
     public Sensor(){}
 
@@ -109,14 +103,6 @@ public class Sensor implements Parcelable {
 
     public void setActive(boolean active) { this.active = active; }
 
-    public List<SensorService> getSensorServices() {
-        return sensorServices;
-    }
-
-    public void setSensorServices(List<SensorService> sensorServices) {
-        this.sensorServices = sensorServices;
-    }
-
     public boolean isConnected() {
         return connected;
     }
@@ -193,15 +179,7 @@ public class Sensor implements Parcelable {
         sensor.setTemperature("80");
         sensor.setActive(true);
         sensor.setConnected(false);
-        sensor.setSensorServices( SensorService.createDefaultSensorServices() );
-
         return sensor;
     }
 
-    public void loadServices(Context context){
-
-        LoonMedicalDao lDao = new LoonMedicalDao(context);
-        SensorServiceDao sDao = new SensorServiceDao(context);
-        this.sensorServices = sDao.getAllBySensorId(this.id, lDao.getReadableDatabase());
-    }
 }

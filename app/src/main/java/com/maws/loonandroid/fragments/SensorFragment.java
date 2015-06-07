@@ -1,15 +1,9 @@
 package com.maws.loonandroid.fragments;
 
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -29,14 +23,15 @@ import com.maws.loonandroid.R;
 import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.activities.MonitorActivity;
 import com.maws.loonandroid.activities.ScanDevicesActivity;
-import com.maws.loonandroid.adapters.BluetoothDeviceAdapter;
 import com.maws.loonandroid.adapters.SensorListAdapter;
 import com.maws.loonandroid.contentproviders.AlertContentProvider;
 import com.maws.loonandroid.contentproviders.SensorContentProvider;
 import com.maws.loonandroid.dao.AlertDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
 import com.maws.loonandroid.dao.SensorDao;
+import com.maws.loonandroid.models.Alert;
 import com.maws.loonandroid.models.Sensor;
+import com.maws.loonandroid.models.SensorCharacteristic;
 import com.maws.loonandroid.models.SensorService;
 import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
@@ -187,18 +182,14 @@ public class SensorFragment extends Fragment implements
             Random ran = new Random();
             int x = ran.nextInt(adapter.getCount());
             Sensor sSensor = (Sensor)adapter.getItem(x);
-            sSensor.loadServices(this.getActivity());
 
-            if(sSensor.getSensorServices().size() > 0) {
-                //now, once inside the sensor, i need to randomly pick a service
-                SensorService sService = sSensor.getSensorServices().get(ran.nextInt(sSensor.getSensorServices().size()));
-
-                //now we generate a random alert
-                Util.generateAlarm(
-                        this.getActivity(),
-                        sSensor,
-                        sService);
-            }
+            //now let's pick a service at random
+            int randomService = ran.nextInt(SensorService.serviceNames.values().size());
+            Alert fakeAlert = new Alert();
+            fakeAlert.setSensorId(sSensor.getId());
+            fakeAlert.setSensorServiceId(randomService);
+            fakeAlert.setIsOn(ran.nextBoolean());
+            Util.generateAlarm(this.getActivity(), fakeAlert);
         }
     }
 

@@ -9,16 +9,19 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.models.Alert;
 import com.maws.loonandroid.models.Sensor;
-import com.maws.loonandroid.models.SensorService;
-import com.maws.loonandroid.models.User;
+import com.maws.loonandroid.models.SensorCharacteristic;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * Created by Andrexxjc on 04/05/2015.
  */
 public class Util {
+
+    public static final SimpleDateFormat sdf = new SimpleDateFormat("EEE dd MMM, h:mm a");
 
     public static String MD5(String md5) {
         try {
@@ -34,16 +37,13 @@ public class Util {
         return null;
     }
 
-    public static void generateAlarm(Context context, Sensor sensor, SensorService service){
-        String title = sensor.getName().toUpperCase();
-        String message = String.format(context.getString(R.string.alarm_notification_text), service.getName());
+    public static void generateAlarm(Context context, Alert alert){
 
         Intent intent = new Intent();
         intent.setAction("com.maws.loonandroid.alert");
-        intent.putExtra("title", title);
-        intent.putExtra("message", message);
-        intent.putExtra("sensor", sensor.getId());
-        intent.putExtra("service", service.getId());
+        intent.putExtra("sensorId", alert.getSensorId());
+        intent.putExtra("serviceId", alert.getSensorServiceId());
+        intent.putExtra("isOn", alert.isOn());
         intent.putExtra("dateMillis", new Date().getTime());
         context.sendBroadcast(intent);
     }

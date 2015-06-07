@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 
 import com.maws.loonandroid.contentproviders.AlertContentProvider;
+import com.maws.loonandroid.contentproviders.SensorContentProvider;
 import com.maws.loonandroid.models.Alert;
-import com.maws.loonandroid.models.SensorService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,8 +24,10 @@ public class AlertDao {
 
     // Contacts Table Columns names
     public static final String KEY_ID = "_id";
+    public static final String KEY_SENSOR_ID = "sensorId";
     public static final String KEY_SENSOR_SERVICE_ID = "sensorServiceId";
     public static final String KEY_ALERT_DATE = "dateInMillis";
+    public static final String KEY_IS_ON = "isOn";
     public static final String KEY_DISMISSED = "dismissed";
 
     private Context context;
@@ -39,8 +41,10 @@ public class AlertDao {
 
         String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
                 KEY_ID + " INTEGER PRIMARY KEY," +
-                KEY_SENSOR_SERVICE_ID + " INT REFERENCES "+SensorServiceDao.TABLE_NAME+"("+SensorServiceDao.KEY_ID+") ON DELETE CASCADE," +
+                KEY_SENSOR_ID + " INT," +
+                KEY_SENSOR_SERVICE_ID + " INT," +
                 KEY_ALERT_DATE + " INT," +
+                KEY_IS_ON + " TINYINT," +
                 KEY_DISMISSED + " TINYINT" + ")";
 
         db.execSQL(CREATE_TABLE);
@@ -59,39 +63,46 @@ public class AlertDao {
     public void create(Alert alert) {
 
         ContentValues values = new ContentValues();
+        values.put(KEY_SENSOR_ID, alert.getSensorId());
         values.put(KEY_SENSOR_SERVICE_ID, alert.getSensorServiceId());
         values.put(KEY_ALERT_DATE, alert.getAlertDate() == null ? null : alert.getAlertDate().getTime());
         values.put(KEY_DISMISSED, alert.isDismissed() ? 1 : 0);
+        values.put(KEY_IS_ON, alert.isOn() ? 1 : 0);
         context.getContentResolver().insert(AlertContentProvider.CONTENT_URI, values);
     }
 
     // Getting single object
-    public Alert get(int id, SQLiteDatabase db) {
+    public Alert get(int id) {
 
-        Cursor cursor = db.query(TABLE_NAME,
-                new String[] {
+        Cursor cursor = context.getContentResolver().query(AlertContentProvider.CONTENT_URI,
+                new String[]{
                         KEY_ID,
+                        KEY_SENSOR_ID,
                         KEY_SENSOR_SERVICE_ID,
                         KEY_ALERT_DATE,
+                        KEY_IS_ON,
                         KEY_DISMISSED
                 },
                 KEY_ID + "=?",
-                new String[] {
+                new String[]{
                         String.valueOf(id)
                 },
-                null, null, null, null);
-        if (cursor != null) {
+                null
+        );
+
+        if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
         }else{
             return null;
         }
 
         Alert alert = new Alert();
-        alert.setId(cursor.getInt(0));
-        alert.setSensorServiceId(cursor.getInt(1));
-        alert.setAlertDate(cursor.isNull(2) ? null : new Date(cursor.getLong(2)));
-        alert.setDismissed(cursor.getInt(3) == 1);
-        db.close();
+        alert.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+        alert.setSensorId(cursor.getInt(cursor.getColumnIndex(KEY_SENSOR_ID)));
+        alert.setSensorServiceId(cursor.getInt(cursor.getColumnIndex(KEY_SENSOR_SERVICE_ID)));
+        alert.setAlertDate(new Date(cursor.getLong(cursor.getColumnIndex(KEY_ALERT_DATE))));
+        alert.setDismissed(cursor.getInt(cursor.getColumnIndex(KEY_DISMISSED)) == 1);
+        alert.setIsOn( cursor.getInt(cursor.getColumnIndex(KEY_IS_ON)) == 1);
         cursor.close();
 
         // return object
@@ -99,22 +110,34 @@ public class AlertDao {
     }
 
     // Getting All objects
-    public List<Alert> getAll(SQLiteDatabase db) {
+    public List<Alert> getAll() {
 
         List<Alert> toReturnList = new ArrayList<Alert>();
-        // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_NAME;
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = context.getContentResolver().query(AlertContentProvider.CONTENT_URI,
+                new String[]{
+                        KEY_ID,
+                        KEY_SENSOR_ID,
+                        KEY_SENSOR_SERVICE_ID,
+                        KEY_ALERT_DATE,
+                        KEY_IS_ON,
+                        KEY_DISMISSED
+                },
+                null,
+                null,
+                null
+        );
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
 
                 Alert alert = new Alert();
-                alert.setId(cursor.getInt(0));
-                alert.setSensorServiceId(cursor.getInt(1));
-                alert.setAlertDate(cursor.isNull(2) ? null : new Date(cursor.getLong(2)));
-                alert.setDismissed(cursor.getInt(3) == 1);
+                alert.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+                alert.setSensorId(cursor.getInt(cursor.getColumnIndex(KEY_SENSOR_ID)));
+                alert.setSensorServiceId(cursor.getInt(cursor.getColumnIndex(KEY_SENSOR_SERVICE_ID)));
+                alert.setAlertDate(new Date(cursor.getLong(cursor.getColumnIndex(KEY_ALERT_DATE))));
+                alert.setDismissed(cursor.getInt(cursor.getColumnIndex(KEY_DISMISSED)) == 1);
+                alert.setIsOn(cursor.getInt(cursor.getColumnIndex(KEY_IS_ON)) == 1);
                 toReturnList.add(alert);
 
             } while (cursor.moveToNext());
@@ -126,35 +149,45 @@ public class AlertDao {
     }
 
     // Updating single object
-    public int update(Alert alert, SQLiteDatabase db) {
+    public int update(Alert alert) {
 
         ContentValues values = new ContentValues();
+        values.put(KEY_SENSOR_ID, alert.getSensorId());
         values.put(KEY_SENSOR_SERVICE_ID, alert.getSensorServiceId());
-        values.put(KEY_ALERT_DATE, alert.getAlertDate() == null ? null : alert.getAlertDate().getTime());
+        values.put(KEY_ALERT_DATE, alert.getAlertDate().getTime());
         values.put(KEY_DISMISSED, alert.isDismissed() ? 1 : 0);
+        values.put(KEY_IS_ON, alert.isOn() ? 1 : 0);
 
-        // updating row
-        int toReturn =  db.update(TABLE_NAME, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(alert.getId()) });
-
+        int toReturn = context.getContentResolver().update(
+                AlertContentProvider.CONTENT_URI,
+                values,
+                KEY_ID + " = ?",
+                new String[] { String.valueOf(alert.getId()) }
+        );
         return toReturn;
     }
 
     // Updating single object
-    public void dismiss(Alert alert, SQLiteDatabase db) {
+    public void dismiss(Alert alert) {
 
         ContentValues values = new ContentValues();
         values.put(KEY_DISMISSED, 1);
 
-        // updating row
-        db.update(TABLE_NAME, values, KEY_ID + " = ?", new String[] { String.valueOf(alert.getId()) });
-
+        context.getContentResolver().update(
+                AlertContentProvider.CONTENT_URI,
+                values,
+                KEY_ID + " = ?",
+                new String[]{String.valueOf(alert.getId())}
+        );
     }
 
     // Deleting single object
-    public void delete(Alert alert, SQLiteDatabase db) {
-        db.delete(TABLE_NAME, KEY_ID + " = ?",
-                new String[] { String.valueOf(alert.getId()) });
+    public void delete(Alert alert) {
+        context.getContentResolver().delete(
+                AlertContentProvider.CONTENT_URI,
+                KEY_ID + " = ?",
+                new String[] { String.valueOf(alert.getId()) }
+        );
     }
 
     public void deleteAll(SQLiteDatabase db){
@@ -165,21 +198,19 @@ public class AlertDao {
 
         final SQLiteQueryBuilder todayShiftQueryBuilder = new SQLiteQueryBuilder();
         todayShiftQueryBuilder.setTables(AlertDao.TABLE_NAME
-                        + " JOIN " + SensorServiceDao.TABLE_NAME+ " ON(" + AlertDao.TABLE_NAME + "." + AlertDao.KEY_SENSOR_SERVICE_ID
-                        + "=" + SensorServiceDao.TABLE_NAME + "." + SensorServiceDao.KEY_ID + ")"
-                        + " JOIN " + SensorDao.TABLE_NAME+ " ON(" + SensorDao.TABLE_NAME + "." + SensorDao.KEY_ID
-                        + "=" + SensorServiceDao.TABLE_NAME + "." + SensorServiceDao.KEY_SENSOR_ID + ")"
+                        + " JOIN " + SensorDao.TABLE_NAME+ " ON(" + AlertDao.TABLE_NAME + "." + AlertDao.KEY_SENSOR_ID
+                        + "=" + SensorDao.TABLE_NAME + "." + SensorDao.KEY_ID + ")"
         );
         String[] projection = {
-                AlertDao.TABLE_NAME + "." + AlertDao.KEY_ID + ", "
-                + AlertDao.TABLE_NAME + "." + AlertDao.KEY_ALERT_DATE +  ", "
-                + AlertDao.TABLE_NAME + "." + AlertDao.KEY_SENSOR_SERVICE_ID +  ", "
-                + AlertDao.TABLE_NAME + "." + AlertDao.KEY_DISMISSED +  ", "
-                + SensorServiceDao.TABLE_NAME + "." + SensorServiceDao.KEY_NAME +  " AS Service, "
-                + SensorServiceDao.TABLE_NAME + "." + SensorServiceDao.KEY_SENSOR_ID +  ", "
-                + SensorDao.TABLE_NAME + "." + SensorDao.KEY_NAME +  " AS Sensor, "
-                + SensorDao.TABLE_NAME + "." + SensorDao.KEY_CODE +  " AS SensorCode, "
-                + SensorDao.TABLE_NAME + "." + SensorDao.KEY_DESCRIPTION + " AS SensorDescription"
+                AlertDao.TABLE_NAME + "." + AlertDao.KEY_ID,
+                AlertDao.TABLE_NAME + "." + AlertDao.KEY_ALERT_DATE,
+                AlertDao.TABLE_NAME + "." + AlertDao.KEY_SENSOR_SERVICE_ID,
+                AlertDao.TABLE_NAME + "." + AlertDao.KEY_DISMISSED,
+                AlertDao.TABLE_NAME + "." + AlertDao.KEY_IS_ON,
+                AlertDao.TABLE_NAME + "." + AlertDao.KEY_SENSOR_ID,
+                SensorDao.TABLE_NAME + "." + SensorDao.KEY_NAME +  " AS Sensor",
+                SensorDao.TABLE_NAME + "." + SensorDao.KEY_CODE +  " AS SensorCode",
+                SensorDao.TABLE_NAME + "." + SensorDao.KEY_DESCRIPTION + " AS SensorDescription"
         };
         String selection = AlertDao.TABLE_NAME + "." + AlertDao.KEY_DISMISSED + "=? AND " +
                 SensorDao.TABLE_NAME + "." + SensorDao.KEY_ID + "=?";

@@ -1,10 +1,5 @@
 package com.maws.loonandroid.contentproviders;
 
-/**
- * Created by Andrexxjc on 19/05/2015.
- */
-import java.util.Arrays;
-import java.util.HashSet;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -14,34 +9,39 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
-import com.maws.loonandroid.dao.AlertDao;
+import com.maws.loonandroid.dao.CustomerDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
 import com.maws.loonandroid.enums.LoonDataType;
+import java.util.Arrays;
+import java.util.HashSet;
 
-public class AlertContentProvider extends ContentProvider {
+/**
+ * Created by Andrexxjc on 04/06/2015.
+ */
+public class CustomerContentProvider extends ContentProvider {
 
     // database classes
     private LoonMedicalDao loonMedicalDao;
 
     // used for the UriMacher
-    private static final int ALERTS = 10;
-    private static final int ALERT_ID = 20;
+    private static final int CUSTOMERS = 10;
+    private static final int CUSTOMER_ID = 20;
 
-    private static final String AUTHORITY = "com.maws.loonandroid.contentproviders.AlertContentProvider";
-    private static final String BASE_PATH = "alerts";
+    private static final String AUTHORITY = "com.maws.loonandroid.contentproviders.CustomerContentProvider";
+    private static final String BASE_PATH = "customers";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
 
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
-            + "/alerts";
+            + "/customers";
     public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-            + "/alert";
+            + "/customer";
 
     private static final UriMatcher sURIMatcher = buildUriMatcher();
 
     private static UriMatcher buildUriMatcher(){
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        matcher.addURI(AUTHORITY, BASE_PATH, ALERTS);
-        matcher.addURI(AUTHORITY, BASE_PATH + "/#", ALERT_ID);
+        matcher.addURI(AUTHORITY, BASE_PATH, CUSTOMERS);
+        matcher.addURI(AUTHORITY, BASE_PATH + "/#", CUSTOMER_ID);
         return matcher;
     }
 
@@ -63,15 +63,15 @@ public class AlertContentProvider extends ContentProvider {
         checkColumns(projection);
 
         // Set the table
-        queryBuilder.setTables(AlertDao.TABLE_NAME);
+        queryBuilder.setTables(CustomerDao.TABLE_NAME);
 
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
-            case ALERTS:
+            case CUSTOMERS:
                 break;
-            case ALERT_ID:
+            case CUSTOMER_ID:
                 // adding the ID to the original query
-                queryBuilder.appendWhere(AlertDao.KEY_ID + "="
+                queryBuilder.appendWhere(CustomerDao.KEY_ID + "="
                         + uri.getLastPathSegment());
                 break;
             default:
@@ -83,13 +83,12 @@ public class AlertContentProvider extends ContentProvider {
                 selectionArgs, null, null, sortOrder);
         // make sure that potential listeners are getting notified
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
-
         return cursor;
     }
 
     @Override
     public String getType(Uri uri) {
-        return LoonDataType.ALERT.toString();
+        return LoonDataType.CUSTOMER.toString();
     }
 
     @Override
@@ -99,8 +98,8 @@ public class AlertContentProvider extends ContentProvider {
         int rowsDeleted = 0;
         long id = 0;
         switch (uriType) {
-            case ALERTS:
-                id = sqlDB.insert(AlertDao.TABLE_NAME, null, values);
+            case CUSTOMERS:
+                id = sqlDB.insert(CustomerDao.TABLE_NAME, null, values);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -115,19 +114,19 @@ public class AlertContentProvider extends ContentProvider {
         SQLiteDatabase sqlDB = loonMedicalDao.getWritableDatabase();
         int rowsDeleted = 0;
         switch (uriType) {
-            case ALERTS:
-                rowsDeleted = sqlDB.delete(AlertDao.TABLE_NAME, selection,
+            case CUSTOMERS:
+                rowsDeleted = sqlDB.delete(CustomerDao.TABLE_NAME, selection,
                         selectionArgs);
                 break;
-            case ALERT_ID:
+            case CUSTOMER_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsDeleted = sqlDB.delete(AlertDao.TABLE_NAME,
-                            AlertDao.KEY_ID + "=" + id,
+                    rowsDeleted = sqlDB.delete(CustomerDao.TABLE_NAME,
+                            CustomerDao.KEY_ID + "=" + id,
                             null);
                 } else {
-                    rowsDeleted = sqlDB.delete(AlertDao.TABLE_NAME,
-                            AlertDao.KEY_ID + "=" + id
+                    rowsDeleted = sqlDB.delete(CustomerDao.TABLE_NAME,
+                            CustomerDao.KEY_ID + "=" + id
                                     + " and " + selection,
                             selectionArgs);
                 }
@@ -147,23 +146,23 @@ public class AlertContentProvider extends ContentProvider {
         SQLiteDatabase sqlDB = loonMedicalDao.getWritableDatabase();
         int rowsUpdated = 0;
         switch (uriType) {
-            case ALERTS:
-                rowsUpdated = sqlDB.update(AlertDao.TABLE_NAME,
+            case CUSTOMERS:
+                rowsUpdated = sqlDB.update(CustomerDao.TABLE_NAME,
                         values,
                         selection,
                         selectionArgs);
                 break;
-            case ALERT_ID:
+            case CUSTOMER_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsUpdated = sqlDB.update(AlertDao.TABLE_NAME,
+                    rowsUpdated = sqlDB.update(CustomerDao.TABLE_NAME,
                             values,
-                            AlertDao.KEY_ID+ "=" + id,
+                            CustomerDao.KEY_ID+ "=" + id,
                             null);
                 } else {
-                    rowsUpdated = sqlDB.update(AlertDao.TABLE_NAME,
+                    rowsUpdated = sqlDB.update(CustomerDao.TABLE_NAME,
                             values,
-                            AlertDao.KEY_ID + "=" + id
+                            CustomerDao.KEY_ID + "=" + id
                                     + " and "
                                     + selection,
                             selectionArgs);
@@ -178,12 +177,8 @@ public class AlertContentProvider extends ContentProvider {
 
     private void checkColumns(String[] projection) {
         String[] available = {
-                AlertDao.KEY_ID,
-                AlertDao.KEY_SENSOR_ID,
-                AlertDao.KEY_SENSOR_SERVICE_ID,
-                AlertDao.KEY_ALERT_DATE,
-                AlertDao.KEY_IS_ON,
-                AlertDao.KEY_DISMISSED };
+                CustomerDao.KEY_ID,
+                CustomerDao.KEY_CODE };
         if (projection != null) {
             HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
             HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));

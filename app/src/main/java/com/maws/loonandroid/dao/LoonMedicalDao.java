@@ -1,6 +1,5 @@
 package com.maws.loonandroid.dao;
 
-import java.text.SimpleDateFormat;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -8,10 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class LoonMedicalDao extends SQLiteOpenHelper {
 
     public static final String _DATABASE_NAME = "loonmedical";
-    public static final int _DATABASE_VERSION = 3;
-    public static final SimpleDateFormat iso8601Format = new SimpleDateFormat(
-            "yyyy-MM-dd HH:mm:ss");
-
+    public static final int _DATABASE_VERSION = 9;
     private Context context;
 
     public LoonMedicalDao( Context context ) {
@@ -28,11 +24,18 @@ public class LoonMedicalDao extends SQLiteOpenHelper {
         SensorDao sensorDao = new SensorDao(context);
         sensorDao.onCreate(db);
 
-        SensorServiceDao sensorServiceDao = new SensorServiceDao(context);
-        sensorServiceDao.onCreate(db);
+        SensorCharacteristicDao sensorCharacteristicDao = new SensorCharacteristicDao(context);
+        sensorCharacteristicDao.onCreate(db);
 
         AlertDao alertDao = new AlertDao(context);
         alertDao.onCreate(db);
+
+        CustomerDao customerDao = new CustomerDao(context);
+        customerDao.onCreate(db);
+
+        SiteDao siteDao = new SiteDao(context);
+        siteDao.onCreate(db);
+
     }
 
     @Override
@@ -44,11 +47,17 @@ public class LoonMedicalDao extends SQLiteOpenHelper {
         SensorDao sensorDao = new SensorDao(context);
         sensorDao.onUpgrade(db, oldVersion, newVersion);
 
-        SensorServiceDao sensorServiceDao = new SensorServiceDao(context);
-        sensorServiceDao.onUpgrade(db, oldVersion, newVersion);
+        SensorCharacteristicDao sensorCharacteristicDao = new SensorCharacteristicDao(context);
+        sensorCharacteristicDao.onUpgrade(db, oldVersion, newVersion);
 
         AlertDao alertDao = new AlertDao(context);
         alertDao.onUpgrade(db, oldVersion, newVersion);
+
+        CustomerDao customerDao = new CustomerDao(context);
+        customerDao.onUpgrade(db, oldVersion, newVersion);
+
+        SiteDao siteDao = new SiteDao(context);
+        siteDao.onUpgrade(db, oldVersion, newVersion);
     }
 
     public void clearData(){
@@ -60,9 +69,6 @@ public class LoonMedicalDao extends SQLiteOpenHelper {
 
         SensorDao sensorDao = new SensorDao(context);
         sensorDao.deleteAll(db);
-
-        SensorServiceDao sensorServiceDao = new SensorServiceDao(context);
-        sensorServiceDao.deleteAll(db);
 
         AlertDao alertDao = new AlertDao(context);
         alertDao.deleteAll(db);

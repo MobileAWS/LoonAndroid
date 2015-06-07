@@ -9,23 +9,22 @@ import java.util.Date;
 public class Alert {
 
     private long id;
-    private long sensorServiceId;
+    private long sensorId;
+    private int sensorServiceId;
     private Date alertDate;
+    private boolean isOn = true;
     private boolean dismissed = false;
 
     public long getId() { return id; }
-
     public void setId(long id) { this.id = id;}
-
     public boolean isDismissed() { return dismissed; }
-
     public void setDismissed(boolean dismissed) { this.dismissed = dismissed; }
-
-    public long getSensorServiceId() { return sensorServiceId; }
-
-    public void setSensorServiceId(long sensorServiceId) { this.sensorServiceId = sensorServiceId; }
-
+    public int getSensorServiceId() { return sensorServiceId; }
+    public void setSensorServiceId(int sensorServiceId) { this.sensorServiceId = sensorServiceId; }
     public Date getAlertDate() { return alertDate; }
-
     public void setAlertDate(Date alertDate) { this.alertDate = alertDate; }
+    public long getSensorId() {return sensorId;}
+    public void setSensorId(long sensorId) {this.sensorId = sensorId;}
+    public boolean isOn() {return isOn;}
+    public void setIsOn(boolean isOn) {this.isOn = isOn;}
 }

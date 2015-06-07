@@ -6,15 +6,15 @@
     android:padding="10dp">
 
     <LinearLayout
+        android:id="@+id/sensorLL"
         android:orientation="vertical"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
+        android:paddingBottom="10dp"
     >
-
         <TextView
             android:id="@+id/nameTV"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/font_big"
             android:textStyle="bold"
@@ -24,7 +24,7 @@
 
         <TextView
             android:id="@+id/serialTV"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/font_medium"
             android:text="123456"
@@ -36,7 +36,7 @@
         android:id="@+id/alreadyAddedTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_below="@+id/sensorLL"
         android:layout_centerVertical="true"
         android:textColor="@color/green"
         android:textStyle="italic"
@@ -45,24 +45,28 @@
     />
 
     <Button
+        style="@style/Button.dark_green"
         android:id="@+id/addBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/use_it"
-        android:background="@drawable/toast_green"
         android:layout_marginRight="10dp"
+        android:layout_below="@+id/sensorLL"
+        android:textSize="@dimen/font_big"
         android:layout_toLeftOf="@+id/ignoreBtn"
-        android:layout_centerVertical="true"
+        android:drawableLeft="@drawable/ic_stat_ok"
     />
 
     <Button
+        style="@style/Button.orange"
         android:id="@+id/ignoreBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/ignore"
-        android:background="@drawable/toast_red"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:textSize="@dimen/font_big"
+        android:layout_below="@+id/sensorLL"
+        android:drawableLeft="@drawable/ic_stat_cancel"
     />
 
 </RelativeLayout>

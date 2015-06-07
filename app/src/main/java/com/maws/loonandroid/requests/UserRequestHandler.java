@@ -11,6 +11,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.listener.StandardRequestListener;
+import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomProgressSpinner;
 import com.maws.loonandroid.volley.VolleySingleton;
@@ -30,8 +31,7 @@ public class UserRequestHandler {
 
     private static final String TAG = "UserRequestHandler";
 
-    public static void signUp( final Context context, final StandardRequestListener listener,
-           final String email, final String pass, final long customerId, final String site ){
+    public static void signUp( final Context context, final String email, final String pass, final StandardRequestListener listener){
 
         final CustomProgressSpinner spinner = new CustomProgressSpinner(context, context.getString(R.string.creating_user));
         spinner.show();
@@ -66,8 +66,6 @@ public class UserRequestHandler {
                 params.put("email",email);
                 params.put("password",pass);
                 params.put("confirm_password",pass);
-                params.put("customer_site_id", site);
-                params.put("customer_id", String.valueOf(customerId));
                 Log.d(TAG, params.toString());
                 return params;
             }
@@ -180,12 +178,13 @@ public class UserRequestHandler {
     }
 
     public interface LoginListener{
-        public void onSuccess(JSONObject response, String email, String password, String userSite);
-        public void onFailure(String error);
+        void onSuccess(JSONObject response, User user, String siteId, String customerId);
+        void onFailure(String error);
     }
 
-    public static void login( final Context context, final LoginListener listener,
-                               final String email, final String pass, final String site ){
+    public static void login( final Context context,
+                              final LoginListener listener,
+                                final User user, final String siteId, final String customerId){
 
         final CustomProgressSpinner spinner = new CustomProgressSpinner(context, context.getString(R.string.signing_in));
         spinner.show();
@@ -197,13 +196,16 @@ public class UserRequestHandler {
 
         try {
             url.append("?email=");
-            url.append(URLEncoder.encode( email, VolleySingleton.DEFAULT_PARAMS_ENCODING ));
+            url.append(URLEncoder.encode( user.getEmail(), VolleySingleton.DEFAULT_PARAMS_ENCODING ));
             url.append('&');
             url.append("password=");
-            url.append(URLEncoder.encode( pass , VolleySingleton.DEFAULT_PARAMS_ENCODING));
+            url.append(URLEncoder.encode( user.getPassword() , VolleySingleton.DEFAULT_PARAMS_ENCODING));
             url.append('&');
             url.append("customer_site_id=");
-            url.append(URLEncoder.encode( site , VolleySingleton.DEFAULT_PARAMS_ENCODING));
+            url.append(URLEncoder.encode( siteId , VolleySingleton.DEFAULT_PARAMS_ENCODING));
+            url.append('&');
+            url.append("customer_id=");
+            url.append(URLEncoder.encode( customerId , VolleySingleton.DEFAULT_PARAMS_ENCODING));
 
         } catch (Exception e) {
             //ignore it for now. We control the UTF chars on this encoding
@@ -220,8 +222,7 @@ public class UserRequestHandler {
                         listener.onFailure(responseRoot.toString());
                         return;
                     }
-
-                    listener.onSuccess(jsonObject, email, pass, site);
+                    listener.onSuccess(jsonObject, user, siteId, customerId);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     listener.onFailure(e.toString());

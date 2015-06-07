@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -14,24 +13,19 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.AlertDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
-import com.maws.loonandroid.dao.SensorServiceDao;
 import com.maws.loonandroid.gatt.GattManager;
 import com.maws.loonandroid.gatt.operations.GattConnectOperation;
-import com.maws.loonandroid.ifaces.MultipleSelectionAdapter;
 import com.maws.loonandroid.models.Alert;
 import com.maws.loonandroid.models.Sensor;
-import com.maws.loonandroid.services.BLEService;
-import com.maws.loonandroid.views.CustomToast;
+import com.maws.loonandroid.models.SensorService;
+import com.maws.loonandroid.util.Util;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -156,7 +150,7 @@ public class SensorListAdapter extends BaseAdapter {
                 }
             });
 
-        }else if( LoonAndroid.demoMode || (thisSensor.isActive() && thisSensor.isConnected()) ){
+        }else if( thisSensor.isActive() && thisSensor.isConnected() ){
             viewHolder.nameTV.setText( TextUtils.isEmpty(thisSensor.getDescription())? thisSensor.getName():thisSensor.getDescription() );
             viewHolder.addressTV.setText(thisSensor.getName());
             viewHolder.connectBtn.setVisibility(View.GONE);
@@ -182,9 +176,11 @@ public class SensorListAdapter extends BaseAdapter {
             do {
                 Date alertDate = new Date( alertCursor.getLong( alertCursor.getColumnIndex(AlertDao.KEY_ALERT_DATE) ) );
                 long alertId = alertCursor.getLong(alertCursor.getColumnIndex(AlertDao.KEY_ID));
-                String serviceName = alertCursor.getString( alertCursor.getColumnIndex("Service") );
+
+                int service = alertCursor.getInt(alertCursor.getColumnIndex(AlertDao.KEY_SENSOR_SERVICE_ID));
+                String serviceName = context.getString(SensorService.serviceNames.get(service));
                 View alertView = LinearLayout.inflate(context, R.layout.alert_item, null);
-                ((TextView)alertView.findViewById(R.id.alertDateTV)).setText(alertDate.toString());
+                ((TextView)alertView.findViewById(R.id.alertDateTV)).setText(Util.sdf.format(alertDate));
                 ((TextView)alertView.findViewById(R.id.serviceTV)).setText(serviceName);
                 alertView.setTag(alertId);
 
@@ -195,8 +191,7 @@ public class SensorListAdapter extends BaseAdapter {
                         Alert alert = new Alert();
                         alert.setId(alertId);
                         AlertDao aDao = new AlertDao(context);
-                        LoonMedicalDao lDao = new LoonMedicalDao(context);
-                        aDao.dismiss(alert, lDao.getWritableDatabase());
+                        aDao.dismiss(alert);
                         v.setVisibility(View.GONE);
                     }
                 });

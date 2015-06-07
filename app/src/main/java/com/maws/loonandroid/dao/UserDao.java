@@ -19,10 +19,10 @@ public class UserDao {
     private static final String TABLE_NAME = "tblUser";
 
     // Contacts Table Columns names
+    private static final String KEY_ID = "_id";
     private static final String KEY_NAME = "name";
     private static final String KEY_PASSWORD = "password";
     private static final String KEY_EMAIL = "email";
-    private static final String KEY_SITE = "site";
 
     private Context context;
 
@@ -34,10 +34,10 @@ public class UserDao {
     public void onCreate(SQLiteDatabase db) {
 
         String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
-                KEY_EMAIL + " TEXT PRIMARY KEY," +
+                KEY_ID + " INTEGER PRIMARY KEY," +
+                KEY_EMAIL + " TEXT," +
                 KEY_NAME + " TEXT," +
-                KEY_PASSWORD + " TEXT," +
-                KEY_SITE + " TEXT" + ")";
+                KEY_PASSWORD + " TEXT )";
 
         db.execSQL(CREATE_TABLE);
 
@@ -59,7 +59,6 @@ public class UserDao {
         values.put(KEY_EMAIL, user.getEmail());
         values.put(KEY_NAME, user.getName());
         values.put(KEY_PASSWORD, Util.MD5(user.getPassword()));
-        values.put(KEY_SITE, user.getSiteId());
 
         // Inserting Row
         db.insert(TABLE_NAME, null, values);
@@ -72,26 +71,60 @@ public class UserDao {
 
         Cursor cursor = db.query(TABLE_NAME,
                 new String[] {
+                        KEY_ID,
                         KEY_EMAIL,
                         KEY_NAME,
-                        KEY_SITE
+                        KEY_PASSWORD
                 },
                 KEY_EMAIL + "=?",
                 new String[] {
                         String.valueOf(email)
                 },
                 null, null, null, null);
-        if (cursor != null) {
+        if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
         }else{
             return null;
         }
 
         User user = new User();
-        user.setEmail(cursor.getString(0));
-        user.setName(cursor.getString(1));
-        user.setSiteId(cursor.getString(2));
+        user.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
+        user.setEmail(cursor.getString(cursor.getColumnIndex(KEY_EMAIL)));
+        user.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+        user.setPassword(cursor.getString(cursor.getColumnIndex(KEY_PASSWORD)));
+        db.close();
+        cursor.close();
 
+        // return object
+        return user;
+    }
+
+    // Getting single object
+    public User get(Long id, SQLiteDatabase db) {
+
+        Cursor cursor = db.query(TABLE_NAME,
+                new String[] {
+                        KEY_ID,
+                        KEY_EMAIL,
+                        KEY_NAME,
+                        KEY_PASSWORD
+                },
+                KEY_ID + "=?",
+                new String[] {
+                        String.valueOf(id)
+                },
+                null, null, null, null);
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+        }else{
+            return null;
+        }
+
+        User user = new User();
+        user.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
+        user.setEmail(cursor.getString(cursor.getColumnIndex(KEY_EMAIL)));
+        user.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+        user.setPassword(cursor.getString(cursor.getColumnIndex(KEY_PASSWORD)));
         db.close();
         cursor.close();
 
@@ -104,19 +137,18 @@ public class UserDao {
 
         List<User> toReturnList = new ArrayList<User>();
         // Select All Query
-        String selectQuery = "SELECT " +KEY_EMAIL+", " + KEY_NAME+", " +KEY_SITE + " FROM " + TABLE_NAME;
+        String selectQuery = "SELECT * FROM " + TABLE_NAME;
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-
                 User user = new User();
-                user.setEmail(cursor.getString(0));
-                user.setName(cursor.getString(1));
-                user.setSiteId(cursor.getString(2));
+                user.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
+                user.setEmail(cursor.getString( cursor.getColumnIndex(KEY_EMAIL) ));
+                user.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+                user.setPassword(cursor.getString(cursor.getColumnIndex(KEY_PASSWORD)));
                 toReturnList.add(user);
-
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -129,15 +161,15 @@ public class UserDao {
     public int update(User user, SQLiteDatabase db) {
 
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, user.getName() );
+        values.put(KEY_NAME, user.getName());
         if(!TextUtils.isEmpty( user.getPassword() ) ) {
             values.put(KEY_PASSWORD, Util.MD5( user.getPassword()));
         }
-        values.put(KEY_SITE, user.getSiteId() );
+        values.put(KEY_EMAIL, user.getEmail());
 
         // updating row
-        int toReturn =  db.update(TABLE_NAME, values, KEY_EMAIL + " = ?",
-                new String[] { user.getEmail() });
+        int toReturn =  db.update(TABLE_NAME, values, KEY_ID + " = ?",
+                new String[] { String.valueOf(user.getId()) });
 
         return toReturn;
     }
@@ -145,12 +177,13 @@ public class UserDao {
     // Deleting single object
     public void delete(User user, SQLiteDatabase db) {
 
-        db.delete(TABLE_NAME, KEY_EMAIL + " = ?",
-                new String[] { user.getEmail() });
+        db.delete(TABLE_NAME, KEY_ID + " = ?",
+                new String[] { String.valueOf(user.getId()) });
 
     }
 
     public void deleteAll(SQLiteDatabase db){
         db.delete(TABLE_NAME, null, null);
     }
+
 }

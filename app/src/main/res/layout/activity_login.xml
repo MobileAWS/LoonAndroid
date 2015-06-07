@@ -5,7 +5,8 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".LoginActivity"
-    android:background="@drawable/login_background_tiled">
+    android:background="@drawable/login_background_tiled"
+    >
 
     <ImageView
         android:layout_width="wrap_content"
@@ -26,7 +27,7 @@
         android:orientation="vertical"
         android:layout_centerInParent="true"
         android:background="@color/lighten_50"
-        android:padding="30dp"
+        android:padding="15dp"
         >
 
         <EditText
@@ -36,6 +37,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/prompt_email"
             android:inputType="textEmailAddress"
+            android:text="jandresjc@gmail.com"
         />
 
         <EditText
@@ -45,6 +47,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/prompt_password"
             android:inputType="textPassword"
+            android:text="password"
         />
 
         <EditText
@@ -53,7 +56,17 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_site_id"
+            android:text="maws"
         />
+
+        <EditText
+            style="@style/LoginEditText"
+            android:id="@+id/customerIdET"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_customer_id"
+            android:text="123"
+            />
 
     </LinearLayout>
 

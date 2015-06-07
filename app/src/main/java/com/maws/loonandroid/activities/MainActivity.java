@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
+
+import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.enums.FragmentType;
 import com.maws.loonandroid.fragments.NavigationDrawerFragment;
@@ -16,6 +18,9 @@ import com.maws.loonandroid.fragments.PushNotificationsFragment;
 import com.maws.loonandroid.fragments.SensorFragment;
 import com.maws.loonandroid.fragments.UploadToCloudFragment;
 import com.maws.loonandroid.models.User;
+import com.maws.loonandroid.services.BLEService;
+import com.maws.loonandroid.util.Util;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +46,16 @@ public class MainActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(!Util.isMyServiceRunning(this, BLEService.class) && !LoonAndroid.demoMode){
+            Intent intent = new Intent(this,BLEService.class);
+            this.startService(intent);
+        }else{
+            BLEService service = BLEService.getInstance();
+            if(service != null){
+                service.initializeMonitors();
+            }
+        }
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -129,10 +144,10 @@ public class MainActivity extends ActionBarActivity
     public List<User> getUsers(){
         if(users == null) {
             users = new ArrayList<User>();
-            users.add(new User("Andres J.", "andres@mobileaws.com", "password", "maws"));
-            users.add(new User("Joel G.", "joel@mobileaws.com", "password", "maws"));
-            users.add(new User("Mike A.", "mike@mobileaws.com", "password", "maws"));
-            users.add(new User("Edison G.", "edison@mobileaws.com", "password", "maws"));
+            users.add(new User("Andres J.", "andres@mobileaws.com", "password"));
+            users.add(new User("Joel G.", "joel@mobileaws.com", "password"));
+            users.add(new User("Mike A.", "mike@mobileaws.com", "password"));
+            users.add(new User("Edison G.", "edison@mobileaws.com", "password"));
         }
         return users;
     }

@@ -25,19 +25,8 @@
         android:orientation="vertical"
         android:layout_centerInParent="true"
         android:background="@color/lighten_50"
-        android:padding="30dp"
+        android:padding="15dp"
         >
-
-        <TextView
-            style="@style/LoginEditText"
-            android:id="@+id/customerIdTV"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:text="Customer ID: 11111111"
-            android:background="@null"
-        />
 
         <EditText
             style="@style/LoginEditText"
@@ -73,14 +62,6 @@
             android:layout_height="wrap_content"
             android:hint="@string/prompt_confirm_password"
             android:inputType="textPassword"
-        />
-
-        <EditText
-            style="@style/LoginEditText"
-            android:id="@+id/siteET"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:hint="@string/prompt_site_id"
         />
 
     </LinearLayout>

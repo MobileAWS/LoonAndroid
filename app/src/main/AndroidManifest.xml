@@ -18,7 +18,7 @@
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustNothing|stateHidden"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -29,7 +29,7 @@
         <activity
             android:name=".activities.ForgotPasswordActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustNothing|stateHidden"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -40,7 +40,7 @@
         <activity
             android:name=".activities.NewUserActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustNothing|stateHidden"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -51,7 +51,7 @@
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustNothing|stateHidden"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:theme="@style/LoonActionBarTheme"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
@@ -64,7 +64,7 @@
         <activity
             android:name=".activities.MonitorActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustNothing|stateHidden"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:theme="@style/LoonActionBarTheme"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
@@ -80,7 +80,7 @@
         <activity
             android:name=".activities.ScanDevicesActivity"
             android:label="@string/title_scan_devices"
-            android:windowSoftInputMode="adjustNothing|stateHidden"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:theme="@style/LoonActionBarTheme"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
@@ -109,6 +109,18 @@
         <provider
             android:name=".contentproviders.SensorContentProvider"
             android:authorities="com.maws.loonandroid.contentproviders.SensorContentProvider"
+            android:exported="false"
+            android:enabled="true"
+        />
+        <provider
+            android:name=".contentproviders.CustomerContentProvider"
+            android:authorities="com.maws.loonandroid.contentproviders.CustomerContentProvider"
+            android:exported="false"
+            android:enabled="true"
+        />
+        <provider
+            android:name=".contentproviders.SiteContentProvider"
+            android:authorities="com.maws.loonandroid.contentproviders.SiteContentProvider"
             android:exported="false"
             android:enabled="true"
         />

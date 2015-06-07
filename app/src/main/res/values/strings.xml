@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">LoonAndroid</string>
     <string name="prompt_client_number">Client Number</string>
     <string name="prompt_site_id">Site ID</string>
@@ -26,14 +25,15 @@
     <string name="action_scan">Scan for Devices</string>
     <string name="action_send_notification">Send Notification</string>
     <string name="action_upload">Upload</string>
-    <string name="forgot_password_explanation">Enter your email and press \'Reset Password\'. You should get instructions to recover your passwords on your email.</string>
+    <string name="forgot_password_explanation">Enter your email and press \'Reset Password\'. You should get instructions to recover your password on your email.</string>
     <string name="prompt_confirm_email">Confirm Email</string>
     <string name="email_confirmation_must_match">Email confirmation must match. </string>
     <string name="password_confirmation_must_match">Password confirmation must match. </string>
     <string name="customer_id">Customer ID: %1$s</string>
     <string name="validation_email_required">Email is required.</string>
     <string name="validation_password_required">Password is required.</string>
-    <string name="validation_site_required">Site is required.</string>
+    <string name="validation_site_required">Site ID is required.</string>
+    <string name="validation_customer_required">Customer ID is required.</string>
     <string name="validation_password_char_length">Your password must be at least 8 characters long.</string>
     <string name="success_password_reset">Instructions on how to reset your password have been sent to your email.</string>
     <string name="error_password_reset">It was not possible to reset your password. Please try again later.</string>
@@ -72,5 +72,16 @@
     <string name="device_already_added">Already Added</string>
     <string name="connect">Connect</string>
     <string name="action_restart_service">Restart Service</string>
+    <string name="prompt_customer_id">Customer ID</string>
+    <string name="validation_user_exists">User Email already in use.</string>
+    <string name="user_created_successfully">The user was created successfully.</string>
+    <string name="validation_incorrect_user_password">Invalid User or Password.</string>
+    <string name="push_notification_message_alert_on">The sensor %1$s has been activated.</string>
+    <string name="push_notification_message_alert_off">The sensor %1$s has been deactivated.</string>
+    <string name="sensor_bed">Bed</string>
+    <string name="sensor_chair">Chair</string>
+    <string name="sensor_toilet">Toilet</string>
+    <string name="sensor_incontinence">Incontinence</string>
+    <string name="view_history">View History</string>
 
 </resources>

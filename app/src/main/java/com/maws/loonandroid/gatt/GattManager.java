@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothProfile;
 import android.os.AsyncTask;
 
+import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.gatt.events.GattEvent;
 import com.maws.loonandroid.gatt.operations.GattCharacteristicReadOperation;
 import com.maws.loonandroid.gatt.operations.GattDescriptorReadOperation;
@@ -113,7 +114,7 @@ public class GattManager {
         if(mGatts.containsKey(device.getAddress())) {
             execute(mGatts.get(device.getAddress()), operation);
         } else {
-            device.connectGatt(Injector.getApplicationContext(), true, new BluetoothGattCallback() {
+            device.connectGatt(LoonAndroid.globalApplicationContext, true, new BluetoothGattCallback() {
                 @Override
                 public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
                     super.onConnectionStateChange(gatt, status, newState);
@@ -163,7 +164,16 @@ public class GattManager {
                 @Override
                 public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
                     super.onCharacteristicRead(gatt, characteristic, status);
-                    ((GattCharacteristicReadOperation) mCurrentOperation).onRead(characteristic);
+
+                    EventBus.postEvent(GattEvent.GATT_CHARACTERISTIC_READ,
+                            new GattManagerBundle(
+                                    gatt.getDevice().getAddress(),
+                                    gatt,
+                                    0,
+                                    GattEvent.GATT_CHARACTERISTIC_READ,
+                                    characteristic));
+
+                    //((GattCharacteristicReadOperation) mCurrentOperation).onRead(gatt.getDevice().getAddress(),characteristic);
                     setCurrentOperation(null);
                     drive();
                 }
@@ -194,11 +204,19 @@ public class GattManager {
                 public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
                     super.onCharacteristicChanged(gatt, characteristic);
                     L.e("Characteristic " + characteristic.getUuid() + "was changed, device: " + device.getAddress());
-                    if (mCharacteristicChangeListeners.containsKey(characteristic.getUuid())) {
+                    EventBus.postEvent(GattEvent.GATT_CHARACTERISTIC_CHANGED,
+                            new GattManagerBundle(
+                                    device.getAddress(),
+                                    gatt,
+                                    0,
+                                    GattEvent.GATT_CHARACTERISTIC_CHANGED,
+                                    characteristic));
+
+                    /*if (mCharacteristicChangeListeners.containsKey(characteristic.getUuid())) {
                         for (CharacteristicChangeListener listener : mCharacteristicChangeListeners.get(characteristic.getUuid())) {
                             listener.onCharacteristicChanged(device.getAddress(), characteristic);
                         }
-                    }
+                    }*/
                 }
             });
         }
@@ -241,12 +259,22 @@ public class GattManager {
         public final BluetoothGatt gatt;
         public final int newState;
         public final String address;
+        public final BluetoothGattCharacteristic characteristic;
 
         public GattManagerBundle(String address, BluetoothGatt gatt,int newState, String gattEvent) {
             this.address = address;
             this.gatt = gatt;
             this.newState = newState;
             this.gattEvent = gattEvent;
+            this.characteristic = null;
+        }
+
+        public GattManagerBundle(String address, BluetoothGatt gatt,int newState, String gattEvent, BluetoothGattCharacteristic characteristic) {
+            this.address = address;
+            this.gatt = gatt;
+            this.newState = newState;
+            this.gattEvent = gattEvent;
+            this.characteristic = characteristic;
         }
     }
 

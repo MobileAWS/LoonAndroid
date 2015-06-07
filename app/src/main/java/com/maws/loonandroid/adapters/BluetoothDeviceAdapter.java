@@ -108,6 +108,8 @@ public class BluetoothDeviceAdapter extends BaseAdapter {
         final Sensor thisSensor = items.get(position);
         viewHolder.nameTV.setText(thisSensor.getName());
         viewHolder.serialTV.setText(thisSensor.getMacAddress());
+        viewHolder.addBtn.setText(" " + context.getString(R.string.use_it));
+        viewHolder.ignoreBtn.setText(" " + context.getString(R.string.ignore));
 
         if(thisSensor.getId() >= 0){
             viewHolder.addBtn.setVisibility(View.GONE);

@@ -3,18 +3,16 @@ package com.maws.loonandroid.activities;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.dao.LoonMedicalDao;
+import com.maws.loonandroid.dao.UserDao;
 import com.maws.loonandroid.listener.StandardRequestListener;
+import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.requests.UserRequestHandler;
 import com.maws.loonandroid.views.CustomToast;
-
 import org.json.JSONObject;
 
 /**
@@ -24,38 +22,29 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
 
     // UI references.
     private static final String TAG = "NEW USER";
-    private EditText emailET, confirmEmailET, passwordET, confirmPasswordET, siteET;
+    private EditText emailET, confirmEmailET, passwordET, confirmPasswordET;
     private Button createUserBtn;
-    private long customerId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_user);
-        customerId = getIntent().getLongExtra("customerId", 0);
-        if(customerId == 0){
-            finish();
-        }
 
-        TextView tv = (TextView) findViewById(R.id.customerIdTV);
-        tv.setText( String.format( getString(R.string.customer_id), customerId ) );
         emailET = (EditText) findViewById(R.id.emailET);
         confirmEmailET = (EditText) findViewById(R.id.confirmEmailET);
         passwordET = (EditText) findViewById(R.id.passwordET);
         confirmPasswordET = (EditText) findViewById(R.id.confirmPasswordET);
         createUserBtn = (Button) findViewById(R.id.createUserBtn);
-        siteET = (EditText) findViewById(R.id.siteET);
         createUserBtn.setOnClickListener(this);
     }
 
-    private void attemptLogin(){
+    private void attemptUserCreation(){
 
         //first, i need to check if the confirmation fields match.
         String email = emailET.getText().toString();
         String emailConfirmation = confirmEmailET.getText().toString();
         String password = passwordET.getText().toString();
         String passwordConfirmation = confirmPasswordET.getText().toString();
-        String site = siteET.getText().toString();
 
         StringBuilder errors = new StringBuilder();
         if(TextUtils.isEmpty(email)){
@@ -64,10 +53,6 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
         }
         if(TextUtils.isEmpty(password)){
             errors.append( getString(R.string.validation_password_required) );
-            errors.append( " " );
-        }
-        if(TextUtils.isEmpty(site)){
-            errors.append( getString(R.string.validation_site_required) );
             errors.append( " " );
         }
 
@@ -84,17 +69,34 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
             errors.append( " " );
         }
 
+        //let's see if this user already exists in the local database
+        LoonMedicalDao lDao = new LoonMedicalDao(this);
+        UserDao uDao = new UserDao(this);
+        User inDbUser = uDao.get(email, lDao.getReadableDatabase());
+        if(inDbUser != null){
+            errors.append( getString(R.string.validation_user_exists) );
+            errors.append( " " );
+        }
+
         if(errors.length() > 0){
             CustomToast.showAlert(this, errors.toString(), CustomToast._TYPE_ERROR);
         }else{
-            UserRequestHandler.signUp(this, new StandardRequestListener() {
+
+            //TODO: put code here to try to detect network and save the user online first.
+            User user = new User();
+            user.setEmail(email);
+            user.setPassword(password);
+            uDao.create(user, lDao.getWritableDatabase());
+            CustomToast.showAlert(this, getString(R.string.user_created_successfully), CustomToast._TYPE_SUCCESS);
+            this.finish();
+
+            /*UserRequestHandler.signUp(this, email, password, new StandardRequestListener() {
                 @Override
                 public void onSuccess(JSONObject jsonObject) {
 
                     try {
                         if (jsonObject.getString("response").equalsIgnoreCase("done")) {
-                            CustomToast.showAlert(NewUserActivity.this, NewUserActivity.this.getString(R.string.message_account_creation_success), CustomToast._TYPE_SUCCESS);
-                            finish();
+
                         }
                     }catch(Exception ex){
                         onFailure(ex.getMessage());
@@ -110,14 +112,14 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
                         CustomToast.showAlert(NewUserActivity.this, NewUserActivity.this.getString(R.string.default_request_error_message), CustomToast._TYPE_ERROR);
                     }
                 }
-            }, email, password, customerId, site);
+            });*/
         }
     };
 
     @Override
     public void onClick(View v) {
         if(v == createUserBtn){
-            attemptLogin();
+            attemptUserCreation();
         }
     }
 }

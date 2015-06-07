@@ -29,7 +29,14 @@ import android.widget.TextView;
 
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.dao.CustomerDao;
+import com.maws.loonandroid.dao.LoonMedicalDao;
+import com.maws.loonandroid.dao.SiteDao;
+import com.maws.loonandroid.dao.UserDao;
 import com.maws.loonandroid.listener.StandardRequestListener;
+import com.maws.loonandroid.models.Customer;
+import com.maws.loonandroid.models.Site;
+import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.requests.UserRequestHandler;
 import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
@@ -48,7 +55,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 
     // UI references.
     private static final String TAG = "LOGIN";
-    private EditText emailET, passwordET, siteIdET;
+    private EditText emailET, passwordET, siteIdET, customerIdET;
     private TextView forgotPasswordTV, newUserTV;
     private Button loginBtn, loginNoCloudBtn;
 
@@ -61,27 +68,22 @@ public class LoginActivity extends Activity implements OnClickListener {
         emailET = (EditText) findViewById(R.id.emailET);
         passwordET = (EditText) findViewById(R.id.passwordET);
         siteIdET = (EditText) findViewById(R.id.siteIdET);
+        customerIdET = (EditText) findViewById(R.id.customerIdET);
         forgotPasswordTV = (TextView) findViewById(R.id.forgotPasswordTV);
         newUserTV = (TextView) findViewById(R.id.newUserTV);
         loginBtn = (Button) findViewById(R.id.loginBtn);
         loginNoCloudBtn = (Button) findViewById(R.id.loginNoCloudBtn);
-
         forgotPasswordTV.setOnClickListener(this);
         newUserTV.setOnClickListener(this);
         loginBtn.setOnClickListener(this);
         loginNoCloudBtn.setOnClickListener(this);
-
-        if(!Util.isMyServiceRunning(this, BLEService.class ) && !LoonAndroid.demoMode){
-            Intent intent = new Intent(this,BLEService.class);
-            this.startService(intent);
-        }
     }
 
-    private void attemptLogin(){
+    private StringBuilder validateFields(){
         String email = emailET.getText().toString();
         String password = passwordET.getText().toString();
         String siteId = siteIdET.getText().toString();
-
+        String customerId = customerIdET.getText().toString();
         StringBuilder errors = new StringBuilder();
         if(TextUtils.isEmpty(email)){
             errors.append( getString(R.string.validation_email_required) );
@@ -95,19 +97,35 @@ public class LoginActivity extends Activity implements OnClickListener {
             errors.append( getString(R.string.validation_site_required) );
             errors.append( " " );
         }
+        if(TextUtils.isEmpty(customerId)){
+            errors.append( getString(R.string.validation_customer_required) );
+            errors.append( " " );
+        }
+        return errors;
+    }
+
+    private void attemptLogin(){
+
+        StringBuilder errors = validateFields();
+        String email = emailET.getText().toString();
+        String password = passwordET.getText().toString();
+        String siteId = siteIdET.getText().toString();
+        String customerId = customerIdET.getText().toString();
+
+        final User user = new User();
+        user.setName("");
+        user.setEmail(email);
+        user.setPassword(password);
 
         if(errors.length() > 0){
             CustomToast.showAlert(this, errors.toString(), CustomToast._TYPE_ERROR);
         }else{
             UserRequestHandler.login(this, new UserRequestHandler.LoginListener() {
                 @Override
-                public void onSuccess(JSONObject jsonObject, String email, String password, String site) {
-
+                public void onSuccess(JSONObject jsonObject, User user, String siteId, String customerId) {
                     try {
                         JSONObject response = jsonObject.getJSONObject("response");
-
                         if (jsonObject.getString("response").equalsIgnoreCase("done")) {
-                            CustomToast.showAlert(LoginActivity.this, LoginActivity.this.getString(R.string.message_account_creation_success), CustomToast._TYPE_SUCCESS);
                             finish();
                         }
                     } catch (Exception ex) {
@@ -124,9 +142,59 @@ public class LoginActivity extends Activity implements OnClickListener {
                         CustomToast.showAlert(LoginActivity.this, LoginActivity.this.getString(R.string.default_request_error_message), CustomToast._TYPE_ERROR);
                     }
                 }
-            }, email, password, siteId);
+            }, user, siteId, customerId);
         }
     };
+
+    private void attemptOfflineLogin(){
+
+        StringBuilder errors = validateFields();
+        String email = emailET.getText().toString();
+        String password = passwordET.getText().toString();
+        String siteId = siteIdET.getText().toString();
+        String customerId = customerIdET.getText().toString();
+
+        //for offline, we also need to validate if the user exists in our local database
+        LoonMedicalDao lDao = new LoonMedicalDao(this);
+        UserDao uDao = new UserDao(this);
+
+        User user = uDao.get(email, lDao.getReadableDatabase());
+        if (user == null || !Util.MD5(password).equals(user.getPassword())) {
+            errors.append( getString(R.string.validation_incorrect_user_password) );
+            errors.append( " " );
+        }
+
+        if(errors.length() > 0){
+            CustomToast.showAlert(this, errors.toString(), CustomToast._TYPE_ERROR);
+        }else{
+
+            //if everything is good, i set the current user, site and customerId for the app
+            User.setCurrent(user, this);
+
+            CustomerDao cDao = new CustomerDao(this);
+            Customer customer = cDao.get(customerId);
+            if(customer == null){
+                customer = new Customer();
+                customer.setCode(customerId);
+                cDao.create(customer);
+            }
+            Customer.setCurrent(customer, this);
+
+            SiteDao sDao = new SiteDao(this);
+            Site site = sDao.get(siteId);
+            if(site == null){
+                site = new Site();
+                site.setCode(siteId);
+                sDao.create(site);
+            }
+            Site.setCurrent(site, this);
+
+            Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(newUserIntent);
+            this.finish();
+        }
+    };
+
 
     @Override
     public void onClick(View v) {
@@ -134,42 +202,14 @@ public class LoginActivity extends Activity implements OnClickListener {
             Intent forgotPwdIntent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
             startActivity(forgotPwdIntent);
         }else if(v == newUserTV){
-
-            UserRequestHandler.generateUserId(this, new StandardRequestListener() {
-                @Override
-                public void onSuccess(JSONObject jsonObject) {
-                    try {
-                        JSONObject responseObj = jsonObject.getJSONObject("response");
-                        JSONArray customerObj = responseObj.getJSONArray("customer_id");
-                        long customerId = ((JSONObject)customerObj.get(0)).getLong("nextval");
-                        Intent newUserIntent = new Intent(LoginActivity.this, NewUserActivity.class);
-                        newUserIntent.putExtra("customerId", customerId);
-                        startActivity(newUserIntent);
-                    } catch (Exception ex) {
-                        onFailure(ex.toString());
-                    }
-                }
-
-                @Override
-                public void onFailure(String error) {
-                    try{
-                        JSONObject object = new JSONObject(error);
-                        CustomToast.showAlert(LoginActivity.this, object.getString("message"), CustomToast._TYPE_ERROR);
-                    }catch(Exception ex) {
-                        CustomToast.showAlert(LoginActivity.this, getString(R.string.default_request_error_message), CustomToast._TYPE_ERROR);
-                    }
-                }
-            });
+            Intent newUserIntent = new Intent(LoginActivity.this, NewUserActivity.class);
+            startActivity(newUserIntent);
 
         }else if(v == loginBtn){
             attemptLogin();
-            /*Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(newUserIntent);
-            this.finish();*/
+
         }else if(v == loginNoCloudBtn){
-            Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(newUserIntent);
-            this.finish();
+            attemptOfflineLogin();
         }
     }
 

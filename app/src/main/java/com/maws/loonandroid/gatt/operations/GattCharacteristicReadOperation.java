@@ -34,7 +34,7 @@ public class GattCharacteristicReadOperation extends GattOperation {
         return true;
     }
 
-    public void onRead(BluetoothGattCharacteristic characteristic) {
-        mCallback.call(characteristic.getValue());
+    public void onRead(String address, BluetoothGattCharacteristic characteristic) {
+        mCallback.call(address, characteristic.getValue());
     }
 }

@@ -15,7 +15,7 @@ public class DeviceStartedReceiver extends BroadcastReceiver
     public void onReceive(Context arg0, Intent arg1)
     {
         Intent intent = new Intent(arg0, BLEService.class);
-        arg0.startService(intent);
+        //arg0.startService(intent);
         Log.i("Autostart", "Started BLE service, i think");
     }
 }

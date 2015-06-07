@@ -8,62 +8,87 @@
         android:padding="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-    >
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
 
-            <TextView
-                android:id="@+id/nameTV"
+            <ImageView
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_bluetooth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_gravity="center_vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/nameTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_big"
+                    android:textStyle="bold"
+                    android:text="Sensor Name"/>
+
+                <TextView
+                    android:id="@+id/codeTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sensor Code"
+                    android:textSize="@dimen/font_medium"
+                    />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/signalIV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_big"
-                android:textStyle="bold"
-                android:text="Sensor Name"/>
-
-            <TextView
-                android:id="@+id/codeTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sensor Code"
-                android:textSize="@dimen/font_medium"
+                android:src="@drawable/wifi3"
+                android:tint="@color/light_aquamarine"
+                android:layout_marginRight="5dp"
+                android:layout_gravity="center_vertical"
                 />
+
+            <ImageView
+                android:id="@+id/batteryIV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/battery4"
+                android:tint="@color/light_aquamarine"
+                android:layout_marginRight="5dp"
+                android:layout_gravity="center_vertical"
+                />
+
+            <ImageView
+                android:id="@+id/checkIV"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_action_sound"
+                android:tint="@color/light_aquamarine"
+                android:layout_marginRight="5dp"
+                android:layout_gravity="center_vertical"
+                />
+
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/signalIV"
+        <Button
+            android:layout_gravity="right"
+            style="@style/Button.dark_green"
+            android:id="@+id/historyBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/wifi3"
-            android:tint="@color/green"
-            android:layout_marginRight="5dp"
-            android:layout_gravity="center_vertical"
-            />
-
-        <ImageView
-            android:id="@+id/batteryIV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/battery4"
-            android:tint="@color/green"
-            android:layout_marginRight="5dp"
-            android:layout_gravity="center_vertical"
-            />
-
-        <ImageView
-            android:id="@+id/checkIV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/check"
-            android:tint="@color/green"
-            android:layout_marginRight="5dp"
-            android:layout_gravity="center_vertical"
-        />
+            android:text="@string/view_history"/>
 
     </LinearLayout>
+
+
 
     <TextView
         style="@style/DarkHeader"
