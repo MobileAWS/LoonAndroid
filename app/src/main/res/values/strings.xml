@@ -43,7 +43,7 @@
     <string name="default_request_error_message">There was an error. Please try again later.</string>
     <string name="message_account_creation_success">Account Created. Please confirm the account on your email before attempting to login.</string>
     <string name="signing_in">Signing In...</string>
-    <string name="add_sensor_instructions"><![CDATA[Enter a description (e.g. Jacket Activator) & tap \"Register\".]]></string>
+    <string name="add_sensor_instructions"><![CDATA[Enter a description (e.g. JaJacket Activator) & tap \"Register\".]]></string>
     <string name="sensor_found_name">Found: Sensor LM01</string>
     <string name="sensor_found_label">Found:</string>
     <string name="sensor_serial_label">S/N:</string>
@@ -83,5 +83,10 @@
     <string name="sensor_toilet">Toilet</string>
     <string name="sensor_incontinence">Incontinence</string>
     <string name="view_history">View History</string>
+    <string name="title_activity_history_sensor">Alert History</string>
+    <string name="list_Alarm_Description">Description </string>
+    <string name="list_Alarm_header2">Alert Date </string>
+    <string name="list_Alarm_header3">Dismissed Date </string>
+    <string name="list_Alarm_header4">Time Ellapsed</string>
 
 </resources>

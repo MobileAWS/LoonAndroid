@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/prompt_email"
             android:inputType="textEmailAddress"
-            android:text="jandresjc@gmail.com"
+            android:text="asd@asd.com"
         />
 
         <EditText
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/prompt_password"
             android:inputType="textPassword"
-            android:text="password"
+            android:text="12345678"
         />
 
         <EditText

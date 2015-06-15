@@ -183,7 +183,12 @@ public class AlertContentProvider extends ContentProvider {
                 AlertDao.KEY_SENSOR_SERVICE_ID,
                 AlertDao.KEY_ALERT_DATE,
                 AlertDao.KEY_IS_ON,
-                AlertDao.KEY_DISMISSED };
+                AlertDao.KEY_DISMISSED,
+                AlertDao.KEY_DISMISSED_DATE,
+                AlertDao.KEY_TOTAL_TIME_ALARM,
+                AlertDao.KEY_CUSTOMER_ID,
+                AlertDao.KEY_SITE_ID
+                };
         if (projection != null) {
             HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
             HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));
