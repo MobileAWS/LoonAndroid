@@ -81,6 +81,20 @@ public class Util {
         return false;
     }
 
+    public static long  subtract2Dates(Date date1, Date date2) {
 
+        long difference = (date2.getTime() - date1.getTime());
+        return difference;
+    }
+
+    public static  String totalTimeDismissed(long totalMilSecs){
+        long totalSecs = totalMilSecs / 1000;
+        long hours = totalSecs / 3600;
+        long minutes = (totalSecs % 3600) / 60;
+        long seconds = totalSecs % 60;
+
+        String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        return timeString;
+    }
 
 }

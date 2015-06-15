@@ -188,9 +188,14 @@ public class SensorListAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         long alertId = Long.valueOf( v.getTag().toString());
+
                         Alert alert = new Alert();
                         alert.setId(alertId);
+
                         AlertDao aDao = new AlertDao(context);
+                        Alert alertConsult = aDao.get(alertId);
+                        alert.setAlertDate(alertConsult.getAlertDate());
+
                         aDao.dismiss(alert);
                         v.setVisibility(View.GONE);
                     }
