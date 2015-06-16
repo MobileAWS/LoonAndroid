@@ -10,8 +10,10 @@ import com.maws.loonandroid.dao.AlertDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
 import com.maws.loonandroid.dao.SensorDao;
 import com.maws.loonandroid.models.Alert;
+import com.maws.loonandroid.models.Customer;
 import com.maws.loonandroid.models.Sensor;
 import com.maws.loonandroid.models.SensorService;
+import com.maws.loonandroid.models.Site;
 import com.maws.loonandroid.util.Util;
 
 import java.util.Date;
@@ -42,6 +44,8 @@ public class AlertReceiver extends BroadcastReceiver {
             alert.setSensorServiceId(serviceId);
             alert.setIsOn(isOn);
             alert.setAlertDate(new Date(alarmDateMillis));
+            alert.setCostumerId( Customer.getCurrent(context).getId() );
+            alert.setSiteId( Site.getCurrent(context).getId() );
 
             AlertDao aDao = new AlertDao(context);
             aDao.create(alert);

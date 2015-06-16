@@ -22,6 +22,8 @@ import java.util.Date;
 public class Util {
 
     public static final SimpleDateFormat sdf = new SimpleDateFormat("EEE dd MMM, h:mm a");
+    public static final SimpleDateFormat longDateFormat = new SimpleDateFormat("EEE dd MMM");
+    public static final SimpleDateFormat timeOnlyFormat = new SimpleDateFormat("hh:mm:ss a");
 
     public static String MD5(String md5) {
         try {

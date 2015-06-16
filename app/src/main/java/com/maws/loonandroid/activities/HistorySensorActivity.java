@@ -54,7 +54,7 @@ public class HistorySensorActivity extends ActionBarActivity {
 
     private AlertHistoryListAdapter loadInformation (long sensorId) {
         AlertDao alertDao = new AlertDao(this);
-        List<Alert> listAlert = alertDao.getAll4Id(sensorId);
+        List<Alert> listAlert = alertDao.getAllForId(sensorId);
         if (listAlert != null && listAlert.size() > 0 ) {
             adapter= new AlertHistoryListAdapter(listAlert,this);
         }
@@ -62,25 +62,14 @@ public class HistorySensorActivity extends ActionBarActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_history_sensor, menu);
-        return true;
-    }
-
-
-
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
-        if (id > 0) {
+        if (id == android.R.id.home) {
             goBackInfo();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

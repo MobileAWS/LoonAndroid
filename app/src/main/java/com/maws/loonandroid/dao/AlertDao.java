@@ -81,7 +81,7 @@ public class AlertDao {
         values.put(KEY_DISMISSED, alert.isDismissed() ? 1 : 0);
         values.put(KEY_IS_ON, alert.isOn() ? 1 : 0);
         values.put(KEY_DISMISSED_DATE, alert.getDismissedDate() == null ? null : alert.getAlertDate().getTime());
-        values.put(KEY_TOTAL_TIME_ALARM, alert.getTotalTimeAlarm() == 0 ? null : 0);
+        values.put(KEY_TOTAL_TIME_ALARM, alert.getTotalTimeAlarm());
         values.put(KEY_CUSTOMER_ID, alert.getCostumerId());
         values.put(KEY_SITE_ID, alert.getId());
         context.getContentResolver().insert(AlertContentProvider.CONTENT_URI, values);
@@ -123,9 +123,10 @@ public class AlertDao {
         alert.setAlertDate(new Date(cursor.getLong(cursor.getColumnIndex(KEY_ALERT_DATE))));
         alert.setDismissed(cursor.getInt(cursor.getColumnIndex(KEY_DISMISSED)) == 1);
         alert.setIsOn(cursor.getInt(cursor.getColumnIndex(KEY_IS_ON)) == 1);
-        alert.setDismissedDate(new Date(cursor.getColumnIndex(KEY_DISMISSED_DATE)));
-        alert.setTotalTimeAlarm(cursor.getColumnIndex(KEY_TOTAL_TIME_ALARM));
-        alert.setCostumerId(cursor.getColumnIndex(KEY_CUSTOMER_ID));
+        alert.setDismissedDate( cursor.isNull(cursor.getColumnIndex(KEY_DISMISSED_DATE))?null: new Date(cursor.getLong(cursor.getColumnIndex(KEY_DISMISSED_DATE))));
+        alert.setTotalTimeAlarm(cursor.getLong(cursor.getColumnIndex(KEY_TOTAL_TIME_ALARM)));
+        alert.setCostumerId(cursor.getLong(cursor.getColumnIndex(KEY_CUSTOMER_ID)));
+        alert.setSiteId(cursor.getLong(cursor.getColumnIndex(KEY_SITE_ID)));
 
         cursor.close();
 
@@ -133,7 +134,7 @@ public class AlertDao {
         return alert;
     }
 
-    public List<Alert> getAll4Id(long id) {
+    public List<Alert> getAllForId(long id) {
         List<Alert> listAlerts = new ArrayList<>();
         Cursor cursor = context.getContentResolver().query(AlertContentProvider.CONTENT_URI,
                 new String[]{
@@ -166,10 +167,10 @@ public class AlertDao {
                 alert.setAlertDate(new Date(cursor.getLong(cursor.getColumnIndex(KEY_ALERT_DATE))));
                 alert.setDismissed(cursor.getInt(cursor.getColumnIndex(KEY_DISMISSED)) == 1);
                 alert.setIsOn(cursor.getInt(cursor.getColumnIndex(KEY_IS_ON)) == 1);
-                alert.setDismissedDate(new Date(cursor.getLong(cursor.getColumnIndex(KEY_DISMISSED_DATE))));
+                alert.setDismissedDate( cursor.isNull(cursor.getColumnIndex(KEY_DISMISSED_DATE))?null: new Date(cursor.getLong(cursor.getColumnIndex(KEY_DISMISSED_DATE))));
                 alert.setTotalTimeAlarm(cursor.getLong(cursor.getColumnIndex(KEY_TOTAL_TIME_ALARM)));
                 alert.setCostumerId(cursor.getLong(cursor.getColumnIndex(KEY_CUSTOMER_ID)));
-                alert.setSensorId(cursor.getLong(cursor.getColumnIndex(KEY_SITE_ID)));
+                alert.setSiteId(cursor.getLong(cursor.getColumnIndex(KEY_SITE_ID)));
                 listAlerts.add(alert);
             } while(cursor.moveToNext());
         }else{
@@ -213,10 +214,10 @@ public class AlertDao {
                 alert.setAlertDate(new Date(cursor.getLong(cursor.getColumnIndex(KEY_ALERT_DATE))));
                 alert.setDismissed(cursor.getInt(cursor.getColumnIndex(KEY_DISMISSED)) == 1);
                 alert.setIsOn(cursor.getInt(cursor.getColumnIndex(KEY_IS_ON)) == 1);
-                alert.setDismissedDate(new Date(cursor.getColumnIndex(KEY_DISMISSED_DATE)));
-                alert.setDismissedDate(new Date(cursor.getColumnIndex(KEY_DISMISSED_DATE)));
-                alert.setTotalTimeAlarm(cursor.getColumnIndex(KEY_TOTAL_TIME_ALARM));
-                alert.setCostumerId(cursor.getColumnIndex(KEY_CUSTOMER_ID));
+                alert.setDismissedDate( cursor.isNull(cursor.getColumnIndex(KEY_DISMISSED_DATE))?null: new Date(cursor.getLong(cursor.getColumnIndex(KEY_DISMISSED_DATE))));
+                alert.setTotalTimeAlarm( cursor.getLong( cursor.getColumnIndex(KEY_TOTAL_TIME_ALARM)) );
+                alert.setCostumerId(cursor.getLong(cursor.getColumnIndex(KEY_CUSTOMER_ID)));
+                alert.setSiteId(cursor.getLong(cursor.getColumnIndex(KEY_SITE_ID)));
                 toReturnList.add(alert);
 
             } while (cursor.moveToNext());
@@ -236,7 +237,7 @@ public class AlertDao {
         values.put(KEY_ALERT_DATE, alert.getAlertDate().getTime());
         values.put(KEY_DISMISSED, alert.isDismissed() ? 1 : 0);
         values.put(KEY_IS_ON, alert.isOn() ? 1 : 0);
-        values.put(KEY_ALERT_DATE, alert.getDismissedDate().getTime());
+        values.put(KEY_DISMISSED_DATE, alert.getDismissedDate().getTime());
         values.put(KEY_TOTAL_TIME_ALARM, alert.getTotalTimeAlarm());
         values.put(KEY_CUSTOMER_ID, alert.getCostumerId());
         values.put(KEY_SITE_ID, alert.getSiteId());
@@ -257,10 +258,8 @@ public class AlertDao {
         long dismissedDate = new Date().getTime();
         values.put(KEY_DISMISSED, 1);
         values.put(KEY_DISMISSED_DATE, dismissedDate);
-        long  totalTimeAlarm =Util.subtract2Dates(alert.getAlertDate(),new Date(dismissedDate));
+        long  totalTimeAlarm = Util.subtract2Dates(alert.getAlertDate(),new Date(dismissedDate));
         values.put(KEY_TOTAL_TIME_ALARM, totalTimeAlarm);
-        values.put(KEY_CUSTOMER_ID, Customer.getCurrent(context).getId());
-        values.put(KEY_SITE_ID, Site.getCurrent(context).getId());
 
         context.getContentResolver().update(
                 AlertContentProvider.CONTENT_URI,

@@ -85,8 +85,11 @@
     <string name="view_history">View History</string>
     <string name="title_activity_history_sensor">Alert History</string>
     <string name="list_Alarm_Description">Description </string>
-    <string name="list_Alarm_header2">Alert Date </string>
-    <string name="list_Alarm_header3">Dismissed Date </string>
+    <string name="list_Alarm_header2">Alerted On:</string>
+    <string name="list_Alarm_header3">Dismissed On:</string>
     <string name="list_Alarm_header4">Time Ellapsed</string>
+    <string name="elapsed_time">Time to dismiss: %1$s</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
 
 </resources>

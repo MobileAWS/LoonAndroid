@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/prompt_email"
             android:inputType="textEmailAddress"
-            android:text=""
+            android:text="jandresjc@gmail.com"
         />
 
         <EditText
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/prompt_password"
             android:inputType="textPassword"
-            android:text=""
+            android:text="password"
         />
 
         <EditText
@@ -56,7 +56,7 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_site_id"
-            android:text=""
+            android:text="maws"
         />
 
         <EditText
@@ -65,7 +65,7 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_customer_id"
-            android:text=""
+            android:text="123"
             />
 
     </LinearLayout>

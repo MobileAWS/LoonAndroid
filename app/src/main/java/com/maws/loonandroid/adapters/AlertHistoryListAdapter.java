@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.ifaces.MultipleSelectionAdapter;
 import com.maws.loonandroid.models.Alert;
+import com.maws.loonandroid.models.SensorService;
 import com.maws.loonandroid.util.Util;
 
 import org.droidparts.adapter.holder.ViewHolder;
@@ -28,10 +29,7 @@ public class AlertHistoryListAdapter extends BaseAdapter implements MultipleSele
     private List<Integer> selectedItems;
 
     static class ViewHolder {
-        TextView descAlertHv;
-        TextView alertDateHv;
-        TextView dismissDateHv;
-        TextView timeAlertHv;
+        TextView descAlertHv, alertDismiss, alertDateHv, dismissDateHv, timeAlertHv, alertDateTV;
     }
 
     public AlertHistoryListAdapter(List<Alert> items, Context context) {
@@ -65,6 +63,8 @@ public class AlertHistoryListAdapter extends BaseAdapter implements MultipleSele
             viewHolder.alertDateHv = (TextView) convertView.findViewById(R.id.alertDateHv);
             viewHolder.dismissDateHv = (TextView) convertView.findViewById(R.id.dismissdateHv);
             viewHolder.timeAlertHv = (TextView) convertView.findViewById(R.id.timeAlertHv);
+            viewHolder.alertDismiss = (TextView) convertView.findViewById(R.id.alertDismiss);
+            viewHolder.alertDateTV = (TextView) convertView.findViewById(R.id.alertDateTV);
             convertView.setTag(viewHolder);
 
         }else {
@@ -72,11 +72,22 @@ public class AlertHistoryListAdapter extends BaseAdapter implements MultipleSele
         }
 
         Alert thisAlert = items.get(position);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a");
-        viewHolder.descAlertHv.setText(String.valueOf(thisAlert.getSensorId()));
-        viewHolder.alertDateHv.setText(sdf.format(thisAlert.getAlertDate()));
-        viewHolder.dismissDateHv.setText(sdf.format(thisAlert.getDismissedDate()));
-        viewHolder.timeAlertHv.setText( Util.totalTimeDismissed(thisAlert.getTotalTimeAlarm()));
+        viewHolder.alertDateTV.setText(Util.longDateFormat.format(thisAlert.getAlertDate()));
+        viewHolder.descAlertHv.setText( context.getString(SensorService.serviceNames.get(thisAlert.getSensorServiceId())) );
+        viewHolder.alertDateHv.setText( Util.timeOnlyFormat.format(thisAlert.getAlertDate()));
+        viewHolder.dismissDateHv.setText(thisAlert.getDismissedDate() == null ? "-" : Util.timeOnlyFormat.format(thisAlert.getDismissedDate()));
+        viewHolder.timeAlertHv.setText(thisAlert.getDismissedDate() == null ? "-" : String.format( context.getString(R.string.elapsed_time), Util.totalTimeDismissed(thisAlert.getTotalTimeAlarm())) ) ;
+
+        if(thisAlert.getDismissedDate() == null) {
+            viewHolder.alertDismiss.setVisibility(View.GONE);
+            viewHolder.dismissDateHv.setVisibility(View.GONE);
+            viewHolder.timeAlertHv.setVisibility(View.GONE);
+        }else{
+            viewHolder.alertDismiss.setVisibility(View.VISIBLE);
+            viewHolder.dismissDateHv.setVisibility(View.VISIBLE);
+            viewHolder.timeAlertHv.setVisibility(View.VISIBLE);
+
+        }
         return convertView;
     }
 

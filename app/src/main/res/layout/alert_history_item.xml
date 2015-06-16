@@ -1,71 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
-    android:id="@+id/headerDesc"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/list_Alarm_Description"
-    android:textSize="18sp"
-    android:textStyle="bold"
-    />
-    <TextView
-    android:id="@+id/descAlertHv"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Sensor Code"
-    android:textSize="16sp"
-    android:paddingBottom="5dp"
-    />
-    <TextView
-    android:id="@+id/headerAD"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/list_Alarm_header2"
-    android:textSize="18sp"
-    android:textStyle="bold"
-
-    />
-    <TextView
-    android:id="@+id/alertDateHv"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Date"
-    android:textSize="16sp"
-    android:paddingBottom="5dp"
-    />
-    <TextView
-    android:id="@+id/alertDismiss"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/list_Alarm_header3"
-    android:textSize="18sp"
-    android:textStyle="bold"
-    />
-    <TextView
-    android:id="@+id/dismissdateHv"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="date"
-    android:textSize="16sp"
-    android:paddingBottom="5dp"
-    />
-    <TextView
-        android:id="@+id/header4"
+        android:id="@+id/descAlertHv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/list_Alarm_header4"
+        android:text="Sensor Code"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:paddingBottom="5dp"
+    />
+    <TextView
+        android:id="@+id/alertDateTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="01/01/2000"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingBottom="5dp"
         />
+    <TextView
+        android:id="@+id/headerAD"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/descAlertHv"
+        android:text="@string/from"
+        android:textSize="16sp"
+        android:textStyle="bold"
+    />
+    <TextView
+        android:id="@+id/alertDateHv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/descAlertHv"
+        android:layout_toRightOf="@+id/headerAD"
+        android:layout_marginLeft="5dp"
+        android:text="Date"
+        android:textSize="16sp"
+        android:paddingBottom="5dp"
+    />
+    <TextView
+        android:id="@+id/alertDismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/alertDateHv"
+        android:layout_below="@+id/descAlertHv"
+        android:layout_marginLeft="10dp"
+        android:text="@string/to"
+        android:textSize="16sp"
+        android:textStyle="bold"
+    />
+    <TextView
+        android:id="@+id/dismissdateHv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/alertDismiss"
+        android:layout_below="@+id/descAlertHv"
+        android:layout_marginLeft="5dp"
+        android:text="Date"
+        android:textSize="16sp"
+        android:paddingBottom="5dp"
+    />
     <TextView
         android:id="@+id/timeAlertHv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="time"
+        android:layout_below="@+id/alertDismiss"
+        android:layout_alignParentRight="true"
+        android:text="@string/elapsed_time"
         android:textSize="16sp"
-        android:paddingBottom="10dp"
+        android:textColor="@color/green"
+        android:textStyle="italic"
         />
-</LinearLayout>
+
+</RelativeLayout>
