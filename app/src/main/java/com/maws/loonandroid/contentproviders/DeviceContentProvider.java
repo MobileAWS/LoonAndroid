@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 import com.maws.loonandroid.dao.LoonMedicalDao;
-import com.maws.loonandroid.dao.SensorDao;
+import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.enums.LoonDataType;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,7 +18,7 @@ import java.util.HashSet;
 /**
  * Created by Andrexxjc on 02/06/2015.
  */
-public class SensorContentProvider extends ContentProvider {
+public class DeviceContentProvider extends ContentProvider {
 
     // database classes
     private LoonMedicalDao loonMedicalDao;
@@ -27,7 +27,7 @@ public class SensorContentProvider extends ContentProvider {
     private static final int SENSORS = 30;
     private static final int SENSOR_ID = 31;
 
-    private static final String AUTHORITY = "com.maws.loonandroid.contentproviders.SensorContentProvider";
+    private static final String AUTHORITY = "com.maws.loonandroid.contentproviders.DeviceContentProvider";
     private static final String BASE_PATH = "sensors";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
 
@@ -63,7 +63,7 @@ public class SensorContentProvider extends ContentProvider {
         checkColumns(projection);
 
         // Set the table
-        queryBuilder.setTables(SensorDao.TABLE_NAME);
+        queryBuilder.setTables(DeviceDao.TABLE_NAME);
 
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
@@ -71,7 +71,7 @@ public class SensorContentProvider extends ContentProvider {
                 break;
             case SENSOR_ID:
                 // adding the ID to the original query
-                queryBuilder.appendWhere(SensorDao.KEY_ID + "="
+                queryBuilder.appendWhere(DeviceDao.KEY_ID + "="
                         + uri.getLastPathSegment());
                 break;
             default:
@@ -100,7 +100,7 @@ public class SensorContentProvider extends ContentProvider {
         long id = 0;
         switch (uriType) {
             case SENSORS:
-                id = sqlDB.insert(SensorDao.TABLE_NAME, null, values);
+                id = sqlDB.insert(DeviceDao.TABLE_NAME, null, values);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -116,18 +116,18 @@ public class SensorContentProvider extends ContentProvider {
         int rowsDeleted = 0;
         switch (uriType) {
             case SENSORS:
-                rowsDeleted = sqlDB.delete(SensorDao.TABLE_NAME, selection,
+                rowsDeleted = sqlDB.delete(DeviceDao.TABLE_NAME, selection,
                         selectionArgs);
                 break;
             case SENSOR_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsDeleted = sqlDB.delete(SensorDao.TABLE_NAME,
-                            SensorDao.KEY_ID + "=" + id,
+                    rowsDeleted = sqlDB.delete(DeviceDao.TABLE_NAME,
+                            DeviceDao.KEY_ID + "=" + id,
                             null);
                 } else {
-                    rowsDeleted = sqlDB.delete(SensorDao.TABLE_NAME,
-                            SensorDao.KEY_ID + "=" + id
+                    rowsDeleted = sqlDB.delete(DeviceDao.TABLE_NAME,
+                            DeviceDao.KEY_ID + "=" + id
                                     + " and " + selection,
                             selectionArgs);
                 }
@@ -148,7 +148,7 @@ public class SensorContentProvider extends ContentProvider {
         int rowsUpdated = 0;
         switch (uriType) {
             case SENSORS:
-                rowsUpdated = sqlDB.update(SensorDao.TABLE_NAME,
+                rowsUpdated = sqlDB.update(DeviceDao.TABLE_NAME,
                         values,
                         selection,
                         selectionArgs);
@@ -156,14 +156,14 @@ public class SensorContentProvider extends ContentProvider {
             case SENSOR_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsUpdated = sqlDB.update(SensorDao.TABLE_NAME,
+                    rowsUpdated = sqlDB.update(DeviceDao.TABLE_NAME,
                             values,
-                            SensorDao.KEY_ID+ "=" + id,
+                            DeviceDao.KEY_ID+ "=" + id,
                             null);
                 } else {
-                    rowsUpdated = sqlDB.update(SensorDao.TABLE_NAME,
+                    rowsUpdated = sqlDB.update(DeviceDao.TABLE_NAME,
                             values,
-                            SensorDao.KEY_ID + "=" + id
+                            DeviceDao.KEY_ID + "=" + id
                                     + " and "
                                     + selection,
                             selectionArgs);
@@ -178,15 +178,15 @@ public class SensorContentProvider extends ContentProvider {
 
     private void checkColumns(String[] projection) {
         String[] available = {
-                SensorDao.KEY_ID,
-                SensorDao.KEY_NAME,
-                SensorDao.KEY_CODE,
-                SensorDao.KEY_SERIAL,
-                SensorDao.KEY_VERSION,
-                SensorDao.KEY_DESCRIPTION,
-                SensorDao.KEY_MAC_ADDRESS,
-                SensorDao.KEY_ACTIVE,
-                SensorDao.KEY_CONNECTED
+                DeviceDao.KEY_ID,
+                DeviceDao.KEY_NAME,
+                DeviceDao.KEY_CODE,
+                DeviceDao.KEY_SERIAL,
+                DeviceDao.KEY_VERSION,
+                DeviceDao.KEY_DESCRIPTION,
+                DeviceDao.KEY_MAC_ADDRESS,
+                DeviceDao.KEY_ACTIVE,
+                DeviceDao.KEY_CONNECTED
         };
         if (projection != null) {
             HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));

@@ -10,7 +10,7 @@ import java.util.UUID;
 /**
  * Created by Andrexxjc on 05/06/2015.
  */
-public class SensorService {
+public class DeviceService {
 
     //let's map the UUIDs of the services here
     public static final UUID UUID_BATTERY_SERVICE = UUID.fromString("0000180f-0000-1000-8000-00805f9b34fb");

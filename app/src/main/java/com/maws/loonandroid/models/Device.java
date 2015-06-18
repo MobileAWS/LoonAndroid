@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Created by Andrexxjc on 12/04/2015.
  */
-public class Sensor implements Parcelable {
+public class Device implements Parcelable {
 
     private long id = -1;
     private String name;
@@ -24,9 +24,9 @@ public class Sensor implements Parcelable {
     private int signalStrength;
     private String temperature;
 
-    public Sensor(){}
+    public Device(){}
 
-    public Sensor(BluetoothDevice device){
+    public Device(BluetoothDevice device){
         this.name = device.getName();
         this.macAddress = device.getAddress();
     }
@@ -135,19 +135,19 @@ public class Sensor implements Parcelable {
     }
 
     /** Static field used to regenerate object, individually or as arrays */
-    public static final Parcelable.Creator<Sensor> CREATOR = new Parcelable.Creator<Sensor>() {
-        public Sensor createFromParcel(Parcel pc) {
-            return new Sensor(pc);
+    public static final Parcelable.Creator<Device> CREATOR = new Parcelable.Creator<Device>() {
+        public Device createFromParcel(Parcel pc) {
+            return new Device(pc);
         }
-        public Sensor[] newArray(int size) {
-            return new Sensor[size];
+        public Device[] newArray(int size) {
+            return new Device[size];
         }
     };
 
     /**
      * Creator from Parcel, reads back fields in the same order they were written
      * */
-    public Sensor(Parcel pc){
+    public Device(Parcel pc){
 
         this.id = pc.readLong();
         this.name = pc.readString();
@@ -163,23 +163,23 @@ public class Sensor implements Parcelable {
         this.connected = pc.readInt() == 1;
     }
 
-    public static Sensor createFakeSensor(){
+    public static Device createFakeSensor(){
 
         long currentTime = (new Date()).getTime();
         String currentTimeStr = String.valueOf(currentTime);
-        Sensor sensor = new Sensor();
-        sensor.setName("Sensor " + currentTimeStr.substring(currentTimeStr.length() - 4));
-        sensor.setCode(currentTimeStr.substring(currentTimeStr.length() - 4));
-        sensor.setSerial(currentTimeStr);
-        sensor.setVersion("v1");
-        sensor.setDescription("");
-        sensor.setMacAddress("00-00-" + currentTimeStr.substring(currentTimeStr.length() - 4, currentTimeStr.length() - 2 ) + "-"+ currentTimeStr.substring(currentTimeStr.length() - 2));
-        sensor.setBatteryStatus(3);
-        sensor.setSignalStrength(5);
-        sensor.setTemperature("80");
-        sensor.setActive(true);
-        sensor.setConnected(false);
-        return sensor;
+        Device device = new Device();
+        device.setName("Device " + currentTimeStr.substring(currentTimeStr.length() - 4));
+        device.setCode(currentTimeStr.substring(currentTimeStr.length() - 4));
+        device.setSerial(currentTimeStr);
+        device.setVersion("v1");
+        device.setDescription("");
+        device.setMacAddress("00-00-" + currentTimeStr.substring(currentTimeStr.length() - 4, currentTimeStr.length() - 2 ) + "-"+ currentTimeStr.substring(currentTimeStr.length() - 2));
+        device.setBatteryStatus(3);
+        device.setSignalStrength(5);
+        device.setTemperature("80");
+        device.setActive(true);
+        device.setConnected(false);
+        return device;
     }
 
 }

@@ -3,7 +3,7 @@ package com.maws.loonandroid.dao;
 import java.util.ArrayList;
 import java.util.List;
 import com.maws.loonandroid.contentproviders.SensorContentProvider;
-import com.maws.loonandroid.models.Sensor;
+import com.maws.loonandroid.models.Device;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,7 +14,7 @@ import android.net.Uri;
 /**
  * Created by Andrexxjc on 07/05/2015.
  */
-public class SensorDao {
+public class DeviceDao {
 
     // Contacts table name
     public static final String TABLE_NAME = "tblSensor";
@@ -32,7 +32,7 @@ public class SensorDao {
 
     private Context context;
 
-    public SensorDao(Context context) {
+    public DeviceDao(Context context) {
         this.context = context;
     }
 
@@ -64,24 +64,24 @@ public class SensorDao {
     }
 
     // Adding new object
-    public void create(Sensor sensor) {
+    public void create(Device device) {
 
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, sensor.getName());
-        values.put(KEY_CODE, sensor.getCode());
-        values.put(KEY_SERIAL, sensor.getSerial());
-        values.put(KEY_VERSION, sensor.getVersion());
-        values.put(KEY_DESCRIPTION, sensor.getDescription());
-        values.put(KEY_MAC_ADDRESS, sensor.getMacAddress());
-        values.put(KEY_ACTIVE, sensor.isActive()?1:0);
-        values.put(KEY_CONNECTED, sensor.isConnected() ? 1 : 0);
+        values.put(KEY_NAME, device.getName());
+        values.put(KEY_CODE, device.getCode());
+        values.put(KEY_SERIAL, device.getSerial());
+        values.put(KEY_VERSION, device.getVersion());
+        values.put(KEY_DESCRIPTION, device.getDescription());
+        values.put(KEY_MAC_ADDRESS, device.getMacAddress());
+        values.put(KEY_ACTIVE, device.isActive()?1:0);
+        values.put(KEY_CONNECTED, device.isConnected() ? 1 : 0);
         Uri uri = context.getContentResolver().insert(SensorContentProvider.CONTENT_URI, values);
         long sensorId = Long.valueOf(uri.getLastPathSegment());
-        sensor.setId(sensorId);
+        device.setId(sensorId);
     }
 
     // Getting single object
-    public Sensor get(long id) {
+    public Device get(long id) {
 
         Cursor cursor = context.getContentResolver().query(SensorContentProvider.CONTENT_URI,
                 new String[]{
@@ -108,24 +108,24 @@ public class SensorDao {
             return null;
         }
 
-        Sensor sensor = new Sensor();
-        sensor.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
-        sensor.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
-        sensor.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
-        sensor.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
-        sensor.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
-        sensor.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
-        sensor.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
-        sensor.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
-        sensor.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
+        Device device = new Device();
+        device.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
+        device.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+        device.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
+        device.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
+        device.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
+        device.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+        device.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
+        device.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
+        device.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
         cursor.close();
 
         // return object
-        return sensor;
+        return device;
     }
 
     // Getting single object
-    public Sensor findByMacAddress(String macAddress) {
+    public Device findByMacAddress(String macAddress) {
 
         Cursor cursor = context.getContentResolver().query(SensorContentProvider.CONTENT_URI,
             new String[]{
@@ -152,26 +152,26 @@ public class SensorDao {
             return null;
         }
 
-        Sensor sensor = new Sensor();
-        sensor.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
-        sensor.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
-        sensor.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
-        sensor.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
-        sensor.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
-        sensor.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
-        sensor.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
-        sensor.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
-        sensor.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
+        Device device = new Device();
+        device.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
+        device.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+        device.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
+        device.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
+        device.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
+        device.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+        device.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
+        device.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
+        device.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
         cursor.close();
 
         // return object
-        return sensor;
+        return device;
     }
 
     // Getting All objects
-    public List<Sensor> getAll() {
+    public List<Device> getAll() {
 
-        List<Sensor> toReturnList = new ArrayList<Sensor>();
+        List<Device> toReturnList = new ArrayList<Device>();
         // Select All Query
         Cursor cursor = context.getContentResolver().query(SensorContentProvider.CONTENT_URI,
                 new String[]{
@@ -194,17 +194,17 @@ public class SensorDao {
         if (cursor.moveToFirst()) {
             do {
 
-                Sensor sensor = new Sensor();
-                sensor.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
-                sensor.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
-                sensor.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
-                sensor.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
-                sensor.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
-                sensor.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
-                sensor.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
-                sensor.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
-                sensor.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
-                toReturnList.add(sensor);
+                Device device = new Device();
+                device.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
+                device.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+                device.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
+                device.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
+                device.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
+                device.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                device.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
+                device.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
+                device.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
+                toReturnList.add(device);
 
             } while (cursor.moveToNext());
         }
@@ -215,9 +215,9 @@ public class SensorDao {
     }
 
     // Getting All objects
-    public List<Sensor> getAllActive() {
+    public List<Device> getAllActive() {
 
-        List<Sensor> toReturnList = new ArrayList<Sensor>();
+        List<Device> toReturnList = new ArrayList<Device>();
         // Select All Query
         Cursor cursor = context.getContentResolver().query(SensorContentProvider.CONTENT_URI,
                 new String[]{
@@ -242,17 +242,17 @@ public class SensorDao {
         if (cursor.moveToFirst()) {
             do {
 
-                Sensor sensor = new Sensor();
-                sensor.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
-                sensor.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
-                sensor.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
-                sensor.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
-                sensor.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
-                sensor.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
-                sensor.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
-                sensor.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
-                sensor.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
-                toReturnList.add(sensor);
+                Device device = new Device();
+                device.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
+                device.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+                device.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
+                device.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
+                device.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
+                device.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                device.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
+                device.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
+                device.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
+                toReturnList.add(device);
 
             } while (cursor.moveToNext());
         }
@@ -263,9 +263,9 @@ public class SensorDao {
     }
 
     // Getting All objects
-    public List<Sensor> getAllInactive() {
+    public List<Device> getAllInactive() {
 
-        List<Sensor> toReturnList = new ArrayList<Sensor>();
+        List<Device> toReturnList = new ArrayList<Device>();
         // Select All Query
         Cursor cursor = context.getContentResolver().query(SensorContentProvider.CONTENT_URI,
                 new String[]{
@@ -290,17 +290,17 @@ public class SensorDao {
         if (cursor.moveToFirst()) {
             do {
 
-                Sensor sensor = new Sensor();
-                sensor.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
-                sensor.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
-                sensor.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
-                sensor.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
-                sensor.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
-                sensor.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
-                sensor.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
-                sensor.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
-                sensor.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
-                toReturnList.add(sensor);
+                Device device = new Device();
+                device.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
+                device.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+                device.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
+                device.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
+                device.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
+                device.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                device.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
+                device.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
+                device.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
+                toReturnList.add(device);
 
             } while (cursor.moveToNext());
         }
@@ -311,26 +311,26 @@ public class SensorDao {
     }
 
     // Updating single object
-    public long update(Sensor sensor) {
+    public long update(Device device) {
 
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, sensor.getName());
-        values.put(KEY_CODE, sensor.getCode());
-        values.put(KEY_SERIAL, sensor.getSerial());
-        values.put(KEY_VERSION, sensor.getVersion());
-        values.put(KEY_DESCRIPTION, sensor.getDescription());
-        values.put(KEY_MAC_ADDRESS, sensor.getMacAddress());
-        values.put(KEY_ACTIVE, sensor.isActive() ? 1 : 0);
-        values.put(KEY_CONNECTED, sensor.isConnected() ? 1 : 0);
+        values.put(KEY_NAME, device.getName());
+        values.put(KEY_CODE, device.getCode());
+        values.put(KEY_SERIAL, device.getSerial());
+        values.put(KEY_VERSION, device.getVersion());
+        values.put(KEY_DESCRIPTION, device.getDescription());
+        values.put(KEY_MAC_ADDRESS, device.getMacAddress());
+        values.put(KEY_ACTIVE, device.isActive() ? 1 : 0);
+        values.put(KEY_CONNECTED, device.isConnected() ? 1 : 0);
 
         context.getContentResolver().update(SensorContentProvider.CONTENT_URI,
                 values,
                 KEY_ID + "=?",
                 new String[]{
-                        String.valueOf(sensor.getId())
+                        String.valueOf(device.getId())
                 }
         );
-        return sensor.getId();
+        return device.getId();
     }
 
     // Updating single object
@@ -348,11 +348,11 @@ public class SensorDao {
 
 
     // Deleting single object
-    public void delete(Sensor sensor) {
+    public void delete(Device device) {
         context.getContentResolver().delete(SensorContentProvider.CONTENT_URI,
                 KEY_ID + "=?",
                 new String[]{
-                        String.valueOf(sensor.getId())
+                        String.valueOf(device.getId())
                 }
         );
     }

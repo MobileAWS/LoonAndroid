@@ -4,7 +4,6 @@ package com.maws.loonandroid.dao;
  * Created by Andrexxjc on 10/05/2015.
  */
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,7 +14,7 @@ import java.util.List;
 /**
  * Created by Andrexxjc on 07/05/2015.
  */
-public class SensorCharacteristicDao {
+public class DeviceCharacteristicDao {
 
     // Contacts table name
     public static final String TABLE_NAME = "tblSensorCharacteristic";
@@ -26,7 +25,7 @@ public class SensorCharacteristicDao {
 
     private Context context;
 
-    public SensorCharacteristicDao(Context context) {
+    public DeviceCharacteristicDao(Context context) {
         this.context = context;
     }
 

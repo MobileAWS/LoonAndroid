@@ -8,7 +8,7 @@ import java.util.UUID;
  * Created by Andrexxjc on 10/05/2015.
  * This object holds the configuration of each one of the services inside the sensor
  */
-public class SensorCharacteristic {
+public class DeviceCharacteristic {
 
     public static final String _CHAR_BATTERY_DATA = "2a19";
     public static final String _CHAR_THERMO_DATA = "2a1c";
@@ -29,9 +29,9 @@ public class SensorCharacteristic {
     private long id;
     private String name;
 
-    public SensorCharacteristic(){}
+    public DeviceCharacteristic(){}
 
-    public SensorCharacteristic(String name){
+    public DeviceCharacteristic(String name){
         this.name = name;
     }
 
@@ -43,13 +43,13 @@ public class SensorCharacteristic {
 
     public void setName(String name) { this.name = name; }
 
-    public static List<SensorCharacteristic> createDefaultSensorCharacteristics(){
+    public static List<DeviceCharacteristic> createDefaultSensorCharacteristics(){
 
-        List<SensorCharacteristic> toReturn = new ArrayList<SensorCharacteristic>();
-        toReturn.add(new SensorCharacteristic("Bed"));
-        toReturn.add(new SensorCharacteristic("Chair"));
-        toReturn.add(new SensorCharacteristic("Toilet"));
-        toReturn.add(new SensorCharacteristic("Incontinence"));
+        List<DeviceCharacteristic> toReturn = new ArrayList<DeviceCharacteristic>();
+        toReturn.add(new DeviceCharacteristic("Bed"));
+        toReturn.add(new DeviceCharacteristic("Chair"));
+        toReturn.add(new DeviceCharacteristic("Toilet"));
+        toReturn.add(new DeviceCharacteristic("Incontinence"));
         return toReturn;
     }
 
