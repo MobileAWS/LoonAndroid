@@ -11,7 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.maws.loonandroid.R;
-import com.maws.loonandroid.adapters.SensorServiceListAdapter;
+import com.maws.loonandroid.adapters.DeviceServiceListAdapter;
 import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.DeviceCharacteristicDao;
 import com.maws.loonandroid.models.Device;
@@ -30,7 +30,7 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
     private Button viewHistory;
     private ImageView signalIV, batteryIV, checkIV;
     private ListView sensorServicesLV;
-    private SensorServiceListAdapter adapter;
+    private DeviceServiceListAdapter adapter;
 
 
     @Override
@@ -68,7 +68,7 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
             codeTV.setText(currentDevice.getName());
 
             /*List<DeviceCharacteristic> services = ssDao.getAllBySensorId(currentDevice.getId(), lDao.getReadableDatabase());
-            adapter = new SensorServiceListAdapter(this,services);
+            adapter = new DeviceServiceListAdapter(this,services);
             sensorServicesLV.setAdapter(adapter);*/
         }
     }

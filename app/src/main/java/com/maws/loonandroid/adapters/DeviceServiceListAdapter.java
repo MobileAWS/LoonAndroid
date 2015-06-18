@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by Andrexxjc on 15/05/2015.
  */
-public class SensorServiceListAdapter extends BaseAdapter {
+public class DeviceServiceListAdapter extends BaseAdapter {
 
     private final Context context;
     private final List<DeviceCharacteristic> items;
@@ -26,7 +26,7 @@ public class SensorServiceListAdapter extends BaseAdapter {
         ImageView soundIV;
     }
 
-    public SensorServiceListAdapter(Context context, List<DeviceCharacteristic> values) {
+    public DeviceServiceListAdapter(Context context, List<DeviceCharacteristic> values) {
         this.context = context;
         this.items = values;
     }

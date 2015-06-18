@@ -23,7 +23,7 @@ import com.maws.loonandroid.R;
 import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.activities.MonitorActivity;
 import com.maws.loonandroid.activities.ScanDevicesActivity;
-import com.maws.loonandroid.adapters.SensorListAdapter;
+import com.maws.loonandroid.adapters.DeviceListAdapter;
 import com.maws.loonandroid.contentproviders.AlertContentProvider;
 import com.maws.loonandroid.contentproviders.DeviceContentProvider;
 import com.maws.loonandroid.dao.AlertDao;
@@ -46,7 +46,7 @@ public class SensorFragment extends Fragment implements
     private View emptyLayout;
     private TextView activeSensorHeaderTV, inactiveSensorHeaderTV;
     private ListView sensorsLV, inactiveSensorsLV;
-    private SensorListAdapter adapter, inactiveAdapter;
+    private DeviceListAdapter adapter, inactiveAdapter;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -97,7 +97,7 @@ public class SensorFragment extends Fragment implements
 
         List<Device> devices = sDao.getAllActive();
         if(devices.size() > 0) {
-            adapter = new SensorListAdapter(this.getActivity(), devices);
+            adapter = new DeviceListAdapter(this.getActivity(), devices);
             sensorsLV.setAdapter(adapter);
 
             sensorsLV.setVisibility(View.VISIBLE);
@@ -109,7 +109,7 @@ public class SensorFragment extends Fragment implements
 
         List<Device> inactiveDevices = sDao.getAllInactive();
         if(inactiveDevices.size() > 0) {
-            inactiveAdapter = new SensorListAdapter(this.getActivity(), inactiveDevices);
+            inactiveAdapter = new DeviceListAdapter(this.getActivity(), inactiveDevices);
             inactiveSensorsLV.setAdapter(inactiveAdapter);
 
             inactiveSensorsLV.setVisibility(View.VISIBLE);

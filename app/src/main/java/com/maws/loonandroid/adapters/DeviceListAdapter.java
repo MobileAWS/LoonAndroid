@@ -32,9 +32,9 @@ import java.util.List;
 /**
  * Created by Andrexxjc on 12/04/2015.
  */
-public class SensorListAdapter extends BaseAdapter {
+public class DeviceListAdapter extends BaseAdapter {
 
-    private static final String TAG = "SensorListAdapter";
+    private static final String TAG = "DeviceListAdapter";
     private final Context context;
     private final List<Device> items;
 
@@ -45,7 +45,7 @@ public class SensorListAdapter extends BaseAdapter {
         LinearLayout alarmsLL;
     }
 
-    public SensorListAdapter(Context context, List<Device> values) {
+    public DeviceListAdapter(Context context, List<Device> values) {
         this.context = context;
         this.items = values;
     }
