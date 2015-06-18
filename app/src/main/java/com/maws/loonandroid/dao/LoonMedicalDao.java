@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class LoonMedicalDao extends SQLiteOpenHelper {
 
     public static final String _DATABASE_NAME = "loonmedical";
-    public static final int _DATABASE_VERSION = 10;
+    public static final int _DATABASE_VERSION = 11;
     private Context context;
 
     public LoonMedicalDao( Context context ) {
@@ -21,11 +21,11 @@ public class LoonMedicalDao extends SQLiteOpenHelper {
         UserDao userDao = new UserDao(context);
         userDao.onCreate(db);
 
-        SensorDao sensorDao = new SensorDao(context);
-        sensorDao.onCreate(db);
+        DeviceDao deviceDao = new DeviceDao(context);
+        deviceDao.onCreate(db);
 
-        SensorCharacteristicDao sensorCharacteristicDao = new SensorCharacteristicDao(context);
-        sensorCharacteristicDao.onCreate(db);
+        DeviceCharacteristicDao deviceCharacteristicDao = new DeviceCharacteristicDao(context);
+        deviceCharacteristicDao.onCreate(db);
 
         AlertDao alertDao = new AlertDao(context);
         alertDao.onCreate(db);
@@ -44,11 +44,11 @@ public class LoonMedicalDao extends SQLiteOpenHelper {
         UserDao userDao = new UserDao(context);
         userDao.onUpgrade(db, oldVersion, newVersion);
 
-        SensorDao sensorDao = new SensorDao(context);
-        sensorDao.onUpgrade(db, oldVersion, newVersion);
+        DeviceDao deviceDao = new DeviceDao(context);
+        deviceDao.onUpgrade(db, oldVersion, newVersion);
 
-        SensorCharacteristicDao sensorCharacteristicDao = new SensorCharacteristicDao(context);
-        sensorCharacteristicDao.onUpgrade(db, oldVersion, newVersion);
+        DeviceCharacteristicDao deviceCharacteristicDao = new DeviceCharacteristicDao(context);
+        deviceCharacteristicDao.onUpgrade(db, oldVersion, newVersion);
 
         AlertDao alertDao = new AlertDao(context);
         alertDao.onUpgrade(db, oldVersion, newVersion);
@@ -67,8 +67,8 @@ public class LoonMedicalDao extends SQLiteOpenHelper {
         UserDao userDao = new UserDao(context);
         userDao.deleteAll(db);
 
-        SensorDao sensorDao = new SensorDao(context);
-        sensorDao.deleteAll(db);
+        DeviceDao deviceDao = new DeviceDao(context);
+        deviceDao.deleteAll(db);
 
         AlertDao alertDao = new AlertDao(context);
         alertDao.deleteAll(db);

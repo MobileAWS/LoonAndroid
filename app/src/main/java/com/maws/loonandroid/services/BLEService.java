@@ -3,28 +3,23 @@ package com.maws.loonandroid.services;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Intent;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
-import com.maws.loonandroid.dao.LoonMedicalDao;
-import com.maws.loonandroid.dao.SensorDao;
-import com.maws.loonandroid.gatt.GattCharacteristicReadCallback;
+
+import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.gatt.GattManager;
 import com.maws.loonandroid.gatt.events.GattEvent;
 import com.maws.loonandroid.gatt.operations.GattCharacteristicReadOperation;
 import com.maws.loonandroid.gatt.operations.GattConnectOperation;
-import com.maws.loonandroid.gatt.operations.GattDescriptorWriteOperation;
 import com.maws.loonandroid.gatt.operations.GattSetNotificationOperation;
 import com.maws.loonandroid.models.Alert;
-import com.maws.loonandroid.models.Sensor;
-import com.maws.loonandroid.models.SensorCharacteristic;
-import com.maws.loonandroid.models.SensorService;
+import com.maws.loonandroid.models.Device;
+import com.maws.loonandroid.models.DeviceCharacteristic;
+import com.maws.loonandroid.models.DeviceService;
 import com.maws.loonandroid.util.Util;
 
 import org.droidparts.bus.EventBus;
@@ -32,7 +27,6 @@ import org.droidparts.bus.EventReceiver;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by Andrexxjc on 30/05/2015.
@@ -89,12 +83,12 @@ public class BLEService extends Service
 
         //i need to read the database for devices
         //LoonMedicalDao lDao = new LoonMedicalDao(this);
-        SensorDao sDao = new SensorDao(this);
-        List<Sensor> sensors = sDao.getAllActive();
+        DeviceDao sDao = new DeviceDao(this);
+        List<Device> devices = sDao.getAllActive();
 
-        for(Sensor sensor: sensors){
+        for(Device device : devices){
             //i need to get the mac address and try to connect to it
-            connect(sensor.getMacAddress());
+            connect(device.getMacAddress());
         }
     }
 
@@ -164,53 +158,53 @@ public class BLEService extends Service
         switch (data.gattEvent){
             case GattEvent.GATT_CONECTION_STATE_CHANGED:
 
-                //here, i need to get the sensor from the database and update its conected status
-                SensorDao sDao = new SensorDao(this);
-                Sensor sensor = sDao.findByMacAddress(data.address);
-                if(sensor != null && data.newState == BluetoothProfile.STATE_CONNECTED){
-                    sensor.setConnected(true);
+                //here, i need to get the device from the database and update its conected status
+                DeviceDao sDao = new DeviceDao(this);
+                Device device = sDao.findByMacAddress(data.address);
+                if(device != null && data.newState == BluetoothProfile.STATE_CONNECTED){
+                    device.setConnected(true);
                 }else{
-                    sensor.setConnected(false);
+                    device.setConnected(false);
                 }
-                sDao.update(sensor);
+                sDao.update(device);
                 break;
             case GattEvent.GATT_SERVICES_DISCOVERED:
 
                 //I need the device to read all characteristics
-                BluetoothDevice device = null;
+                BluetoothDevice bluetoothDevice = null;
                 try {
-                    device = mBluetoothAdapter.getRemoteDevice(data.address);
+                    bluetoothDevice = mBluetoothAdapter.getRemoteDevice(data.address);
                 } catch (Exception ex) {
                     //just don't connect to the device if the mac address is weird
                 }
 
-                if (device == null) {
+                if (bluetoothDevice == null) {
                     Log.w(TAG, "Device not found.  Unable to connect.");
                     return;
                 }
 
                 //once i have discovered the services i need to read a couple of them for information on the device
                 GattCharacteristicReadOperation readInitialCare = new GattCharacteristicReadOperation(
-                        device,
-                        SensorService.UUID_CARE_SENTINEL_SERVICE,
-                        SensorCharacteristic._CHAR_CARE_SENTINEL,
+                        bluetoothDevice,
+                        DeviceService.UUID_CARE_SENTINEL_SERVICE,
+                        DeviceCharacteristic._CHAR_CARE_SENTINEL,
                         null
                 );
                 manager.queue(readInitialCare);
 
                 //lastly, i subscribe to the notification service
                 GattSetNotificationOperation operation = new GattSetNotificationOperation(
-                        device,
-                        SensorService.UUID_CARE_SENTINEL_SERVICE,
-                        SensorCharacteristic._CHAR_CARE_SENTINEL,
-                        SensorCharacteristic._DESCRIPTOR_CARE_SENTINEL_NOTIFICATIONS
+                        bluetoothDevice,
+                        DeviceService.UUID_CARE_SENTINEL_SERVICE,
+                        DeviceCharacteristic._CHAR_CARE_SENTINEL,
+                        DeviceCharacteristic._DESCRIPTOR_CARE_SENTINEL_NOTIFICATIONS
                 );
                 manager.queue(operation);
                 break;
 
             case GattEvent.GATT_CHARACTERISTIC_CHANGED:
                 //the care sentinel characteristic has changed
-                if(data.characteristic.getUuid().equals(SensorCharacteristic._CHAR_CARE_SENTINEL) ){
+                if(data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_CARE_SENTINEL) ){
                     String result = Integer.toBinaryString( data.characteristic.getValue()[0] );
                     updateDeviceState(data.address, result, true);
                     Log.d(TAG, "The new value of this chara is " + result);
@@ -218,7 +212,7 @@ public class BLEService extends Service
                 break;
 
             case GattEvent.GATT_CHARACTERISTIC_READ:
-                if(data.characteristic.getUuid().equals(SensorCharacteristic._CHAR_CARE_SENTINEL) ){
+                if(data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_CARE_SENTINEL) ){
                     String result = Integer.toBinaryString( data.characteristic.getValue()[0] );
                     updateDeviceState(data.address, result, false);
                     Log.d(TAG, "The new value of this chara is " + result);
@@ -244,9 +238,9 @@ public class BLEService extends Service
         newState = builder.toString();
         if(fireNotification && switchValues.containsKey(address)){
 
-            SensorDao sDao = new SensorDao(this);
-            Sensor sensor = sDao.findByMacAddress(address);
-            if(sensor != null) {
+            DeviceDao sDao = new DeviceDao(this);
+            Device device = sDao.findByMacAddress(address);
+            if(device != null) {
 
                 String previousState = switchValues.get(address);
 
@@ -256,9 +250,9 @@ public class BLEService extends Service
                     if (previousState.charAt(i) != newState.charAt(i)) {
                         //send an alarm to the broadcast receiver
                         Alert realAlert = new Alert();
-                        realAlert.setSensorId(sensor.getId());
+                        realAlert.setDeviceId(device.getId());
                         realAlert.setIsOn( newState.charAt(i) == '1' );
-                        realAlert.setSensorServiceId(i);
+                        realAlert.setDeviceServiceId(i);
                         Util.generateAlarm(this, realAlert);
                         break;
                     }

@@ -20,9 +20,9 @@ import android.widget.TextView;
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.BluetoothDeviceAdapter;
-import com.maws.loonandroid.dao.SensorDao;
+import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.fragments.AddSensorDialogFragment;
-import com.maws.loonandroid.models.Sensor;
+import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.views.CustomToast;
 
 /**
@@ -64,13 +64,13 @@ public class ScanDevicesActivity extends ActionBarActivity {
         sensorsLV = (ListView) findViewById(R.id.sensorsLV);
         scanAdapter = new BluetoothDeviceAdapter(this, new BluetoothDeviceAdapter.BluetoothDeviceOptionListener() {
             @Override
-            public void onDeviceAdded(Sensor sensor) {
-                showSensorDialog(sensor);
+            public void onDeviceAdded(Device device) {
+                showSensorDialog(device);
             }
 
             @Override
-            public void onDeviceIgnored(Sensor sensor) {
-                ignoreSensor(sensor);
+            public void onDeviceIgnored(Device device) {
+                ignoreSensor(device);
             }
         });
         sensorsLV.setAdapter(scanAdapter);
@@ -121,7 +121,7 @@ public class ScanDevicesActivity extends ActionBarActivity {
     private void stopScanning(){
         if(LoonAndroid.demoMode && !isFinishing()){
             discovering = false;
-            scanAdapter.add(Sensor.createFakeSensor());
+            scanAdapter.add(com.maws.loonandroid.models.Device.createFakeDevice());
             scanPB.setVisibility(View.GONE);
             try{
                 if(scanAdapter.getCount() == 0){
@@ -165,12 +165,12 @@ public class ScanDevicesActivity extends ActionBarActivity {
                 short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, defaultShort);
 
                 //i need to know if this device is already on our database
-                SensorDao sDao = new SensorDao(ScanDevicesActivity.this);
-                Sensor mSensor = sDao.findByMacAddress(device.getAddress());
-                if(mSensor == null){
-                    mSensor = new Sensor(device);
+                DeviceDao sDao = new DeviceDao(ScanDevicesActivity.this);
+                Device mDevice = sDao.findByMacAddress(device.getAddress());
+                if(mDevice == null){
+                    mDevice = new Device(device);
                 }
-                scanAdapter.add(mSensor);
+                scanAdapter.add(mDevice);
                 scanAdapter.notifyDataSetChanged();
             }
         }
@@ -244,30 +244,30 @@ public class ScanDevicesActivity extends ActionBarActivity {
         }
     }
 
-    public void showSensorDialog(Sensor sensor){
-        //for now, let's create a random sensor and add it to the dialog
-        AddSensorDialogFragment newFragment = AddSensorDialogFragment.newInstance(sensor, new AddSensorDialogFragment.AddSensorDialogListener() {
+    public void showSensorDialog(Device device){
+        //for now, let's create a random device and add it to the dialog
+        AddSensorDialogFragment newFragment = AddSensorDialogFragment.newInstance(device, new AddSensorDialogFragment.AddSensorDialogListener() {
             @Override
-            public void onSensorAdded(Sensor sensor) {
+            public void onSensorAdded(Device sensor) {
                 addSensor(sensor);
             }
         });
         newFragment.show(getSupportFragmentManager(), "dialog");
     }
 
-    private void addSensor(Sensor sensor){
-        sensor.setActive(true);
-        saveSensor(sensor);
+    private void addSensor(Device device){
+        device.setActive(true);
+        saveSensor(device);
     }
 
-    private void ignoreSensor(Sensor sensor){
-        sensor.setActive(false);
-        saveSensor(sensor);
+    private void ignoreSensor(Device device){
+        device.setActive(false);
+        saveSensor(device);
     }
 
-    private void saveSensor(Sensor sensor){
-        SensorDao sDao = new SensorDao(this);
-        sDao.create(sensor);
+    private void saveSensor(Device device){
+        DeviceDao sDao = new DeviceDao(this);
+        sDao.create(device);
         scanAdapter.notifyDataSetChanged();
     }
 

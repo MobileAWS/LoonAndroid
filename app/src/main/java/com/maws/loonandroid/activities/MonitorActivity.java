@@ -4,24 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.SensorServiceListAdapter;
-import com.maws.loonandroid.dao.LoonMedicalDao;
-import com.maws.loonandroid.dao.SensorDao;
-import com.maws.loonandroid.dao.SensorCharacteristicDao;
-import com.maws.loonandroid.models.Sensor;
-import com.maws.loonandroid.models.SensorCharacteristic;
-
-import java.util.List;
+import com.maws.loonandroid.dao.DeviceDao;
+import com.maws.loonandroid.dao.DeviceCharacteristicDao;
+import com.maws.loonandroid.models.Device;
 
 /**
  * Created by Andrexxjc on 15/05/2015.
@@ -66,15 +59,15 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
 
 
     private void loadInformation(){
-        SensorDao sDao = new SensorDao(this);
-        Sensor currentSensor = sDao.get(sensorId);
+        DeviceDao sDao = new DeviceDao(this);
+        Device currentDevice = sDao.get(sensorId);
 
-        if(currentSensor != null) {
-            SensorCharacteristicDao ssDao = new SensorCharacteristicDao(this);
-            nameTV.setText(TextUtils.isEmpty(currentSensor.getDescription())?currentSensor.getName():currentSensor.getDescription());
-            codeTV.setText(currentSensor.getName());
+        if(currentDevice != null) {
+            DeviceCharacteristicDao ssDao = new DeviceCharacteristicDao(this);
+            nameTV.setText(TextUtils.isEmpty(currentDevice.getDescription())? currentDevice.getName(): currentDevice.getDescription());
+            codeTV.setText(currentDevice.getName());
 
-            /*List<SensorCharacteristic> services = ssDao.getAllBySensorId(currentSensor.getId(), lDao.getReadableDatabase());
+            /*List<DeviceCharacteristic> services = ssDao.getAllBySensorId(currentDevice.getId(), lDao.getReadableDatabase());
             adapter = new SensorServiceListAdapter(this,services);
             sensorServicesLV.setAdapter(adapter);*/
         }

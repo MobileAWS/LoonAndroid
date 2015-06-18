@@ -11,9 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.activities.MainActivity;
-import com.maws.loonandroid.adapters.UploadSensorListAdapter;
 import com.maws.loonandroid.adapters.UserListAdapter;
-import com.maws.loonandroid.models.Sensor;
 import com.maws.loonandroid.models.User;
 
 import java.util.ArrayList;

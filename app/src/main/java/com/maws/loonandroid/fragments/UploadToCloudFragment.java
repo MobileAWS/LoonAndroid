@@ -11,12 +11,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.maws.loonandroid.R;
-import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.adapters.UploadSensorListAdapter;
-import com.maws.loonandroid.dao.SensorDao;
-import com.maws.loonandroid.models.Sensor;
+import com.maws.loonandroid.dao.DeviceDao;
+import com.maws.loonandroid.models.Device;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,10 +44,10 @@ public class UploadToCloudFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_upload, container, false);
         sensorsLV = (ListView) rootView.findViewById(R.id.sensorsLV);
 
-        SensorDao sDao = new SensorDao(this.getActivity());
-        List<Sensor> sensors = sDao.getAllActive();
+        DeviceDao sDao = new DeviceDao(this.getActivity());
+        List<Device> devices = sDao.getAllActive();
 
-        adapter = new UploadSensorListAdapter(this.getActivity(), sensors);
+        adapter = new UploadSensorListAdapter(this.getActivity(), devices);
         sensorsLV.setAdapter(adapter);
 
         sensorsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {

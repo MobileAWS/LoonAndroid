@@ -10,8 +10,6 @@ import android.support.v4.app.NotificationCompat;
 
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.models.Alert;
-import com.maws.loonandroid.models.Sensor;
-import com.maws.loonandroid.models.SensorCharacteristic;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,8 +41,8 @@ public class Util {
 
         Intent intent = new Intent();
         intent.setAction("com.maws.loonandroid.alert");
-        intent.putExtra("sensorId", alert.getSensorId());
-        intent.putExtra("serviceId", alert.getSensorServiceId());
+        intent.putExtra("deviceId", alert.getDeviceId());
+        intent.putExtra("serviceId", alert.getDeviceServiceId());
         intent.putExtra("isOn", alert.isOn());
         intent.putExtra("dateMillis", new Date().getTime());
         context.sendBroadcast(intent);

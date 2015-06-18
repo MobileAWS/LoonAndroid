@@ -1,8 +1,6 @@
 package com.maws.loonandroid.adapters;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.database.Cursor;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -10,14 +8,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.maws.loonandroid.R;
-import com.maws.loonandroid.dao.AlertDao;
-import com.maws.loonandroid.dao.LoonMedicalDao;
-import com.maws.loonandroid.models.Alert;
-import com.maws.loonandroid.models.Sensor;
-import com.maws.loonandroid.views.CustomToast;
+import com.maws.loonandroid.models.Device;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,12 +19,12 @@ import java.util.List;
 public class BluetoothDeviceAdapter extends BaseAdapter {
 
     private final Context context;
-    private final List<Sensor> items = new ArrayList<Sensor>();
+    private final List<Device> items = new ArrayList<Device>();
     private BluetoothDeviceOptionListener listener;
 
     public interface BluetoothDeviceOptionListener{
-        public void onDeviceAdded(Sensor sensor);
-        public void onDeviceIgnored(Sensor sensor);
+        public void onDeviceAdded(Device device);
+        public void onDeviceIgnored(Device device);
     }
 
     static class ViewHolder {
@@ -60,22 +53,22 @@ public class BluetoothDeviceAdapter extends BaseAdapter {
         this.notifyDataSetChanged();
     }
 
-    public void add(Sensor sensor){
-        if(!items.contains(sensor)) {
-            this.items.add(sensor);
+    public void add(Device device){
+        if(!items.contains(device)) {
+            this.items.add(device);
             this.notifyDataSetChanged();
         }
     };
 
-    public void remove(Sensor sensor){
-        Sensor toRemove = null;
-        for(Sensor mSensor: items){
-            if(mSensor.getMacAddress() == sensor.getMacAddress()){
-                toRemove = mSensor;
+    public void remove(Device device){
+        Device toRemove = null;
+        for(Device mDevice : items){
+            if(mDevice.getMacAddress() == device.getMacAddress()){
+                toRemove = mDevice;
             }
         }
         if(toRemove != null) {
-            this.items.remove(sensor);
+            this.items.remove(device);
             this.notifyDataSetChanged();
         }
     };
@@ -105,13 +98,13 @@ public class BluetoothDeviceAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        final Sensor thisSensor = items.get(position);
-        viewHolder.nameTV.setText(thisSensor.getName());
-        viewHolder.serialTV.setText(thisSensor.getMacAddress());
+        final Device thisDevice = items.get(position);
+        viewHolder.nameTV.setText(thisDevice.getName());
+        viewHolder.serialTV.setText(thisDevice.getMacAddress());
         viewHolder.addBtn.setText(" " + context.getString(R.string.use_it));
         viewHolder.ignoreBtn.setText(" " + context.getString(R.string.ignore));
 
-        if(thisSensor.getId() >= 0){
+        if(thisDevice.getId() >= 0){
             viewHolder.addBtn.setVisibility(View.GONE);
             viewHolder.ignoreBtn.setVisibility(View.GONE);
             viewHolder.alreadyAddedTV.setVisibility(View.VISIBLE);
@@ -123,14 +116,14 @@ public class BluetoothDeviceAdapter extends BaseAdapter {
             viewHolder.addBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onDeviceAdded(thisSensor);
+                    listener.onDeviceAdded(thisDevice);
                 }
             });
 
             viewHolder.ignoreBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onDeviceIgnored(thisSensor);
+                    listener.onDeviceIgnored(thisDevice);
                 }
             });
         }

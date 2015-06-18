@@ -25,14 +25,13 @@ import com.maws.loonandroid.activities.MonitorActivity;
 import com.maws.loonandroid.activities.ScanDevicesActivity;
 import com.maws.loonandroid.adapters.SensorListAdapter;
 import com.maws.loonandroid.contentproviders.AlertContentProvider;
-import com.maws.loonandroid.contentproviders.SensorContentProvider;
+import com.maws.loonandroid.contentproviders.DeviceContentProvider;
 import com.maws.loonandroid.dao.AlertDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
-import com.maws.loonandroid.dao.SensorDao;
+import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.models.Alert;
-import com.maws.loonandroid.models.Sensor;
-import com.maws.loonandroid.models.SensorCharacteristic;
-import com.maws.loonandroid.models.SensorService;
+import com.maws.loonandroid.models.Device;
+import com.maws.loonandroid.models.DeviceService;
 import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
 import java.util.List;
@@ -94,11 +93,11 @@ public class SensorFragment extends Fragment implements
 
         //get database
         LoonMedicalDao loonDao = new LoonMedicalDao(this.getActivity());
-        SensorDao sDao = new SensorDao(this.getActivity());
+        DeviceDao sDao = new DeviceDao(this.getActivity());
 
-        List<Sensor> sensors = sDao.getAllActive();
-        if(sensors.size() > 0) {
-            adapter = new SensorListAdapter(this.getActivity(), sensors);
+        List<Device> devices = sDao.getAllActive();
+        if(devices.size() > 0) {
+            adapter = new SensorListAdapter(this.getActivity(), devices);
             sensorsLV.setAdapter(adapter);
 
             sensorsLV.setVisibility(View.VISIBLE);
@@ -108,9 +107,9 @@ public class SensorFragment extends Fragment implements
             activeSensorHeaderTV.setVisibility(View.GONE);
         }
 
-        List<Sensor> inactiveSensors = sDao.getAllInactive();
-        if(inactiveSensors.size() > 0) {
-            inactiveAdapter = new SensorListAdapter(this.getActivity(), inactiveSensors);
+        List<Device> inactiveDevices = sDao.getAllInactive();
+        if(inactiveDevices.size() > 0) {
+            inactiveAdapter = new SensorListAdapter(this.getActivity(), inactiveDevices);
             inactiveSensorsLV.setAdapter(inactiveAdapter);
 
             inactiveSensorsLV.setVisibility(View.VISIBLE);
@@ -120,7 +119,7 @@ public class SensorFragment extends Fragment implements
             inactiveSensorHeaderTV.setVisibility(View.GONE);
         }
 
-        if(sensors.size() <= 0 && inactiveSensors.size() <= 0){
+        if(devices.size() <= 0 && inactiveDevices.size() <= 0){
             emptyLayout.setVisibility(View.VISIBLE);
         }else{
             emptyLayout.setVisibility(View.GONE);
@@ -170,7 +169,7 @@ public class SensorFragment extends Fragment implements
 
     private void removeSensors(){
         LoonMedicalDao loonDao = new LoonMedicalDao(this.getActivity());
-        SensorDao sDao = new SensorDao(this.getActivity());
+        DeviceDao sDao = new DeviceDao(this.getActivity());
         sDao.deleteAll(loonDao.getWritableDatabase());
         loadSensors();
     }
@@ -181,13 +180,13 @@ public class SensorFragment extends Fragment implements
 
             Random ran = new Random();
             int x = ran.nextInt(adapter.getCount());
-            Sensor sSensor = (Sensor)adapter.getItem(x);
+            Device sDevice = (Device)adapter.getItem(x);
 
             //now let's pick a service at random
-            int randomService = ran.nextInt(SensorService.serviceNames.values().size());
+            int randomService = ran.nextInt(DeviceService.serviceNames.values().size());
             Alert fakeAlert = new Alert();
-            fakeAlert.setSensorId(sSensor.getId());
-            fakeAlert.setSensorServiceId(randomService);
+            fakeAlert.setDeviceId(sDevice.getId());
+            fakeAlert.setDeviceServiceId(randomService);
             fakeAlert.setIsOn(ran.nextBoolean());
             Util.generateAlarm(this.getActivity(), fakeAlert);
         }
@@ -200,7 +199,7 @@ public class SensorFragment extends Fragment implements
         if(id == 0) {
             String[] projection = {
                     AlertDao.KEY_ID,
-                    AlertDao.KEY_SENSOR_SERVICE_ID,
+                    AlertDao.KEY_DEVICE_SERVICE_ID,
                     AlertDao.KEY_ALERT_DATE,
                     AlertDao.KEY_DISMISSED
             };
@@ -210,18 +209,18 @@ public class SensorFragment extends Fragment implements
 
         } else if(id == 1){
             String[] projection = {
-                    SensorDao.KEY_ID,
-                    SensorDao.KEY_NAME,
-                    SensorDao.KEY_CODE,
-                    SensorDao.KEY_SERIAL,
-                    SensorDao.KEY_VERSION,
-                    SensorDao.KEY_DESCRIPTION,
-                    SensorDao.KEY_MAC_ADDRESS,
-                    SensorDao.KEY_ACTIVE,
-                    SensorDao.KEY_CONNECTED
+                    DeviceDao.KEY_ID,
+                    DeviceDao.KEY_NAME,
+                    DeviceDao.KEY_CODE,
+                    DeviceDao.KEY_SERIAL,
+                    DeviceDao.KEY_VERSION,
+                    DeviceDao.KEY_DESCRIPTION,
+                    DeviceDao.KEY_MAC_ADDRESS,
+                    DeviceDao.KEY_ACTIVE,
+                    DeviceDao.KEY_CONNECTED
             };
             CursorLoader cursorLoader = new CursorLoader(this.getActivity(),
-                    SensorContentProvider.CONTENT_URI, projection, null, null, null);
+                    DeviceContentProvider.CONTENT_URI, projection, null, null, null);
             return cursorLoader;
         }
         return null;

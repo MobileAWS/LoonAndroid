@@ -115,8 +115,8 @@
             android:enabled="true"
             android:exported="false" />
         <provider
-            android:name=".contentproviders.SensorContentProvider"
-            android:authorities="com.maws.loonandroid.contentproviders.SensorContentProvider"
+            android:name=".contentproviders.DeviceContentProvider"
+            android:authorities="com.maws.loonandroid.contentproviders.DeviceContentProvider"
             android:enabled="true"
             android:exported="false" />
         <provider

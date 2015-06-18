@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.ifaces.MultipleSelectionAdapter;
-import com.maws.loonandroid.models.Sensor;
 import com.maws.loonandroid.models.User;
 
 import java.util.ArrayList;

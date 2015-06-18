@@ -7,7 +7,9 @@ package com.maws.loonandroid.dao;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import com.maws.loonandroid.models.SensorCharacteristic;
+
+import com.maws.loonandroid.models.DeviceCharacteristic;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +19,7 @@ import java.util.List;
 public class DeviceCharacteristicDao {
 
     // Contacts table name
-    public static final String TABLE_NAME = "tblSensorCharacteristic";
+    public static final String TABLE_NAME = "tblDeviceCharacteristic";
 
     // Contacts Table Columns names
     public static final String KEY_ID = "_id";
@@ -50,7 +52,7 @@ public class DeviceCharacteristicDao {
     }
 
     // Getting single object
-    public SensorCharacteristic get(int id, SQLiteDatabase db) {
+    public DeviceCharacteristic get(int id, SQLiteDatabase db) {
 
         Cursor cursor = db.query(TABLE_NAME,
                 new String[] {
@@ -68,20 +70,20 @@ public class DeviceCharacteristicDao {
             return null;
         }
 
-        SensorCharacteristic sensor = new SensorCharacteristic();
-        sensor.setId(cursor.getLong(0));
-        sensor.setName(cursor.getString(1));
+        DeviceCharacteristic device = new DeviceCharacteristic();
+        device.setId(cursor.getLong(0));
+        device.setName(cursor.getString(1));
         db.close();
         cursor.close();
 
         // return object
-        return sensor;
+        return device;
     }
 
     // Getting All objects
-    public List<SensorCharacteristic> getAll(SQLiteDatabase db) {
+    public List<DeviceCharacteristic> getAll(SQLiteDatabase db) {
 
-        List<SensorCharacteristic> toReturnList = new ArrayList<SensorCharacteristic>();
+        List<DeviceCharacteristic> toReturnList = new ArrayList<DeviceCharacteristic>();
         // Select All Query
         String selectQuery = "SELECT * FROM " + TABLE_NAME;
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -90,10 +92,10 @@ public class DeviceCharacteristicDao {
         if (cursor.moveToFirst()) {
             do {
 
-                SensorCharacteristic sensorCharacteristic = new SensorCharacteristic();
-                sensorCharacteristic.setId(cursor.getLong(0));
-                sensorCharacteristic.setName(cursor.getString(1));
-                toReturnList.add(sensorCharacteristic);
+                DeviceCharacteristic deviceCharacteristic = new DeviceCharacteristic();
+                deviceCharacteristic.setId(cursor.getLong(0));
+                deviceCharacteristic.setName(cursor.getString(1));
+                toReturnList.add(deviceCharacteristic);
 
             } while (cursor.moveToNext());
         }

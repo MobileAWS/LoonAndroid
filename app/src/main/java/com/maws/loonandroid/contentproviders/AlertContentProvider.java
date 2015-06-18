@@ -179,8 +179,8 @@ public class AlertContentProvider extends ContentProvider {
     private void checkColumns(String[] projection) {
         String[] available = {
                 AlertDao.KEY_ID,
-                AlertDao.KEY_SENSOR_ID,
-                AlertDao.KEY_SENSOR_SERVICE_ID,
+                AlertDao.KEY_DEVICE_ID,
+                AlertDao.KEY_DEVICE_SERVICE_ID,
                 AlertDao.KEY_ALERT_DATE,
                 AlertDao.KEY_IS_ON,
                 AlertDao.KEY_DISMISSED,

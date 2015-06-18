@@ -1,34 +1,27 @@
 package com.maws.loonandroid.adapters;
 
 import android.content.Context;
-import android.graphics.Typeface;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.ifaces.MultipleSelectionAdapter;
-import com.maws.loonandroid.models.IconTextOption;
-import com.maws.loonandroid.models.Sensor;
+import com.maws.loonandroid.models.Device;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by Andrexxjc on 12/04/2015.
  */
-public class UploadSensorListAdapter extends BaseAdapter implements MultipleSelectionAdapter<Sensor> {
+public class UploadSensorListAdapter extends BaseAdapter implements MultipleSelectionAdapter<Device> {
 
     private final Context context;
-    private final List<Sensor> items;
+    private final List<Device> items;
     private List<Integer> selectedItems;
 
     static class ViewHolder {
@@ -36,7 +29,7 @@ public class UploadSensorListAdapter extends BaseAdapter implements MultipleSele
         ImageView checkIV;
     }
 
-    public UploadSensorListAdapter(Context context, List<Sensor> values) {
+    public UploadSensorListAdapter(Context context, List<Device> values) {
         this.context = context;
         this.items = values;
         this.selectedItems = new ArrayList<Integer>();
@@ -77,8 +70,8 @@ public class UploadSensorListAdapter extends BaseAdapter implements MultipleSele
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Sensor thisSensor = items.get(position);
-        viewHolder.nameTV.setText(thisSensor.getName());
+        Device thisDevice = items.get(position);
+        viewHolder.nameTV.setText(thisDevice.getName());
 
         //select or unselect items
         if(selectedItems.contains( new Integer(position) )){
@@ -92,8 +85,8 @@ public class UploadSensorListAdapter extends BaseAdapter implements MultipleSele
 
 
     @Override
-    public List<Sensor> getSelectedItems(){
-        ArrayList<Sensor> selectedItemsToReturn = new ArrayList<Sensor>();
+    public List<Device> getSelectedItems(){
+        ArrayList<Device> selectedItemsToReturn = new ArrayList<Device>();
         for(Integer position: selectedItems){
             selectedItemsToReturn.add(items.get(position));
         }

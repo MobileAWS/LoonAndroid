@@ -9,8 +9,8 @@ import java.util.Date;
 public class Alert {
 
     private long id;
-    private long sensorId;
-    private int sensorServiceId;
+    private long deviceId;
+    private int deviceServiceId;
     private Date alertDate;
     private boolean isOn = true;
     private boolean dismissed = false;
@@ -23,12 +23,12 @@ public class Alert {
     public void setId(long id) { this.id = id;}
     public boolean isDismissed() { return dismissed; }
     public void setDismissed(boolean dismissed) { this.dismissed = dismissed; }
-    public int getSensorServiceId() { return sensorServiceId; }
-    public void setSensorServiceId(int sensorServiceId) { this.sensorServiceId = sensorServiceId; }
+    public int getDeviceServiceId() { return deviceServiceId; }
+    public void setDeviceServiceId(int deviceServiceId) { this.deviceServiceId = deviceServiceId; }
     public Date getAlertDate() { return alertDate; }
     public void setAlertDate(Date alertDate) { this.alertDate = alertDate; }
-    public long getSensorId() {return sensorId;}
-    public void setSensorId(long sensorId) {this.sensorId = sensorId;}
+    public long getDeviceId() {return deviceId;}
+    public void setDeviceId(long deviceId) {this.deviceId = deviceId;}
     public boolean isOn() {return isOn;}
     public void setIsOn(boolean isOn) {this.isOn = isOn;}
     public Date getDismissedDate() { return dismissedDate; }

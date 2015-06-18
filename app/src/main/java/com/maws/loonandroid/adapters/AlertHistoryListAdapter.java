@@ -64,7 +64,7 @@ public class AlertHistoryListAdapter extends BaseAdapter{
 
         Alert thisAlert = items.get(position);
         viewHolder.alertDateTV.setText(Util.longDateFormat.format(thisAlert.getAlertDate()));
-        viewHolder.descAlertHv.setText( context.getString(DeviceService.serviceNames.get(thisAlert.getSensorServiceId())) );
+        viewHolder.descAlertHv.setText( context.getString(DeviceService.serviceNames.get(thisAlert.getDeviceServiceId())) );
         viewHolder.alertDateHv.setText( Util.timeOnlyFormat.format(thisAlert.getAlertDate()));
         viewHolder.dismissDateHv.setText(thisAlert.getDismissedDate() == null ? "-" : Util.timeOnlyFormat.format(thisAlert.getDismissedDate()));
         viewHolder.timeAlertHv.setText(thisAlert.getDismissedDate() == null ? "-" : String.format( context.getString(R.string.elapsed_time), Util.totalTimeDismissed(thisAlert.getTotalTimeAlarm())) ) ;

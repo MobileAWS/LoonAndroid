@@ -6,7 +6,7 @@ import java.util.UUID;
 
 /**
  * Created by Andrexxjc on 10/05/2015.
- * This object holds the configuration of each one of the services inside the sensor
+ * This object holds the configuration of each one of the services inside the device
  */
 public class DeviceCharacteristic {
 
@@ -43,7 +43,7 @@ public class DeviceCharacteristic {
 
     public void setName(String name) { this.name = name; }
 
-    public static List<DeviceCharacteristic> createDefaultSensorCharacteristics(){
+    public static List<DeviceCharacteristic> createDefaultDeviceCharacteristics(){
 
         List<DeviceCharacteristic> toReturn = new ArrayList<DeviceCharacteristic>();
         toReturn.add(new DeviceCharacteristic("Bed"));

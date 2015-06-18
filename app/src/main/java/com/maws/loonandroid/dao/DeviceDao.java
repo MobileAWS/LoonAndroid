@@ -2,7 +2,8 @@ package com.maws.loonandroid.dao;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.maws.loonandroid.contentproviders.SensorContentProvider;
+
+import com.maws.loonandroid.contentproviders.DeviceContentProvider;
 import com.maws.loonandroid.models.Device;
 
 import android.content.ContentValues;
@@ -17,7 +18,7 @@ import android.net.Uri;
 public class DeviceDao {
 
     // Contacts table name
-    public static final String TABLE_NAME = "tblSensor";
+    public static final String TABLE_NAME = "tblDevice";
 
     // Contacts Table Columns names
     public static final String KEY_ID = "_id";
@@ -29,6 +30,7 @@ public class DeviceDao {
     public static final String KEY_MAC_ADDRESS = "mac";
     public static final String KEY_ACTIVE = "active";
     public static final String KEY_CONNECTED = "connected";
+    public static final String KEY_HARDWARE_ID = "hw_id";
 
     private Context context;
 
@@ -48,8 +50,8 @@ public class DeviceDao {
                 KEY_DESCRIPTION + " TEXT," +
                 KEY_ACTIVE + " TINYINT," +
                 KEY_MAC_ADDRESS + " TEXT," +
-                KEY_CONNECTED + " TINYINT" + ")";
-
+                KEY_CONNECTED + " TINYINT," +
+                KEY_HARDWARE_ID + " TEXT" + ")";
         db.execSQL(CREATE_TABLE);
 
     }
@@ -58,7 +60,6 @@ public class DeviceDao {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-
         // Create tables again
         onCreate(db);
     }
@@ -75,15 +76,17 @@ public class DeviceDao {
         values.put(KEY_MAC_ADDRESS, device.getMacAddress());
         values.put(KEY_ACTIVE, device.isActive()?1:0);
         values.put(KEY_CONNECTED, device.isConnected() ? 1 : 0);
-        Uri uri = context.getContentResolver().insert(SensorContentProvider.CONTENT_URI, values);
-        long sensorId = Long.valueOf(uri.getLastPathSegment());
-        device.setId(sensorId);
+        values.put(KEY_HARDWARE_ID, device.getHardwareId());
+
+        Uri uri = context.getContentResolver().insert(DeviceContentProvider.CONTENT_URI, values);
+        long deviceId = Long.valueOf(uri.getLastPathSegment());
+        device.setId(deviceId);
     }
 
     // Getting single object
     public Device get(long id) {
 
-        Cursor cursor = context.getContentResolver().query(SensorContentProvider.CONTENT_URI,
+        Cursor cursor = context.getContentResolver().query(DeviceContentProvider.CONTENT_URI,
                 new String[]{
                         KEY_ID,
                         KEY_NAME,
@@ -93,7 +96,8 @@ public class DeviceDao {
                         KEY_DESCRIPTION,
                         KEY_MAC_ADDRESS,
                         KEY_ACTIVE,
-                        KEY_CONNECTED
+                        KEY_CONNECTED,
+                        KEY_HARDWARE_ID
                 },
                 KEY_ID + "=?",
                 new String[]{
@@ -118,6 +122,7 @@ public class DeviceDao {
         device.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
         device.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
         device.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
+        device.setHardwareId(cursor.getString(cursor.getColumnIndex(KEY_HARDWARE_ID)));
         cursor.close();
 
         // return object
@@ -127,7 +132,7 @@ public class DeviceDao {
     // Getting single object
     public Device findByMacAddress(String macAddress) {
 
-        Cursor cursor = context.getContentResolver().query(SensorContentProvider.CONTENT_URI,
+        Cursor cursor = context.getContentResolver().query(DeviceContentProvider.CONTENT_URI,
             new String[]{
                 KEY_ID,
                 KEY_NAME,
@@ -137,7 +142,8 @@ public class DeviceDao {
                 KEY_DESCRIPTION,
                 KEY_MAC_ADDRESS,
                 KEY_ACTIVE,
-                KEY_CONNECTED
+                KEY_CONNECTED,
+                KEY_HARDWARE_ID
             },
             KEY_MAC_ADDRESS + "=?",
                 new String[]{
@@ -162,6 +168,7 @@ public class DeviceDao {
         device.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
         device.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
         device.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
+        device.setHardwareId(cursor.getString(cursor.getColumnIndex(KEY_HARDWARE_ID)));
         cursor.close();
 
         // return object
@@ -173,7 +180,7 @@ public class DeviceDao {
 
         List<Device> toReturnList = new ArrayList<Device>();
         // Select All Query
-        Cursor cursor = context.getContentResolver().query(SensorContentProvider.CONTENT_URI,
+        Cursor cursor = context.getContentResolver().query(DeviceContentProvider.CONTENT_URI,
                 new String[]{
                         KEY_ID,
                         KEY_NAME,
@@ -183,7 +190,8 @@ public class DeviceDao {
                         KEY_DESCRIPTION,
                         KEY_MAC_ADDRESS,
                         KEY_ACTIVE,
-                        KEY_CONNECTED
+                        KEY_CONNECTED,
+                        KEY_HARDWARE_ID
                 },
                 null,
                 null,
@@ -204,6 +212,7 @@ public class DeviceDao {
                 device.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
                 device.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
                 device.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
+                device.setHardwareId(cursor.getString(cursor.getColumnIndex(KEY_HARDWARE_ID)));
                 toReturnList.add(device);
 
             } while (cursor.moveToNext());
@@ -219,7 +228,7 @@ public class DeviceDao {
 
         List<Device> toReturnList = new ArrayList<Device>();
         // Select All Query
-        Cursor cursor = context.getContentResolver().query(SensorContentProvider.CONTENT_URI,
+        Cursor cursor = context.getContentResolver().query(DeviceContentProvider.CONTENT_URI,
                 new String[]{
                         KEY_ID,
                         KEY_NAME,
@@ -229,7 +238,8 @@ public class DeviceDao {
                         KEY_DESCRIPTION,
                         KEY_MAC_ADDRESS,
                         KEY_ACTIVE,
-                        KEY_CONNECTED
+                        KEY_CONNECTED,
+                        KEY_HARDWARE_ID
                 },
                 KEY_ACTIVE + "=?",
                 new String[]{
@@ -252,6 +262,7 @@ public class DeviceDao {
                 device.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
                 device.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
                 device.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
+                device.setHardwareId(cursor.getString(cursor.getColumnIndex(KEY_HARDWARE_ID)));
                 toReturnList.add(device);
 
             } while (cursor.moveToNext());
@@ -267,7 +278,7 @@ public class DeviceDao {
 
         List<Device> toReturnList = new ArrayList<Device>();
         // Select All Query
-        Cursor cursor = context.getContentResolver().query(SensorContentProvider.CONTENT_URI,
+        Cursor cursor = context.getContentResolver().query(DeviceContentProvider.CONTENT_URI,
                 new String[]{
                         KEY_ID,
                         KEY_NAME,
@@ -277,7 +288,8 @@ public class DeviceDao {
                         KEY_DESCRIPTION,
                         KEY_MAC_ADDRESS,
                         KEY_ACTIVE,
-                        KEY_CONNECTED
+                        KEY_CONNECTED,
+                        KEY_HARDWARE_ID
                 },
                 KEY_ACTIVE + "=?",
                 new String[]{
@@ -300,6 +312,7 @@ public class DeviceDao {
                 device.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
                 device.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
                 device.setConnected(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTED)) == 1);
+                device.setHardwareId(cursor.getString(cursor.getColumnIndex(KEY_HARDWARE_ID)));
                 toReturnList.add(device);
 
             } while (cursor.moveToNext());
@@ -322,8 +335,9 @@ public class DeviceDao {
         values.put(KEY_MAC_ADDRESS, device.getMacAddress());
         values.put(KEY_ACTIVE, device.isActive() ? 1 : 0);
         values.put(KEY_CONNECTED, device.isConnected() ? 1 : 0);
+        values.put(KEY_HARDWARE_ID,device.getHardwareId());
 
-        context.getContentResolver().update(SensorContentProvider.CONTENT_URI,
+        context.getContentResolver().update(DeviceContentProvider.CONTENT_URI,
                 values,
                 KEY_ID + "=?",
                 new String[]{
@@ -334,11 +348,11 @@ public class DeviceDao {
     }
 
     // Updating single object
-    public void disconnectAllSensors() {
+    public void disconnectAllDevice() {
 
         ContentValues values = new ContentValues();
         values.put(KEY_CONNECTED, 0);
-        context.getContentResolver().update(SensorContentProvider.CONTENT_URI,
+        context.getContentResolver().update(DeviceContentProvider.CONTENT_URI,
                 values,
                 null,
                 null
@@ -349,7 +363,7 @@ public class DeviceDao {
 
     // Deleting single object
     public void delete(Device device) {
-        context.getContentResolver().delete(SensorContentProvider.CONTENT_URI,
+        context.getContentResolver().delete(DeviceContentProvider.CONTENT_URI,
                 KEY_ID + "=?",
                 new String[]{
                         String.valueOf(device.getId())
@@ -358,11 +372,11 @@ public class DeviceDao {
     }
 
     public void deleteAll(SQLiteDatabase db){
-        context.getContentResolver().delete(SensorContentProvider.CONTENT_URI,
+        context.getContentResolver().delete(DeviceContentProvider.CONTENT_URI,
                 null,
                 null
         );
-        db.delete(SensorCharacteristicDao.TABLE_NAME, null, null);
+        db.delete(DeviceCharacteristicDao.TABLE_NAME, null, null);
         db.delete(AlertDao.TABLE_NAME, null, null);
 
     }

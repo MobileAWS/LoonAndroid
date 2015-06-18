@@ -8,6 +8,7 @@ import java.util.Date;
 
 /**
  * Created by Andrexxjc on 12/04/2015.
+ * modified by Andres.Prada on 6/17/2015
  */
 public class Device implements Parcelable {
 
@@ -23,6 +24,8 @@ public class Device implements Parcelable {
     private float batteryStatus;
     private int signalStrength;
     private String temperature;
+
+    private String hardwareId;
 
     public Device(){}
 
@@ -111,6 +114,10 @@ public class Device implements Parcelable {
         this.connected = connected;
     }
 
+    public String getHardwareId() { return hardwareId; }
+
+    public void setHardwareId(String hardwareId) { this.hardwareId = hardwareId; }
+
     //methods to handle the parcelable implementation
     @Override
     public int describeContents() {
@@ -163,7 +170,7 @@ public class Device implements Parcelable {
         this.connected = pc.readInt() == 1;
     }
 
-    public static Device createFakeSensor(){
+    public static Device createFakeDevice(){
 
         long currentTime = (new Date()).getTime();
         String currentTimeStr = String.valueOf(currentTime);

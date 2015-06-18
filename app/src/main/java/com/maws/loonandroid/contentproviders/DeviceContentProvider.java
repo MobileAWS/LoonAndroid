@@ -24,11 +24,11 @@ public class DeviceContentProvider extends ContentProvider {
     private LoonMedicalDao loonMedicalDao;
 
     // used for the UriMacher
-    private static final int SENSORS = 30;
-    private static final int SENSOR_ID = 31;
+    private static final int DEVICE = 30;
+    private static final int DEVICE_ID = 31;
 
     private static final String AUTHORITY = "com.maws.loonandroid.contentproviders.DeviceContentProvider";
-    private static final String BASE_PATH = "sensors";
+    private static final String BASE_PATH = "devices";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
 
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
@@ -40,8 +40,8 @@ public class DeviceContentProvider extends ContentProvider {
 
     private static UriMatcher buildUriMatcher(){
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        matcher.addURI(AUTHORITY, BASE_PATH, SENSORS);
-        matcher.addURI(AUTHORITY, BASE_PATH + "/#", SENSOR_ID);
+        matcher.addURI(AUTHORITY, BASE_PATH, DEVICE);
+        matcher.addURI(AUTHORITY, BASE_PATH + "/#", DEVICE_ID);
         return matcher;
     }
 
@@ -67,9 +67,9 @@ public class DeviceContentProvider extends ContentProvider {
 
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
-            case SENSORS:
+            case DEVICE:
                 break;
-            case SENSOR_ID:
+            case DEVICE_ID:
                 // adding the ID to the original query
                 queryBuilder.appendWhere(DeviceDao.KEY_ID + "="
                         + uri.getLastPathSegment());
@@ -99,7 +99,7 @@ public class DeviceContentProvider extends ContentProvider {
         int rowsDeleted = 0;
         long id = 0;
         switch (uriType) {
-            case SENSORS:
+            case DEVICE:
                 id = sqlDB.insert(DeviceDao.TABLE_NAME, null, values);
                 break;
             default:
@@ -115,11 +115,11 @@ public class DeviceContentProvider extends ContentProvider {
         SQLiteDatabase sqlDB = loonMedicalDao.getWritableDatabase();
         int rowsDeleted = 0;
         switch (uriType) {
-            case SENSORS:
+            case DEVICE:
                 rowsDeleted = sqlDB.delete(DeviceDao.TABLE_NAME, selection,
                         selectionArgs);
                 break;
-            case SENSOR_ID:
+            case DEVICE_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
                     rowsDeleted = sqlDB.delete(DeviceDao.TABLE_NAME,
@@ -147,13 +147,13 @@ public class DeviceContentProvider extends ContentProvider {
         SQLiteDatabase sqlDB = loonMedicalDao.getWritableDatabase();
         int rowsUpdated = 0;
         switch (uriType) {
-            case SENSORS:
+            case DEVICE:
                 rowsUpdated = sqlDB.update(DeviceDao.TABLE_NAME,
                         values,
                         selection,
                         selectionArgs);
                 break;
-            case SENSOR_ID:
+            case DEVICE_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
                     rowsUpdated = sqlDB.update(DeviceDao.TABLE_NAME,
@@ -186,7 +186,8 @@ public class DeviceContentProvider extends ContentProvider {
                 DeviceDao.KEY_DESCRIPTION,
                 DeviceDao.KEY_MAC_ADDRESS,
                 DeviceDao.KEY_ACTIVE,
-                DeviceDao.KEY_CONNECTED
+                DeviceDao.KEY_CONNECTED,
+                DeviceDao.KEY_HARDWARE_ID
         };
         if (projection != null) {
             HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));

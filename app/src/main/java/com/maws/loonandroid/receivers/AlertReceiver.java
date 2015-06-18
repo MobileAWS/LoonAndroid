@@ -7,12 +7,11 @@ import android.text.TextUtils;
 
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.AlertDao;
-import com.maws.loonandroid.dao.LoonMedicalDao;
-import com.maws.loonandroid.dao.SensorDao;
+import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.models.Alert;
 import com.maws.loonandroid.models.Customer;
-import com.maws.loonandroid.models.Sensor;
-import com.maws.loonandroid.models.SensorService;
+import com.maws.loonandroid.models.Device;
+import com.maws.loonandroid.models.DeviceService;
 import com.maws.loonandroid.models.Site;
 import com.maws.loonandroid.util.Util;
 
@@ -26,22 +25,22 @@ public class AlertReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        long sensorId = intent.getLongExtra("sensorId", 0);
+        long deviceId = intent.getLongExtra("deviceId", 0);
         int serviceId = intent.getIntExtra("serviceId", -1);
         boolean isOn = intent.getBooleanExtra("isOn", true);
         long alarmDateMillis = intent.getLongExtra("dateMillis", 0);
 
-        SensorDao sDao = new SensorDao(context);
-        Sensor sensor = sDao.get(sensorId);
+        DeviceDao sDao = new DeviceDao(context);
+        Device device = sDao.get(deviceId);
 
-        if( sensorId > 0 && serviceId > -1 && alarmDateMillis >= 0 && sensor != null ) {
+        if( deviceId > 0 && serviceId > -1 && alarmDateMillis >= 0 && device != null ) {
 
             //when i receive an alarm, i want to do 2 things: Save it to the db and show a notification
 
             //let's save it to db
             Alert alert = new Alert();
-            alert.setSensorId(sensorId);
-            alert.setSensorServiceId(serviceId);
+            alert.setDeviceId(deviceId);
+            alert.setDeviceServiceId(serviceId);
             alert.setIsOn(isOn);
             alert.setAlertDate(new Date(alarmDateMillis));
             alert.setCostumerId( Customer.getCurrent(context).getId() );
@@ -51,8 +50,8 @@ public class AlertReceiver extends BroadcastReceiver {
             aDao.create(alert);
 
             //let's show the notification
-            String title = TextUtils.isEmpty(sensor.getDescription())? sensor.getName() : sensor.getDescription();
-            String message = isOn? String.format(context.getString(R.string.push_notification_message_alert_on), context.getString(SensorService.serviceNames.get(serviceId))) : String.format(context.getString(R.string.push_notification_message_alert_off), context.getString(SensorService.serviceNames.get(serviceId)));
+            String title = TextUtils.isEmpty(device.getDescription())? device.getName() : device.getDescription();
+            String message = isOn? String.format(context.getString(R.string.push_notification_message_alert_on), context.getString(DeviceService.serviceNames.get(serviceId))) : String.format(context.getString(R.string.push_notification_message_alert_off), context.getString(DeviceService.serviceNames.get(serviceId)));
             Util.generateNotification(context, title, message);
         }
     }

@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.maws.loonandroid.R;
-import com.maws.loonandroid.models.SensorCharacteristic;
+import com.maws.loonandroid.models.DeviceCharacteristic;
 
 import java.util.List;
 
@@ -19,14 +19,14 @@ import java.util.List;
 public class SensorServiceListAdapter extends BaseAdapter {
 
     private final Context context;
-    private final List<SensorCharacteristic> items;
+    private final List<DeviceCharacteristic> items;
 
     static class ViewHolder {
         TextView nameTV;
         ImageView soundIV;
     }
 
-    public SensorServiceListAdapter(Context context, List<SensorCharacteristic> values) {
+    public SensorServiceListAdapter(Context context, List<DeviceCharacteristic> values) {
         this.context = context;
         this.items = values;
     }
@@ -66,7 +66,7 @@ public class SensorServiceListAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        SensorCharacteristic sService = items.get(position);
+        DeviceCharacteristic sService = items.get(position);
         viewHolder.nameTV.setText(sService.getName());
 
         /*if(sService.isOn()){
