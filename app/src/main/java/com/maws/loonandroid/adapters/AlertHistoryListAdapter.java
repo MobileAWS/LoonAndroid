@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.models.Alert;
-import com.maws.loonandroid.models.SensorService;
+import com.maws.loonandroid.models.DeviceService;
 import com.maws.loonandroid.util.Util;
 import java.util.List;
 
@@ -64,7 +64,7 @@ public class AlertHistoryListAdapter extends BaseAdapter{
 
         Alert thisAlert = items.get(position);
         viewHolder.alertDateTV.setText(Util.longDateFormat.format(thisAlert.getAlertDate()));
-        viewHolder.descAlertHv.setText( context.getString(SensorService.serviceNames.get(thisAlert.getSensorServiceId())) );
+        viewHolder.descAlertHv.setText( context.getString(DeviceService.serviceNames.get(thisAlert.getSensorServiceId())) );
         viewHolder.alertDateHv.setText( Util.timeOnlyFormat.format(thisAlert.getAlertDate()));
         viewHolder.dismissDateHv.setText(thisAlert.getDismissedDate() == null ? "-" : Util.timeOnlyFormat.format(thisAlert.getDismissedDate()));
         viewHolder.timeAlertHv.setText(thisAlert.getDismissedDate() == null ? "-" : String.format( context.getString(R.string.elapsed_time), Util.totalTimeDismissed(thisAlert.getTotalTimeAlarm())) ) ;
