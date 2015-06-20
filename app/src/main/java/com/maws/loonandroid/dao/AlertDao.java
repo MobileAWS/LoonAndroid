@@ -67,7 +67,7 @@ public class AlertDao {
         onCreate(db);
     }
 
-    // Adding new object
+   //TODO borrar cuando se pruebe // Adding new object
     public void create(Alert alert) {
 
         ContentValues values = new ContentValues();
@@ -79,7 +79,7 @@ public class AlertDao {
         values.put(KEY_DISMISSED_DATE, alert.getDismissedDate() == null ? null : alert.getAlertDate().getTime());
         values.put(KEY_TOTAL_TIME_ALARM, alert.getTotalTimeAlarm());
         values.put(KEY_CUSTOMER_ID, alert.getCostumerId());
-        values.put(KEY_SITE_ID, alert.getId());
+        values.put(KEY_SITE_ID, alert.getSiteId());
         context.getContentResolver().insert(AlertContentProvider.CONTENT_URI, values);
     }
 
@@ -277,6 +277,24 @@ public class AlertDao {
     public void deleteAll(SQLiteDatabase db){
         db.delete(TABLE_NAME, null, null);
     }
+
+
+    public void addElement(Alert alert) {
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_DEVICE_ID, alert.getDeviceId());
+        values.put(KEY_DEVICE_SERVICE_ID, alert.getDeviceServiceId());
+        values.put(KEY_ALERT_DATE, alert.getAlertDate() == null ? null : alert.getAlertDate().getTime());
+        values.put(KEY_DISMISSED, alert.isDismissed() ? 1 : 0);
+        values.put(KEY_IS_ON, alert.isOn() ? 1 : 0);
+        values.put(KEY_DISMISSED_DATE, alert.getDismissedDate() == null ? null : alert.getAlertDate().getTime());
+        values.put(KEY_TOTAL_TIME_ALARM, alert.getTotalTimeAlarm());
+        values.put(KEY_CUSTOMER_ID, alert.getCostumerId());
+        values.put(KEY_SITE_ID, alert.getSiteId());
+        context.getContentResolver().insert(AlertContentProvider.CONTENT_URI, values);
+    }
+
+
 
     public Cursor getUndismissedAlertInfo(SQLiteDatabase db, long deviceId){
 

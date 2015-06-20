@@ -7,8 +7,11 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.models.Alert;
+import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.DeviceService;
+import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.util.Util;
 import java.util.List;
 
@@ -61,10 +64,12 @@ public class AlertHistoryListAdapter extends BaseAdapter{
         }else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-
         Alert thisAlert = items.get(position);
+        DevicePropertyDao devicePropertyDao = new DevicePropertyDao(context);
+        DeviceProperty deviceProperty = devicePropertyDao.getElementForID(thisAlert.getDeviceServiceId());
+
         viewHolder.alertDateTV.setText(Util.longDateFormat.format(thisAlert.getAlertDate()));
-        viewHolder.descAlertHv.setText( context.getString(DeviceService.serviceNames.get(thisAlert.getDeviceServiceId())) );
+        viewHolder.descAlertHv.setText( deviceProperty.getValue());
         viewHolder.alertDateHv.setText( Util.timeOnlyFormat.format(thisAlert.getAlertDate()));
         viewHolder.dismissDateHv.setText(thisAlert.getDismissedDate() == null ? "-" : Util.timeOnlyFormat.format(thisAlert.getDismissedDate()));
         viewHolder.timeAlertHv.setText(thisAlert.getDismissedDate() == null ? "-" : String.format( context.getString(R.string.elapsed_time), Util.totalTimeDismissed(thisAlert.getTotalTimeAlarm())) ) ;

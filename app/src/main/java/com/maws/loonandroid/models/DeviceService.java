@@ -3,6 +3,7 @@ package com.maws.loonandroid.models;
 import android.app.Service;
 
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.dao.DevicePropertyDao;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -20,16 +21,13 @@ public class DeviceService {
 
     public static final HashMap<Integer, Integer> serviceNames = new HashMap<Integer, Integer>();
 
-    public static final int SENSOR_BED = 3; //these indexes are mapped to the sensor bit on the device characteristic value.
-    public static final int SENSOR_CHAIR = 2; //these indexes are mapped to the sensor bit on the device characteristic value.
-    public static final int SENSOR_TOILET = 0; //these indexes are mapped to the sensor bit on the device characteristic value.
-    public static final int SENSOR_INCONTINENCE = 1; //these indexes are mapped to the sensor bit on the device characteristic value.
+     //these indexes are mapped to the sensor bit on the device characteristic value.
 
     static{
-        serviceNames.put(SENSOR_BED, R.string.sensor_bed);
-        serviceNames.put(SENSOR_CHAIR, R.string.sensor_chair);
-        serviceNames.put(SENSOR_TOILET, R.string.sensor_toilet);
-        serviceNames.put(SENSOR_INCONTINENCE, R.string.sensor_incontinence);
+        serviceNames.put(DevicePropertyDao.CODE_BED, R.string.sensor_bed);
+        serviceNames.put(DevicePropertyDao.CODE_CHAIR, R.string.sensor_chair);
+        serviceNames.put(DevicePropertyDao.CODE_TOILET, R.string.sensor_toilet);
+        serviceNames.put(DevicePropertyDao.CODE_INCONTINENCE, R.string.sensor_incontinence);
     }
 
     public enum ServiceType{

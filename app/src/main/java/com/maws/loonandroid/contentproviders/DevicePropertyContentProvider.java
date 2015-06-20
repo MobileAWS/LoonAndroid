@@ -10,40 +10,39 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
-import com.maws.loonandroid.dao.PropertyDao;
 import com.maws.loonandroid.enums.LoonDataType;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
 /**
- * Created by Andres Prada on 6/18/2015.
+ * Created by Andres on 6/19/2015.
  */
-public class PropertyContentProvider  extends ContentProvider {
+public class DevicePropertyContentProvider extends ContentProvider {
 
     private LoonMedicalDao loonMedicalDao;
+    
+    private static final int DEVICES = 10;
+    private static final int DEVICES_ID = 20;
 
-
-    private static final int PROPERTY = 10;
-    private static final int PROPERTY_ID = 20;
-
-    private static final String AUTHORITY = "com.maws.loonandroid.contentproviders.PropertyContentProvider";
-    private static final String BASE_PATH = "properties";
+    private static final String AUTHORITY = "com.maws.loonandroid.contentproviders.DevicePropertyContentProvider";
+    private static final String BASE_PATH = "deviceProperties";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
 
 
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
-            + "/properties";
+            + "/deviceProperties";
     public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-            + "/property";
+            + "/deviceProperty";
 
     private static final UriMatcher sURIMatcher = buildUriMatcher();
 
     private static UriMatcher buildUriMatcher(){
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        matcher.addURI(AUTHORITY, BASE_PATH, PROPERTY);
-        matcher.addURI(AUTHORITY, BASE_PATH + "/#", PROPERTY_ID);
+        matcher.addURI(AUTHORITY, BASE_PATH, DEVICES);
+        matcher.addURI(AUTHORITY, BASE_PATH + "/#", DEVICES_ID);
         return matcher;
     }
 
@@ -63,15 +62,15 @@ public class PropertyContentProvider  extends ContentProvider {
         checkColumns(projection);
 
         // Set the table
-        queryBuilder.setTables(PropertyDao.TABLE_NAME);
+        queryBuilder.setTables(DevicePropertyDao.TABLE_NAME);
 
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
-            case PROPERTY:
+            case DEVICES:
                 break;
-            case PROPERTY_ID:
+            case DEVICES_ID:
                 // adding the ID to the original query
-                queryBuilder.appendWhere(PropertyDao.KEY_ID + "="
+                queryBuilder.appendWhere(DevicePropertyDao.KEY_ID + "="
                         + uri.getLastPathSegment());
                 break;
             default:
@@ -96,10 +95,11 @@ public class PropertyContentProvider  extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = loonMedicalDao.getWritableDatabase();
+        int rowsDeleted = 0;
         long id = 0;
         switch (uriType) {
-            case PROPERTY:
-                id = sqlDB.insert(PropertyDao.TABLE_NAME, null, values);
+            case DEVICES:
+                id = sqlDB.insert(DevicePropertyDao.TABLE_NAME, null, values);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -114,19 +114,19 @@ public class PropertyContentProvider  extends ContentProvider {
         SQLiteDatabase sqlDB = loonMedicalDao.getWritableDatabase();
         int rowsDeleted = 0;
         switch (uriType) {
-            case PROPERTY:
-                rowsDeleted = sqlDB.delete(PropertyDao.TABLE_NAME, selection,
+            case DEVICES:
+                rowsDeleted = sqlDB.delete(DevicePropertyDao.TABLE_NAME, selection,
                         selectionArgs);
                 break;
-            case PROPERTY_ID:
+            case DEVICES_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsDeleted = sqlDB.delete(PropertyDao.TABLE_NAME,
-                            PropertyDao.KEY_ID + "=" + id,
+                    rowsDeleted = sqlDB.delete(DevicePropertyDao.TABLE_NAME,
+                            DevicePropertyDao.KEY_ID + "=" + id,
                             null);
                 } else {
-                    rowsDeleted = sqlDB.delete(PropertyDao.TABLE_NAME,
-                            PropertyDao.KEY_ID + "=" + id
+                    rowsDeleted = sqlDB.delete(DevicePropertyDao.TABLE_NAME,
+                            DevicePropertyDao.KEY_ID + "=" + id
                                     + " and " + selection,
                             selectionArgs);
                 }
@@ -145,23 +145,23 @@ public class PropertyContentProvider  extends ContentProvider {
         SQLiteDatabase sqlDB = loonMedicalDao.getWritableDatabase();
         int rowsUpdated = 0;
         switch (uriType) {
-            case PROPERTY:
-                rowsUpdated = sqlDB.update(PropertyDao.TABLE_NAME,
+            case DEVICES:
+                rowsUpdated = sqlDB.update(DevicePropertyDao.TABLE_NAME,
                         values,
                         selection,
                         selectionArgs);
                 break;
-            case PROPERTY_ID:
+            case DEVICES_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsUpdated = sqlDB.update(PropertyDao.TABLE_NAME,
+                    rowsUpdated = sqlDB.update(DevicePropertyDao.TABLE_NAME,
                             values,
-                            PropertyDao.KEY_ID+ "=" + id,
+                            DevicePropertyDao.KEY_ID+ "=" + id,
                             null);
                 } else {
-                    rowsUpdated = sqlDB.update(PropertyDao.TABLE_NAME,
+                    rowsUpdated = sqlDB.update(DevicePropertyDao.TABLE_NAME,
                             values,
-                            PropertyDao.KEY_ID + "=" + id
+                            DevicePropertyDao.KEY_ID + "=" + id
                                     + " and "
                                     + selection,
                             selectionArgs);
@@ -178,8 +178,8 @@ public class PropertyContentProvider  extends ContentProvider {
 
     private void checkColumns(String[] projection) {
         String[] available = {
-                PropertyDao.KEY_ID,
-                PropertyDao.KEY_METRIC
+                DevicePropertyDao.KEY_ID,
+                DevicePropertyDao.KEY_VALUE
         };
         if (projection != null) {
             HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));

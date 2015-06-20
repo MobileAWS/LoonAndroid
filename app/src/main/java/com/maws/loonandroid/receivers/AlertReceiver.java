@@ -8,9 +8,11 @@ import android.text.TextUtils;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.AlertDao;
 import com.maws.loonandroid.dao.DeviceDao;
+import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.models.Alert;
 import com.maws.loonandroid.models.Customer;
 import com.maws.loonandroid.models.Device;
+import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.DeviceService;
 import com.maws.loonandroid.models.Site;
 import com.maws.loonandroid.util.Util;
@@ -43,15 +45,17 @@ public class AlertReceiver extends BroadcastReceiver {
             alert.setDeviceServiceId(serviceId);
             alert.setIsOn(isOn);
             alert.setAlertDate(new Date(alarmDateMillis));
-            alert.setCostumerId( Customer.getCurrent(context).getId() );
-            alert.setSiteId( Site.getCurrent(context).getId() );
+            alert.setCostumerId(Customer.getCurrent(context).getId());
+            alert.setSiteId(Site.getCurrent(context).getId());
 
             AlertDao aDao = new AlertDao(context);
-            aDao.create(alert);
+            aDao.addElement(alert);
+            DevicePropertyDao devicePropertyDao = new DevicePropertyDao(context);
+            DeviceProperty deviceProperty =devicePropertyDao.getElementForID(serviceId);
 
             //let's show the notification
             String title = TextUtils.isEmpty(device.getDescription())? device.getName() : device.getDescription();
-            String message = isOn? String.format(context.getString(R.string.push_notification_message_alert_on), context.getString(DeviceService.serviceNames.get(serviceId))) : String.format(context.getString(R.string.push_notification_message_alert_off), context.getString(DeviceService.serviceNames.get(serviceId)));
+            String message = isOn? String.format(context.getString(R.string.push_notification_message_alert_on), deviceProperty.getValue()) : String.format(context.getString(R.string.push_notification_message_alert_off), deviceProperty.getValue());
             Util.generateNotification(context, title, message);
         }
     }

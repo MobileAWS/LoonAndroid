@@ -129,6 +129,16 @@
             android:authorities="com.maws.loonandroid.contentproviders.SiteContentProvider"
             android:enabled="true"
             android:exported="false" />
+        <provider
+            android:name=".contentproviders.PropertyContentProvider"
+            android:authorities="com.maws.loonandroid.contentproviders.PropertyContentProvider"
+            android:enabled="true"
+            android:exported="false" />
+        <provider
+            android:name=".contentproviders.DevicePropertyContentProvider"
+            android:authorities="com.maws.loonandroid.contentproviders.DevicePropertyContentProvider"
+            android:enabled="true"
+            android:exported="false" />
 
         <activity
             android:name=".activities.HistorySensorActivity"

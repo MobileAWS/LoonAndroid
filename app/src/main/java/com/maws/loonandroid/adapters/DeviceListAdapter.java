@@ -18,11 +18,14 @@ import android.widget.TextView;
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.AlertDao;
+import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
+import com.maws.loonandroid.dao.PropertyDao;
 import com.maws.loonandroid.gatt.GattManager;
 import com.maws.loonandroid.gatt.operations.GattConnectOperation;
 import com.maws.loonandroid.models.Alert;
 import com.maws.loonandroid.models.Device;
+import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.DeviceService;
 import com.maws.loonandroid.util.Util;
 
@@ -178,7 +181,10 @@ public class DeviceListAdapter extends BaseAdapter {
                 long alertId = alertCursor.getLong(alertCursor.getColumnIndex(AlertDao.KEY_ID));
 
                 int service = alertCursor.getInt(alertCursor.getColumnIndex(AlertDao.KEY_DEVICE_SERVICE_ID));
-                String serviceName = context.getString(DeviceService.serviceNames.get(service));
+                DevicePropertyDao devicePropertyDao = new DevicePropertyDao(context);
+                DeviceProperty deviceProperty =devicePropertyDao.getElementForID(service);
+
+                String serviceName = deviceProperty.getValue();
                 View alertView = LinearLayout.inflate(context, R.layout.alert_item, null);
                 ((TextView)alertView.findViewById(R.id.alertDateTV)).setText(Util.sdf.format(alertDate));
                 ((TextView)alertView.findViewById(R.id.serviceTV)).setText(serviceName);
