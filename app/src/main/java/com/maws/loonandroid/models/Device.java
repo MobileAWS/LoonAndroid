@@ -14,9 +14,12 @@ public class Device implements Parcelable {
 
     private long id = -1;
     private String name;
+    private String hardwareId;
+    private Date createdAt;
+    private Date updatedAt;
     private String code;
-    private String serial;
-    private String version;
+    private String firmwareVersion;
+    private String hardwareVersion;
     private String description;
     private String macAddress;
     private boolean connected = false;
@@ -24,8 +27,6 @@ public class Device implements Parcelable {
     private float batteryStatus;
     private int signalStrength;
     private String temperature;
-
-    private String hardwareId;
 
     public Device(){}
 
@@ -48,22 +49,6 @@ public class Device implements Parcelable {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public String getSerial() {
-        return serial;
-    }
-
-    public void setSerial(String serial) {
-        this.serial = serial;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
     }
 
     public float getBatteryStatus() {
@@ -118,6 +103,22 @@ public class Device implements Parcelable {
 
     public void setHardwareId(String hardwareId) { this.hardwareId = hardwareId; }
 
+    public String getFirmwareVersion() {
+        return firmwareVersion;
+    }
+
+    public void setFirmwareVersion(String firmwareVersion) {
+        this.firmwareVersion = firmwareVersion;
+    }
+
+    public String getHardwareVersion() {
+        return hardwareVersion;
+    }
+
+    public void setHardwareVersion(String hardwareVersion) {
+        this.hardwareVersion = hardwareVersion;
+    }
+
     //methods to handle the parcelable implementation
     @Override
     public int describeContents() {
@@ -130,8 +131,9 @@ public class Device implements Parcelable {
         pc.writeLong(this.id);
         pc.writeString(this.name);
         pc.writeString(this.code);
-        pc.writeString(this.serial);
-        pc.writeString(this.version);
+        pc.writeString(this.hardwareId);
+        pc.writeString(this.firmwareVersion);
+        pc.writeString(this.hardwareVersion);
         pc.writeString(this.description);
         pc.writeString(this.macAddress);
         pc.writeFloat(this.batteryStatus);
@@ -159,8 +161,9 @@ public class Device implements Parcelable {
         this.id = pc.readLong();
         this.name = pc.readString();
         this.code = pc.readString();
-        this.serial = pc.readString();
-        this.version = pc.readString();
+        this.hardwareId = pc.readString();
+        this.firmwareVersion = pc.readString();
+        this.hardwareVersion = pc.readString();
         this.description = pc.readString();
         this.macAddress = pc.readString();
         this.batteryStatus = pc.readFloat();
@@ -177,8 +180,9 @@ public class Device implements Parcelable {
         Device device = new Device();
         device.setName("Device " + currentTimeStr.substring(currentTimeStr.length() - 4));
         device.setCode(currentTimeStr.substring(currentTimeStr.length() - 4));
-        device.setSerial(currentTimeStr);
-        device.setVersion("v1");
+        device.setHardwareId(currentTimeStr);
+        device.setFirmwareVersion("1.0");
+        device.setHardwareVersion("1.1");
         device.setDescription("");
         device.setMacAddress("00-00-" + currentTimeStr.substring(currentTimeStr.length() - 4, currentTimeStr.length() - 2 ) + "-"+ currentTimeStr.substring(currentTimeStr.length() - 2));
         device.setBatteryStatus(3);

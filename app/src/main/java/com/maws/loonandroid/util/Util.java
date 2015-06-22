@@ -7,10 +7,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
-
 import com.maws.loonandroid.R;
-import com.maws.loonandroid.models.Alert;
-
+import com.maws.loonandroid.models.DeviceProperty;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -37,13 +35,13 @@ public class Util {
         return null;
     }
 
-    public static void generateAlarm(Context context, Alert alert){
+    public static void generateAlarm(Context context, DeviceProperty dProperty){
 
         Intent intent = new Intent();
-        intent.setAction("com.maws.loonandroid.alert");
-        intent.putExtra("deviceId", alert.getDeviceId());
-        intent.putExtra("serviceId", alert.getDeviceServiceId());
-        intent.putExtra("isOn", alert.isOn());
+        intent.setAction("com.maws.loonandroid.deviceproperty");
+        intent.putExtra("deviceId", dProperty.getDeviceId());
+        intent.putExtra("propertyId", dProperty.getPropertyId());
+        intent.putExtra("value", dProperty.getValue());
         intent.putExtra("dateMillis", new Date().getTime());
         context.sendBroadcast(intent);
     }

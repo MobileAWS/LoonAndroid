@@ -24,8 +24,8 @@ public class DeviceDao {
     public static final String KEY_ID = "_id";
     public static final String KEY_NAME = "name";
     public static final String KEY_CODE = "code";
-    public static final String KEY_SERIAL = "serial";
-    public static final String KEY_VERSION = "version";
+    public static final String KEY_FIRMWARE_VERSION = "firmwareVersion";
+    public static final String KEY_HARDWARE_VERSION = "hardwareVersion";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_MAC_ADDRESS = "mac";
     public static final String KEY_ACTIVE = "active";
@@ -45,8 +45,8 @@ public class DeviceDao {
                 KEY_ID + " INTEGER PRIMARY KEY," +
                 KEY_NAME + " TEXT," +
                 KEY_CODE + " TEXT," +
-                KEY_SERIAL + " TEXT," +
-                KEY_VERSION + " TEXT," +
+                KEY_FIRMWARE_VERSION + " TEXT," +
+                KEY_HARDWARE_VERSION + " TEXT," +
                 KEY_DESCRIPTION + " TEXT," +
                 KEY_ACTIVE + " TINYINT," +
                 KEY_MAC_ADDRESS + " TEXT," +
@@ -70,8 +70,8 @@ public class DeviceDao {
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, device.getName());
         values.put(KEY_CODE, device.getCode());
-        values.put(KEY_SERIAL, device.getSerial());
-        values.put(KEY_VERSION, device.getVersion());
+        values.put(KEY_FIRMWARE_VERSION, device.getFirmwareVersion());
+        values.put(KEY_HARDWARE_VERSION, device.getHardwareVersion());
         values.put(KEY_DESCRIPTION, device.getDescription());
         values.put(KEY_MAC_ADDRESS, device.getMacAddress());
         values.put(KEY_ACTIVE, device.isActive()?1:0);
@@ -91,8 +91,8 @@ public class DeviceDao {
                         KEY_ID,
                         KEY_NAME,
                         KEY_CODE,
-                        KEY_SERIAL,
-                        KEY_VERSION,
+                        KEY_FIRMWARE_VERSION,
+                        KEY_HARDWARE_VERSION,
                         KEY_DESCRIPTION,
                         KEY_MAC_ADDRESS,
                         KEY_ACTIVE,
@@ -116,8 +116,8 @@ public class DeviceDao {
         device.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
         device.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
         device.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
-        device.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
-        device.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
+        device.setFirmwareVersion(cursor.getString(cursor.getColumnIndex(KEY_FIRMWARE_VERSION)));
+        device.setHardwareVersion(cursor.getString(cursor.getColumnIndex(KEY_HARDWARE_VERSION)));
         device.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
         device.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
         device.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
@@ -137,8 +137,8 @@ public class DeviceDao {
                 KEY_ID,
                 KEY_NAME,
                 KEY_CODE,
-                KEY_SERIAL,
-                KEY_VERSION,
+                KEY_FIRMWARE_VERSION,
+                KEY_HARDWARE_VERSION,
                 KEY_DESCRIPTION,
                 KEY_MAC_ADDRESS,
                 KEY_ACTIVE,
@@ -162,8 +162,8 @@ public class DeviceDao {
         device.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
         device.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
         device.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
-        device.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
-        device.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
+        device.setFirmwareVersion(cursor.getString(cursor.getColumnIndex(KEY_FIRMWARE_VERSION)));
+        device.setHardwareVersion(cursor.getString(cursor.getColumnIndex(KEY_HARDWARE_VERSION)));
         device.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
         device.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
         device.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
@@ -185,8 +185,8 @@ public class DeviceDao {
                         KEY_ID,
                         KEY_NAME,
                         KEY_CODE,
-                        KEY_SERIAL,
-                        KEY_VERSION,
+                        KEY_FIRMWARE_VERSION,
+                        KEY_HARDWARE_VERSION,
                         KEY_DESCRIPTION,
                         KEY_MAC_ADDRESS,
                         KEY_ACTIVE,
@@ -206,8 +206,8 @@ public class DeviceDao {
                 device.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
                 device.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
                 device.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
-                device.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
-                device.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
+                device.setFirmwareVersion(cursor.getString(cursor.getColumnIndex(KEY_FIRMWARE_VERSION)));
+                device.setHardwareVersion(cursor.getString(cursor.getColumnIndex(KEY_HARDWARE_VERSION)));
                 device.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
                 device.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
                 device.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
@@ -233,8 +233,8 @@ public class DeviceDao {
                         KEY_ID,
                         KEY_NAME,
                         KEY_CODE,
-                        KEY_SERIAL,
-                        KEY_VERSION,
+                        KEY_FIRMWARE_VERSION,
+                        KEY_HARDWARE_VERSION,
                         KEY_DESCRIPTION,
                         KEY_MAC_ADDRESS,
                         KEY_ACTIVE,
@@ -256,8 +256,8 @@ public class DeviceDao {
                 device.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
                 device.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
                 device.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
-                device.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
-                device.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
+                device.setFirmwareVersion(cursor.getString(cursor.getColumnIndex(KEY_FIRMWARE_VERSION)));
+                device.setHardwareVersion(cursor.getString(cursor.getColumnIndex(KEY_HARDWARE_VERSION)));
                 device.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
                 device.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
                 device.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
@@ -283,8 +283,8 @@ public class DeviceDao {
                         KEY_ID,
                         KEY_NAME,
                         KEY_CODE,
-                        KEY_SERIAL,
-                        KEY_VERSION,
+                        KEY_FIRMWARE_VERSION,
+                        KEY_HARDWARE_VERSION,
                         KEY_DESCRIPTION,
                         KEY_MAC_ADDRESS,
                         KEY_ACTIVE,
@@ -306,8 +306,8 @@ public class DeviceDao {
                 device.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
                 device.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
                 device.setCode(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
-                device.setSerial(cursor.getString(cursor.getColumnIndex(KEY_SERIAL)));
-                device.setVersion(cursor.getString(cursor.getColumnIndex(KEY_VERSION)));
+                device.setFirmwareVersion(cursor.getString(cursor.getColumnIndex(KEY_FIRMWARE_VERSION)));
+                device.setHardwareVersion(cursor.getString(cursor.getColumnIndex(KEY_HARDWARE_VERSION)));
                 device.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
                 device.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)) == 1);
                 device.setMacAddress(cursor.getString(cursor.getColumnIndex(KEY_MAC_ADDRESS)));
@@ -326,17 +326,60 @@ public class DeviceDao {
     // Updating single object
     public long update(Device device) {
 
+        //Don't update firmwareVersion, hardwareVersion or hardwareId because they're updated async and we may delete them
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, device.getName());
         values.put(KEY_CODE, device.getCode());
-        values.put(KEY_SERIAL, device.getSerial());
-        values.put(KEY_VERSION, device.getVersion());
         values.put(KEY_DESCRIPTION, device.getDescription());
         values.put(KEY_MAC_ADDRESS, device.getMacAddress());
         values.put(KEY_ACTIVE, device.isActive() ? 1 : 0);
         values.put(KEY_CONNECTED, device.isConnected() ? 1 : 0);
-        values.put(KEY_HARDWARE_ID,device.getHardwareId());
 
+        context.getContentResolver().update(DeviceContentProvider.CONTENT_URI,
+                values,
+                KEY_ID + "=?",
+                new String[]{
+                        String.valueOf(device.getId())
+                }
+        );
+        return device.getId();
+    }
+
+    // Updating single property so we don't delete it with the async calls.
+    public long updateFirmwareVersion(Device device) {
+        //Don't update firmwareVersion, hardwareVersion or hardwareId because they're updated async and we may delete them
+        ContentValues values = new ContentValues();
+        values.put(KEY_FIRMWARE_VERSION, device.getFirmwareVersion());
+        context.getContentResolver().update(DeviceContentProvider.CONTENT_URI,
+                values,
+                KEY_ID + "=?",
+                new String[]{
+                        String.valueOf(device.getId())
+                }
+        );
+        return device.getId();
+    }
+
+    // Updating single property so we don't delete it with the async calls.
+    public long updateHardwareVersion(Device device) {
+        //Don't update firmwareVersion, hardwareVersion or hardwareId because they're updated async and we may delete them
+        ContentValues values = new ContentValues();
+        values.put(KEY_HARDWARE_VERSION, device.getHardwareVersion());
+        context.getContentResolver().update(DeviceContentProvider.CONTENT_URI,
+                values,
+                KEY_ID + "=?",
+                new String[]{
+                        String.valueOf(device.getId())
+                }
+        );
+        return device.getId();
+    }
+
+    // Updating single property so we don't delete it with the async calls.
+    public long updateHardwareId(Device device) {
+        //Don't update firmwareVersion, hardwareVersion or hardwareId because they're updated async and we may delete them
+        ContentValues values = new ContentValues();
+        values.put(KEY_HARDWARE_VERSION, device.getHardwareVersion());
         context.getContentResolver().update(DeviceContentProvider.CONTENT_URI,
                 values,
                 KEY_ID + "=?",
@@ -377,7 +420,7 @@ public class DeviceDao {
                 null
         );
         db.delete(DeviceCharacteristicDao.TABLE_NAME, null, null);
-        db.delete(AlertDao.TABLE_NAME, null, null);
+        db.delete(DevicePropertyDao.TABLE_NAME, null, null);
 
     }
 }

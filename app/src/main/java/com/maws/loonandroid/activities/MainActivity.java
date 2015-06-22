@@ -15,7 +15,7 @@ import com.maws.loonandroid.R;
 import com.maws.loonandroid.enums.FragmentType;
 import com.maws.loonandroid.fragments.NavigationDrawerFragment;
 import com.maws.loonandroid.fragments.PushNotificationsFragment;
-import com.maws.loonandroid.fragments.SensorFragment;
+import com.maws.loonandroid.fragments.DeviceFragment;
 import com.maws.loonandroid.fragments.UploadToCloudFragment;
 import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.services.BLEService;
@@ -77,7 +77,7 @@ public class MainActivity extends ActionBarActivity
         String tag = "";
         switch (type){
             case SENSOR:
-                toReplace = SensorFragment.newInstance();
+                toReplace = DeviceFragment.newInstance();
                 tag = TAG_SENSOR;
                 break;
             case PUSH_NOTIFICATION:
@@ -157,8 +157,8 @@ public class MainActivity extends ActionBarActivity
 
         //for now, let's just refresh the monitors fragment if it's visible
         Fragment f = getSupportFragmentManager().findFragmentByTag(TAG_SENSOR);
-        if(f != null && f instanceof SensorFragment && f.isVisible()){
-            ((SensorFragment)f).loadSensors();
+        if(f != null && f instanceof DeviceFragment && f.isVisible()){
+            ((DeviceFragment)f).loadSensors();
         }
 
     }

@@ -1,6 +1,5 @@
 package com.maws.loonandroid.fragments;
 
-
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -17,21 +16,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.activities.MonitorActivity;
 import com.maws.loonandroid.activities.ScanDevicesActivity;
 import com.maws.loonandroid.adapters.DeviceListAdapter;
-import com.maws.loonandroid.contentproviders.AlertContentProvider;
+import com.maws.loonandroid.contentproviders.DevicePropertyContentProvider;
 import com.maws.loonandroid.contentproviders.DeviceContentProvider;
-import com.maws.loonandroid.dao.AlertDao;
+import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
 import com.maws.loonandroid.dao.DeviceDao;
-import com.maws.loonandroid.models.Alert;
 import com.maws.loonandroid.models.Device;
-import com.maws.loonandroid.models.DeviceService;
+import com.maws.loonandroid.models.DeviceProperty;
+import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
 import java.util.List;
@@ -40,7 +38,7 @@ import java.util.Random;
 /**
  * Created by Andrexxjc on 12/04/2015.
  */
-public class SensorFragment extends Fragment implements
+public class DeviceFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
     private View emptyLayout;
@@ -52,13 +50,13 @@ public class SensorFragment extends Fragment implements
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static SensorFragment newInstance() {
-        SensorFragment fragment = new SensorFragment();
+    public static DeviceFragment newInstance() {
+        DeviceFragment fragment = new DeviceFragment();
         fragment.setHasOptionsMenu(true);
         return fragment;
     }
 
-    public SensorFragment() {
+    public DeviceFragment() {
     }
 
     @Override
@@ -183,11 +181,11 @@ public class SensorFragment extends Fragment implements
             Device sDevice = (Device)adapter.getItem(x);
 
             //now let's pick a service at random
-            int randomService = ran.nextInt(DeviceService.serviceNames.values().size());
-            Alert fakeAlert = new Alert();
+            int randomService = ran.nextInt( Property.defaultProperties.length );
+            DeviceProperty fakeAlert = new DeviceProperty();
             fakeAlert.setDeviceId(sDevice.getId());
-            fakeAlert.setDeviceServiceId(randomService);
-            fakeAlert.setIsOn(ran.nextBoolean());
+            fakeAlert.setPropertyId( Property.defaultProperties[randomService].getId() );
+            fakeAlert.setValue("On");
             Util.generateAlarm(this.getActivity(), fakeAlert);
         }
     }
@@ -198,13 +196,12 @@ public class SensorFragment extends Fragment implements
 
         if(id == 0) {
             String[] projection = {
-                    AlertDao.KEY_ID,
-                    AlertDao.KEY_DEVICE_SERVICE_ID,
-                    AlertDao.KEY_ALERT_DATE,
-                    AlertDao.KEY_DISMISSED
+                    DevicePropertyDao.KEY_ID,
+                    DevicePropertyDao.KEY_CREATED_AT,
+                    DevicePropertyDao.KEY_DISMISSED_DATE
             };
             CursorLoader cursorLoader = new CursorLoader(this.getActivity(),
-                    AlertContentProvider.CONTENT_URI, projection, null, null, null);
+                    DevicePropertyContentProvider.CONTENT_URI, projection, null, null, null);
             return cursorLoader;
 
         } else if(id == 1){
@@ -212,8 +209,9 @@ public class SensorFragment extends Fragment implements
                     DeviceDao.KEY_ID,
                     DeviceDao.KEY_NAME,
                     DeviceDao.KEY_CODE,
-                    DeviceDao.KEY_SERIAL,
-                    DeviceDao.KEY_VERSION,
+                    DeviceDao.KEY_HARDWARE_ID,
+                    DeviceDao.KEY_FIRMWARE_VERSION,
+                    DeviceDao.KEY_HARDWARE_VERSION,
                     DeviceDao.KEY_DESCRIPTION,
                     DeviceDao.KEY_MAC_ADDRESS,
                     DeviceDao.KEY_ACTIVE,

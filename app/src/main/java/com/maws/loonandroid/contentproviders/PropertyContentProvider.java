@@ -179,6 +179,7 @@ public class PropertyContentProvider  extends ContentProvider {
     private void checkColumns(String[] projection) {
         String[] available = {
                 PropertyDao.KEY_ID,
+                PropertyDao.KEY_NAME,
                 PropertyDao.KEY_METRIC
         };
         if (projection != null) {

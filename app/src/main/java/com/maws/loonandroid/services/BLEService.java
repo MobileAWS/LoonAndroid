@@ -16,9 +16,9 @@ import com.maws.loonandroid.gatt.events.GattEvent;
 import com.maws.loonandroid.gatt.operations.GattCharacteristicReadOperation;
 import com.maws.loonandroid.gatt.operations.GattConnectOperation;
 import com.maws.loonandroid.gatt.operations.GattSetNotificationOperation;
-import com.maws.loonandroid.models.Alert;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceCharacteristic;
+import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.DeviceService;
 import com.maws.loonandroid.util.Util;
 
@@ -154,13 +154,11 @@ public class BLEService extends Service
     @Override
     public void onEvent(String name, GattManager.GattManagerBundle data) {
         Log.d("BLEService", "I have connected to the following address " + data.address + " " + data.newState);
+        DeviceDao sDao = new DeviceDao(this);
+        Device device = sDao.findByMacAddress(data.address);
 
         switch (data.gattEvent){
             case GattEvent.GATT_CONECTION_STATE_CHANGED:
-
-                //here, i need to get the device from the database and update its conected status
-                DeviceDao sDao = new DeviceDao(this);
-                Device device = sDao.findByMacAddress(data.address);
                 if(device != null && data.newState == BluetoothProfile.STATE_CONNECTED){
                     device.setConnected(true);
                 }else{
@@ -184,6 +182,8 @@ public class BLEService extends Service
                 }
 
                 //once i have discovered the services i need to read a couple of them for information on the device
+
+                //here, i read the initial status of the switches
                 GattCharacteristicReadOperation readInitialCare = new GattCharacteristicReadOperation(
                         bluetoothDevice,
                         DeviceService.UUID_CARE_SENTINEL_SERVICE,
@@ -191,6 +191,40 @@ public class BLEService extends Service
                         null
                 );
                 manager.queue(readInitialCare);
+
+                //here, i read the device information if i hadn't read it before
+                //read the hardware id
+                if( TextUtils.isEmpty(device.getHardwareId())){
+                    GattCharacteristicReadOperation readSerial = new GattCharacteristicReadOperation(
+                            bluetoothDevice,
+                            DeviceService.UUID_DEVICE_INFORMATION,
+                            DeviceCharacteristic._CHAR_SERIAL_NUMBER,
+                            null
+                    );
+                    manager.queue(readSerial);
+                }
+
+                //read the firmware version
+                if( TextUtils.isEmpty(device.getFirmwareVersion())){
+                    GattCharacteristicReadOperation readSerial = new GattCharacteristicReadOperation(
+                            bluetoothDevice,
+                            DeviceService.UUID_DEVICE_INFORMATION,
+                            DeviceCharacteristic._CHAR_FIRMWARE_REVISION,
+                            null
+                    );
+                    manager.queue(readSerial);
+                }
+
+                //read the hardware version
+                if( TextUtils.isEmpty(device.getFirmwareVersion())){
+                    GattCharacteristicReadOperation readSerial = new GattCharacteristicReadOperation(
+                            bluetoothDevice,
+                            DeviceService.UUID_DEVICE_INFORMATION,
+                            DeviceCharacteristic._CHAR_HARDWARE_REVISION,
+                            null
+                    );
+                    manager.queue(readSerial);
+                }
 
                 //lastly, i subscribe to the notification service
                 GattSetNotificationOperation operation = new GattSetNotificationOperation(
@@ -216,6 +250,21 @@ public class BLEService extends Service
                     String result = Integer.toBinaryString( data.characteristic.getValue()[0] );
                     updateDeviceState(data.address, result, false);
                     Log.d(TAG, "The new value of this chara is " + result);
+                }else if(data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_SERIAL_NUMBER)){
+                    //i need to get the serial number here
+                    String result = new String(data.characteristic.getValue());
+                    device.setHardwareId(result);
+                    sDao.updateHardwareId(device);
+                }else if(data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_FIRMWARE_REVISION)){
+                    //i need to get the serial number here
+                    String result = new String(data.characteristic.getValue());
+                    device.setFirmwareVersion(result);
+                    sDao.updateFirmwareVersion(device);
+                }else if(data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_HARDWARE_REVISION)){
+                    //i need to get the serial number here
+                    String result = new String(data.characteristic.getValue());
+                    device.setHardwareVersion(result);
+                    sDao.updateHardwareVersion(device);
                 }
                 break;
         }
@@ -249,19 +298,17 @@ public class BLEService extends Service
                 for (int i = 0; i < previousState.length(); i++) {
                     if (previousState.charAt(i) != newState.charAt(i)) {
                         //send an alarm to the broadcast receiver
-                        Alert realAlert = new Alert();
+                        DeviceProperty realAlert = new DeviceProperty();
                         realAlert.setDeviceId(device.getId());
-                        realAlert.setIsOn( newState.charAt(i) == '1' );
-                        realAlert.setDeviceServiceId(i);
+                        realAlert.setValue( newState.charAt(i) == '1' ? "On": "Off" );
+                        realAlert.setPropertyId(i);
                         Util.generateAlarm(this, realAlert);
                         break;
                     }
                 }
             }
-
         }
         switchValues.put(address, builder.toString());
-
     }
 
 }

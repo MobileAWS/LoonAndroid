@@ -8,9 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.DevicePropertyDao;
-import com.maws.loonandroid.models.Alert;
 import com.maws.loonandroid.models.DeviceProperty;
-import com.maws.loonandroid.models.DeviceService;
 import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.util.Util;
 import java.util.List;
@@ -18,16 +16,16 @@ import java.util.List;
 /**
  * Created by Andres Prada on 6/15/2015.
  */
-public class AlertHistoryListAdapter extends BaseAdapter{
+public class DevicePropertyHistoryListAdapter extends BaseAdapter{
 
     private final Context context;
-    private final List<Alert> items;
+    private final List<DeviceProperty> items;
 
     static class ViewHolder {
         TextView descAlertHv, alertDismiss, alertDateHv, dismissDateHv, timeAlertHv, alertDateTV;
     }
 
-    public AlertHistoryListAdapter(List<Alert> items, Context context) {
+    public DevicePropertyHistoryListAdapter(List<DeviceProperty> items, Context context) {
         this.items = items;
         this.context = context;
     }
@@ -64,17 +62,16 @@ public class AlertHistoryListAdapter extends BaseAdapter{
         }else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        Alert thisAlert = items.get(position);
-        DevicePropertyDao devicePropertyDao = new DevicePropertyDao(context);
-        DeviceProperty deviceProperty = devicePropertyDao.getElementForID(thisAlert.getDeviceServiceId());
+        DeviceProperty thisAlert = items.get(position);
+        Property property = Property.getDefaultProperty(thisAlert.getPropertyId());
 
-        viewHolder.alertDateTV.setText(Util.longDateFormat.format(thisAlert.getAlertDate()));
-        viewHolder.descAlertHv.setText( deviceProperty.getValue());
-        viewHolder.alertDateHv.setText( Util.timeOnlyFormat.format(thisAlert.getAlertDate()));
-        viewHolder.dismissDateHv.setText(thisAlert.getDismissedDate() == null ? "-" : Util.timeOnlyFormat.format(thisAlert.getDismissedDate()));
-        viewHolder.timeAlertHv.setText(thisAlert.getDismissedDate() == null ? "-" : String.format( context.getString(R.string.elapsed_time), Util.totalTimeDismissed(thisAlert.getTotalTimeAlarm())) ) ;
+        viewHolder.alertDateTV.setText(Util.longDateFormat.format(thisAlert.getCreatedAt()));
+        viewHolder.descAlertHv.setText( context.getString(property.getDisplayId()) );
+        viewHolder.alertDateHv.setText( Util.timeOnlyFormat.format(thisAlert.getCreatedAt()));
+        viewHolder.dismissDateHv.setText(thisAlert.getDismissedAt() == null ? "-" : Util.timeOnlyFormat.format(thisAlert.getDismissedAt()));
+        viewHolder.timeAlertHv.setText(thisAlert.getDismissedAt() == null ? "-" : String.format( context.getString(R.string.elapsed_time), Util.totalTimeDismissed(thisAlert.getTotalTimeAlarm())) ) ;
 
-        if(thisAlert.getDismissedDate() == null) {
+        if(thisAlert.getDismissedAt() == null) {
             viewHolder.alertDismiss.setVisibility(View.GONE);
             viewHolder.dismissDateHv.setVisibility(View.GONE);
             viewHolder.timeAlertHv.setVisibility(View.GONE);

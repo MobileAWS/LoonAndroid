@@ -1,29 +1,21 @@
 package com.maws.loonandroid.activities;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import com.maws.loonandroid.R;
-import com.maws.loonandroid.adapters.AlertHistoryListAdapter;
-import com.maws.loonandroid.dao.AlertDao;
-import com.maws.loonandroid.models.Alert;
-import com.maws.loonandroid.util.Util;
+import com.maws.loonandroid.adapters.DevicePropertyHistoryListAdapter;
+import com.maws.loonandroid.dao.DevicePropertyDao;
+import com.maws.loonandroid.models.DeviceProperty;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 public class HistorySensorActivity extends ActionBarActivity {
     private ListView listView ;
-    private long sensorId;
-    private AlertHistoryListAdapter adapter;
+    private long deviceId;
+    private DevicePropertyHistoryListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +23,9 @@ public class HistorySensorActivity extends ActionBarActivity {
         setContentView(R.layout.activity_history_sensor);
         Intent i = this.getIntent();
         Bundle extras =  i.getExtras();
-        sensorId = extras.getLong(MonitorActivity.MONITOR_ID, -1);
+        deviceId = extras.getLong(MonitorActivity.MONITOR_ID, -1);
         listView = (ListView) findViewById(R.id.listAlarmHistory);
-        listView.setAdapter(loadInformation(sensorId));
+        listView.setAdapter(loadInformation(deviceId));
 
     }
 
@@ -52,11 +44,11 @@ public class HistorySensorActivity extends ActionBarActivity {
         finish();
     }
 
-    private AlertHistoryListAdapter loadInformation (long sensorId) {
-        AlertDao alertDao = new AlertDao(this);
-        List<Alert> listAlert = alertDao.getAllForId(sensorId);
-        if (listAlert != null && listAlert.size() > 0 ) {
-            adapter= new AlertHistoryListAdapter(listAlert,this);
+    private DevicePropertyHistoryListAdapter loadInformation (long deviceId) {
+        DevicePropertyDao devicePropertyDao = new DevicePropertyDao(this);
+        List<DeviceProperty> listDeviceProperty = devicePropertyDao.getAllByDeviceId(deviceId);
+        if (listDeviceProperty.size() > 0 ) {
+            adapter= new DevicePropertyHistoryListAdapter(listDeviceProperty,this);
         }
         return adapter;
     }

@@ -101,17 +101,17 @@
                 android:value=".activities.MainActivity" />
         </activity>
 
-        <receiver android:name=".receivers.AlertReceiver" >
+        <receiver android:name=".receivers.DevicePropertyReceiver" >
             <intent-filter>
-                <action android:name="com.maws.loonandroid.alert" />
+                <action android:name="com.maws.loonandroid.deviceproperty" />
             </intent-filter>
         </receiver>
 
         <service android:name=".services.BLEService" />
 
         <provider
-            android:name=".contentproviders.AlertContentProvider"
-            android:authorities="com.maws.loonandroid.contentproviders.AlertContentProvider"
+            android:name=".contentproviders.DevicePropertyContentProvider"
+            android:authorities="com.maws.loonandroid.contentproviders.DevicePropertyContentProvider"
             android:enabled="true"
             android:exported="false" />
         <provider
@@ -132,11 +132,6 @@
         <provider
             android:name=".contentproviders.PropertyContentProvider"
             android:authorities="com.maws.loonandroid.contentproviders.PropertyContentProvider"
-            android:enabled="true"
-            android:exported="false" />
-        <provider
-            android:name=".contentproviders.DevicePropertyContentProvider"
-            android:authorities="com.maws.loonandroid.contentproviders.DevicePropertyContentProvider"
             android:enabled="true"
             android:exported="false" />
 

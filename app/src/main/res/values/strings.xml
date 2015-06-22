@@ -78,10 +78,11 @@
     <string name="validation_incorrect_user_password">Invalid User or Password.</string>
     <string name="push_notification_message_alert_on">The sensor %1$s has been activated.</string>
     <string name="push_notification_message_alert_off">The sensor %1$s has been deactivated.</string>
-    <string name="sensor_bed">Bed</string>
-    <string name="sensor_chair">Chair</string>
-    <string name="sensor_toilet">Toilet</string>
-    <string name="sensor_incontinence">Incontinence</string>
+    <string name="push_notification_message_alert">$1$s sensor has changed to %2$s.</string>
+    <string name="property_bed">Bed</string>
+    <string name="property_chair">Chair</string>
+    <string name="property_toilet">Toilet</string>
+    <string name="property_incontinence">Incontinence</string>
     <string name="view_history">View History</string>
     <string name="title_activity_history_sensor">Alert History</string>
     <string name="list_Alarm_Description">Description </string>

@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
-import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -14,22 +13,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
-import com.maws.loonandroid.dao.AlertDao;
 import com.maws.loonandroid.dao.DevicePropertyDao;
-import com.maws.loonandroid.dao.LoonMedicalDao;
-import com.maws.loonandroid.dao.PropertyDao;
 import com.maws.loonandroid.gatt.GattManager;
 import com.maws.loonandroid.gatt.operations.GattConnectOperation;
-import com.maws.loonandroid.models.Alert;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
-import com.maws.loonandroid.models.DeviceService;
+import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.util.Util;
-
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -170,48 +162,31 @@ public class DeviceListAdapter extends BaseAdapter {
         }
 
         //i need to look for this item's active alarms and list them
-        AlertDao aDao = new AlertDao(context);
-        LoonMedicalDao lDao = new LoonMedicalDao(context);
+        DevicePropertyDao aDao = new DevicePropertyDao(context);
 
-        Cursor alertCursor = aDao.getUndismissedAlertInfo(lDao.getReadableDatabase(), thisDevice.getId());
-        viewHolder.alarmsLL.removeAllViews();
-        if (alertCursor.moveToFirst()) {
-            do {
-                Date alertDate = new Date( alertCursor.getLong( alertCursor.getColumnIndex(AlertDao.KEY_ALERT_DATE) ) );
-                long alertId = alertCursor.getLong(alertCursor.getColumnIndex(AlertDao.KEY_ID));
+        DeviceProperty dProperty = aDao.getLastAlertForDevice(thisDevice.getId());
+        if(dProperty.getDismissedAt() == null){
 
-                int service = alertCursor.getInt(alertCursor.getColumnIndex(AlertDao.KEY_DEVICE_SERVICE_ID));
-                DevicePropertyDao devicePropertyDao = new DevicePropertyDao(context);
-                DeviceProperty deviceProperty =devicePropertyDao.getElementForID(service);
+            Property alertProperty = Property.getDefaultProperty(dProperty.getPropertyId());
 
-                String serviceName = deviceProperty.getValue();
-                View alertView = LinearLayout.inflate(context, R.layout.alert_item, null);
-                ((TextView)alertView.findViewById(R.id.alertDateTV)).setText(Util.sdf.format(alertDate));
-                ((TextView)alertView.findViewById(R.id.serviceTV)).setText(serviceName);
-                alertView.setTag(alertId);
+            View alertView = LinearLayout.inflate(context, R.layout.alert_item, null);
+            ((TextView)alertView.findViewById(R.id.alertDateTV)).setText( Util.sdf.format(dProperty.getCreatedAt()));
+            ((TextView)alertView.findViewById(R.id.serviceTV)).setText( context.getString( alertProperty.getDisplayId() ) );
+            alertView.setTag(dProperty.getId());
 
-                alertView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        long alertId = Long.valueOf( v.getTag().toString());
-
-                        Alert alert = new Alert();
-                        alert.setId(alertId);
-
-                        AlertDao aDao = new AlertDao(context);
-                        Alert alertConsult = aDao.get(alertId);
-                        alert.setAlertDate(alertConsult.getAlertDate());
-
-                        aDao.dismiss(alert);
-                        v.setVisibility(View.GONE);
-                    }
-                });
-
-                viewHolder.alarmsLL.addView(alertView);
-            } while (alertCursor.moveToNext());
+            alertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                long id = Long.valueOf( v.getTag().toString());
+                DeviceProperty deviceProperty = new DeviceProperty();
+                deviceProperty.setId(id);
+                DevicePropertyDao aDao = new DevicePropertyDao(context);
+                aDao.dismiss(deviceProperty);
+                v.setVisibility(View.GONE);
+                }
+            });
+            viewHolder.alarmsLL.addView(alertView);
         }
-        alertCursor.close();
-
         return convertView;
     }
 

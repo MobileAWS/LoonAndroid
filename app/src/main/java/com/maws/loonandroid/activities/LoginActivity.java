@@ -32,11 +32,13 @@ import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.CustomerDao;
 import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
+import com.maws.loonandroid.dao.PropertyDao;
 import com.maws.loonandroid.dao.SiteDao;
 import com.maws.loonandroid.dao.UserDao;
 import com.maws.loonandroid.listener.StandardRequestListener;
 import com.maws.loonandroid.models.Customer;
 import com.maws.loonandroid.models.DeviceProperty;
+import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.models.Site;
 import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.requests.UserRequestHandler;
@@ -79,7 +81,7 @@ public class LoginActivity extends Activity implements OnClickListener {
         newUserTV.setOnClickListener(this);
         loginBtn.setOnClickListener(this);
         loginNoCloudBtn.setOnClickListener(this);
-        setDefaultValuer();
+        createDefaultProperties();
     }
 
     private StringBuilder validateFields(){
@@ -105,6 +107,16 @@ public class LoginActivity extends Activity implements OnClickListener {
             errors.append( " " );
         }
         return errors;
+    }
+
+    private void createDefaultProperties(){
+        PropertyDao pDao = new PropertyDao(this);
+        if(pDao.get(0) == null) {
+            //after creating the table, add the default properties to the table
+            for (int i = 0; i < Property.defaultProperties.length; i++) {
+                pDao.create(Property.defaultProperties[i]);
+            }
+        }
     }
 
     private void attemptLogin(){
@@ -197,18 +209,6 @@ public class LoginActivity extends Activity implements OnClickListener {
             this.finish();
         }
     };
-
-    private void setDefaultValuer(){
-        DevicePropertyDao devicePropertyDao = new DevicePropertyDao(this);
-        List<DeviceProperty> listDeviceProperties= devicePropertyDao.getAll();
-        if(listDeviceProperties.size() == 0 ) {
-            devicePropertyDao.addElement(new DeviceProperty(DevicePropertyDao.DEVICE_BED, DevicePropertyDao.CODE_BED));
-            devicePropertyDao.addElement(new DeviceProperty(DevicePropertyDao.DEVICE_CHAIR, DevicePropertyDao.CODE_CHAIR));
-            devicePropertyDao.addElement(new DeviceProperty(DevicePropertyDao.DEVICE_TOILET, DevicePropertyDao.CODE_TOILET));
-            devicePropertyDao.addElement(new DeviceProperty(DevicePropertyDao.DEVICE_INCONTINENCE, DevicePropertyDao.CODE_INCONTINENCE));
-        }
-    }
-
 
     @Override
     public void onClick(View v) {
