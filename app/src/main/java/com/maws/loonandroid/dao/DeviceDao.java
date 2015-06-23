@@ -195,7 +195,7 @@ public class DeviceDao {
                 },
                 null,
                 null,
-                KEY_NAME
+                KEY_ID
         );
 
         // looping through all rows and adding to list
@@ -245,7 +245,7 @@ public class DeviceDao {
                 new String[]{
                         "1"
                 },
-                KEY_NAME
+                KEY_ID + " ASC"
         );
 
         // looping through all rows and adding to list
@@ -295,7 +295,7 @@ public class DeviceDao {
                 new String[]{
                         "0"
                 },
-                KEY_NAME
+                KEY_ID + " ASC"
         );
 
         // looping through all rows and adding to list

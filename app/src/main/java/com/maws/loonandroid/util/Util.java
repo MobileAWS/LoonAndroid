@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.models.DeviceProperty;
@@ -38,11 +39,14 @@ public class Util {
     public static void generateAlarm(Context context, DeviceProperty dProperty){
 
         Intent intent = new Intent();
+        Bundle bundle = new Bundle();
+
         intent.setAction("com.maws.loonandroid.deviceproperty");
-        intent.putExtra("deviceId", dProperty.getDeviceId());
-        intent.putExtra("propertyId", dProperty.getPropertyId());
-        intent.putExtra("value", dProperty.getValue());
-        intent.putExtra("dateMillis", new Date().getTime());
+        bundle.putLong("deviceId", dProperty.getDeviceId());
+        bundle.putLong("propertyId", dProperty.getPropertyId());
+        bundle.putString("value", dProperty.getValue());
+        bundle.putLong("dateMillis", new Date().getTime());
+        intent.putExtras(bundle);
         context.sendBroadcast(intent);
     }
 

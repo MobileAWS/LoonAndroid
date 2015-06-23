@@ -180,6 +180,7 @@ public class PropertyContentProvider  extends ContentProvider {
         String[] available = {
                 PropertyDao.KEY_ID,
                 PropertyDao.KEY_NAME,
+                PropertyDao.KEY_DISPLAY_ID,
                 PropertyDao.KEY_METRIC
         };
         if (projection != null) {

@@ -27,8 +27,6 @@ public class LoonMedicalDao extends SQLiteOpenHelper {
         DeviceCharacteristicDao deviceCharacteristicDao = new DeviceCharacteristicDao(context);
         deviceCharacteristicDao.onCreate(db);
 
-        DevicePropertyDao alertDao = new DevicePropertyDao(context);
-        alertDao.onCreate(db);
 
         CustomerDao customerDao = new CustomerDao(context);
         customerDao.onCreate(db);

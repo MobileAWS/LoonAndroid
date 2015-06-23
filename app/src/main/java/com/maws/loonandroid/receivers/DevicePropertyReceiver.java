@@ -3,6 +3,7 @@ package com.maws.loonandroid.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.DevicePropertyDao;
@@ -22,11 +23,11 @@ public class DevicePropertyReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
-        long deviceId = intent.getLongExtra("deviceId", 0);
-        long propertyId = intent.getIntExtra("propertyId", -1);
-        String value = intent.getStringExtra("value");
-        long alarmDateMillis = intent.getLongExtra("dateMillis", 0);
+        Bundle bundle = intent.getExtras();
+        long deviceId = bundle.getLong("deviceId");
+        long propertyId = bundle.getLong("propertyId");
+        String value = bundle.getString("value");
+        long alarmDateMillis = bundle.getLong("dateMillis");
 
         DeviceDao sDao = new DeviceDao(context);
         Device device = sDao.get(deviceId);

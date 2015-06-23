@@ -163,31 +163,36 @@ public class DeviceListAdapter extends BaseAdapter {
 
         //i need to look for this item's active alarms and list them
         DevicePropertyDao aDao = new DevicePropertyDao(context);
-
+        //viewHolder.alarmsLL.removeAllViews();
         DeviceProperty dProperty = aDao.getLastAlertForDevice(thisDevice.getId());
-        if(dProperty.getDismissedAt() == null){
+        viewHolder.alarmsLL.removeAllViews();
+        if (dProperty != null && dProperty.getDismissedAt() == null) {
 
             Property alertProperty = Property.getDefaultProperty(dProperty.getPropertyId());
 
             View alertView = LinearLayout.inflate(context, R.layout.alert_item, null);
-            ((TextView)alertView.findViewById(R.id.alertDateTV)).setText( Util.sdf.format(dProperty.getCreatedAt()));
-            ((TextView)alertView.findViewById(R.id.serviceTV)).setText( context.getString( alertProperty.getDisplayId() ) );
+            ((TextView) alertView.findViewById(R.id.alertDateTV)).setText(Util.sdf.format(dProperty.getCreatedAt()));
+            ((TextView) alertView.findViewById(R.id.serviceTV)).setText(context.getString(alertProperty.getDisplayId()));
             alertView.setTag(dProperty.getId());
 
             alertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                long id = Long.valueOf( v.getTag().toString());
-                DeviceProperty deviceProperty = new DeviceProperty();
-                deviceProperty.setId(id);
-                DevicePropertyDao aDao = new DevicePropertyDao(context);
-                aDao.dismiss(deviceProperty);
-                v.setVisibility(View.GONE);
+                    long id = Long.valueOf(v.getTag().toString());
+
+                    DevicePropertyDao aDao = new DevicePropertyDao(context);
+                    DeviceProperty deviceProperty = aDao.get(id);
+
+                    if (deviceProperty != null && deviceProperty.getCreatedAt() != null) {
+                        aDao.dismiss(deviceProperty);
+                    }
+                    v.setVisibility(View.GONE);
                 }
             });
             viewHolder.alarmsLL.addView(alertView);
         }
         return convertView;
+
     }
 
 }
