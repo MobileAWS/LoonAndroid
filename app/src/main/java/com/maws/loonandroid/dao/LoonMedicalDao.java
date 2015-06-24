@@ -27,7 +27,6 @@ public class LoonMedicalDao extends SQLiteOpenHelper {
         DeviceCharacteristicDao deviceCharacteristicDao = new DeviceCharacteristicDao(context);
         deviceCharacteristicDao.onCreate(db);
 
-
         CustomerDao customerDao = new CustomerDao(context);
         customerDao.onCreate(db);
 
@@ -39,6 +38,9 @@ public class LoonMedicalDao extends SQLiteOpenHelper {
 
         DevicePropertyDao devicePropertyDao = new DevicePropertyDao(context);
         devicePropertyDao.onCreate(db);
+
+        DeviceEnabledPropertyDao deviceEnabledPropertyDao = new DeviceEnabledPropertyDao(context);
+        deviceEnabledPropertyDao.onCreate(db);
 
     }
 
@@ -68,6 +70,9 @@ public class LoonMedicalDao extends SQLiteOpenHelper {
 
         DevicePropertyDao devicePropertyDao = new DevicePropertyDao(context);
         devicePropertyDao.onUpgrade(db, oldVersion, newVersion);
+
+        DeviceEnabledPropertyDao deviceEnabledPropertyDao = new DeviceEnabledPropertyDao(context);
+        deviceEnabledPropertyDao.onUpgrade(db, oldVersion, newVersion);
     }
 
     public void clearData(){

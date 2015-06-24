@@ -9,7 +9,7 @@ import android.content.Context;
 public class LoonAndroid extends Application {
 
     public static Context globalApplicationContext;
-    public static final boolean demoMode = false;
+    public static final boolean demoMode = true;
 
     @Override
     public void onCreate() {

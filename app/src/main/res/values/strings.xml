@@ -78,7 +78,7 @@
     <string name="validation_incorrect_user_password">Invalid User or Password.</string>
     <string name="push_notification_message_alert_on">The sensor %1$s has been activated.</string>
     <string name="push_notification_message_alert_off">The sensor %1$s has been deactivated.</string>
-    <string name="push_notification_message_alert">$1$s sensor has changed to %2$s.</string>
+    <string name="push_notification_message_alert">%1$s sensor has changed to %2$s.</string>
     <string name="property_bed">Bed</string>
     <string name="property_chair">Chair</string>
     <string name="property_toilet">Toilet</string>

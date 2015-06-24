@@ -421,6 +421,7 @@ public class DeviceDao {
         );
         db.delete(DeviceCharacteristicDao.TABLE_NAME, null, null);
         db.delete(DevicePropertyDao.TABLE_NAME, null, null);
+        db.delete(DeviceEnabledPropertyDao.TABLE_NAME, null, null);
 
     }
 }

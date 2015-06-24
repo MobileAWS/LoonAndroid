@@ -80,4 +80,13 @@
         <item name="android:padding">10dp</item>
     </style>
 
+    <style name="Toggle">
+        <item name="android:background">@drawable/toggle_button_bgc</item>
+        <item name="android:textOn"></item>
+        <item name="android:textOff"></item>
+        <item name="android:disabledAlpha">?android:attr/disabledAlpha</item>
+        <item name="android:layout_width">75px</item>
+        <item name="android:layout_height">34px</item>
+    </style>
+
 </resources>

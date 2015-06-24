@@ -12,9 +12,12 @@ import android.widget.TextView;
 
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.DeviceServiceListAdapter;
+import com.maws.loonandroid.adapters.PropertyAdapter;
 import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.DeviceCharacteristicDao;
 import com.maws.loonandroid.models.Device;
+import com.maws.loonandroid.models.DeviceProperty;
+import com.maws.loonandroid.models.Property;
 
 /**
  * Created by Andrexxjc on 15/05/2015.
@@ -29,8 +32,8 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
     private TextView nameTV, codeTV;
     private Button viewHistory;
     private ImageView signalIV, batteryIV, checkIV;
-    private ListView sensorServicesLV;
-    private DeviceServiceListAdapter adapter;
+    private ListView propertiesLV;
+    private PropertyAdapter adapter;
 
 
     @Override
@@ -44,7 +47,7 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
         signalIV = (ImageView) findViewById(R.id.signalIV);
         batteryIV = (ImageView) findViewById(R.id.batteryIV);
         checkIV = (ImageView) findViewById(R.id.checkIV);
-        sensorServicesLV = (ListView) findViewById(R.id.sensorServicesLV);
+        propertiesLV = (ListView) findViewById(R.id.propertiesLV);
         viewHistory = (Button) findViewById(R.id.historyBtn);
         viewHistory.setOnClickListener(this);
         loadInformation();
@@ -67,9 +70,9 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
             nameTV.setText(TextUtils.isEmpty(currentDevice.getDescription())? currentDevice.getName(): currentDevice.getDescription());
             codeTV.setText(currentDevice.getName());
 
-            /*List<DeviceCharacteristic> services = ssDao.getAllBySensorId(currentDevice.getId(), lDao.getReadableDatabase());
-            adapter = new DeviceServiceListAdapter(this,services);
-            sensorServicesLV.setAdapter(adapter);*/
+            //i need to create a device enabled and delay controls for each property
+            adapter = new PropertyAdapter(this, Property.defaultProperties);
+            propertiesLV.setAdapter(adapter);
         }
     }
 
