@@ -22,6 +22,7 @@
     <string name="action_change_background">Change Background</string>
     <string name="navigation_upload_to_cloud">Upload Information</string>
     <string name="upload">Upload</string>
+    <string name="upload_action">Uploading</string>
     <string name="action_scan">Scan for Devices</string>
     <string name="action_send_notification">Send Notification</string>
     <string name="action_upload">Upload</string>
@@ -92,5 +93,9 @@
     <string name="elapsed_time">Time to dismiss: %1$s</string>
     <string name="from">From</string>
     <string name="to">To</string>
+    <string name="upload_fail">Error to Sync with the server</string>
+    <string name="upload_server_error">error to connect with the server.</string>
+    <string name="upload_login_error">You are login like off line  </string>
+
 
 </resources>

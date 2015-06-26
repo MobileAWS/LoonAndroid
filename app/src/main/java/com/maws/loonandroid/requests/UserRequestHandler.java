@@ -178,7 +178,7 @@ public class UserRequestHandler {
     }
 
     public interface LoginListener{
-        void onSuccess(JSONObject response, User user, String siteId, String customerId);
+        void onSuccess(JSONObject response, User user, String siteId, String customerId,Context context);
         void onFailure(String error);
     }
 
@@ -193,7 +193,7 @@ public class UserRequestHandler {
         RequestQueue queue = vs.getRequestQueue();
 
         StringBuilder url = new StringBuilder( VolleySingleton.SERVER_URL + "users/login" );
-
+        /*https://caresentinel-maws.herokuapp.com/users/login?email=caregiver%40caresentinel.com&password=Polaris2014*&site_name=DEFAULT&customer_id=7*/
         try {
             url.append("?email=");
             url.append(URLEncoder.encode( user.getEmail(), VolleySingleton.DEFAULT_PARAMS_ENCODING ));
@@ -201,7 +201,7 @@ public class UserRequestHandler {
             url.append("password=");
             url.append(URLEncoder.encode( user.getPassword() , VolleySingleton.DEFAULT_PARAMS_ENCODING));
             url.append('&');
-            url.append("customer_site_id=");
+            url.append("site_name=");
             url.append(URLEncoder.encode( siteId , VolleySingleton.DEFAULT_PARAMS_ENCODING));
             url.append('&');
             url.append("customer_id=");
@@ -222,7 +222,7 @@ public class UserRequestHandler {
                         listener.onFailure(responseRoot.toString());
                         return;
                     }
-                    listener.onSuccess(jsonObject, user, siteId, customerId);
+                    listener.onSuccess(jsonObject, user, siteId, customerId,context);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     listener.onFailure(e.toString());

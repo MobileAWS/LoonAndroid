@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -137,10 +138,17 @@ public class LoginActivity extends Activity implements OnClickListener {
         }else{
             UserRequestHandler.login(this, new UserRequestHandler.LoginListener() {
                 @Override
-                public void onSuccess(JSONObject jsonObject, User user, String siteId, String customerId) {
+                public void onSuccess(JSONObject jsonObject, User user, String siteId, String customerId,Context context) {
                     try {
                         JSONObject response = jsonObject.getJSONObject("response");
                         if (jsonObject.getString("response").equalsIgnoreCase("done")) {
+                            finish();
+                        }
+                        if (response.getString("token") != null && response.getString("role") != null ) {
+                            user.setToken(response.getString("token"));
+                            user.setRole(response.getString("role"));
+                            User.setCurrent(user, context);
+                            goTonextPage();
                             finish();
                         }
                     } catch (Exception ex) {
@@ -186,26 +194,7 @@ public class LoginActivity extends Activity implements OnClickListener {
             //if everything is good, i set the current user, site and customerId for the app
             User.setCurrent(user, this);
 
-            CustomerDao cDao = new CustomerDao(this);
-            Customer customer = cDao.get(customerId);
-            if(customer == null){
-                customer = new Customer();
-                customer.setCode(customerId);
-                cDao.create(customer);
-            }
-            Customer.setCurrent(customer, this);
-
-            SiteDao sDao = new SiteDao(this);
-            Site site = sDao.get(siteId);
-            if(site == null){
-                site = new Site();
-                site.setCode(siteId);
-                sDao.create(site);
-            }
-            Site.setCurrent(site, this);
-
-            Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(newUserIntent);
+            goTonextPage();
             this.finish();
         }
     };
@@ -227,7 +216,30 @@ public class LoginActivity extends Activity implements OnClickListener {
         }
     }
 
+    private  void goTonextPage(){
+        String siteId = siteIdET.getText().toString();
+        String customerId = customerIdET.getText().toString();
+        CustomerDao cDao = new CustomerDao(this);
+        Customer customer = cDao.get(customerId);
+        if(customer == null){
+            customer = new Customer();
+            customer.setCode(customerId);
+            cDao.create(customer);
+        }
+        Customer.setCurrent(customer, this);
 
+        SiteDao sDao = new SiteDao(this);
+        Site site = sDao.get(siteId);
+        if(site == null){
+            site = new Site();
+            site.setCode(siteId);
+            sDao.create(site);
+        }
+        Site.setCurrent(site, this);
+
+        Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(newUserIntent);
+    }
 
 }
 

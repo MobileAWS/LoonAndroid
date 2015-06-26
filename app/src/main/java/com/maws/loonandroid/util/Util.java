@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.models.DeviceProperty;
+import com.maws.loonandroid.models.User;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -97,6 +99,13 @@ public class Util {
 
         String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         return timeString;
+    }
+    public static  boolean isLoginOnline(Context context){
+        User user =User.getCurrent(context);
+        if(user != null && user.getToken()!= null && !user.getToken().isEmpty()){
+            return  true;
+        }
+        return false;
     }
 
 }

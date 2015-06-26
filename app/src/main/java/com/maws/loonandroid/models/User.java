@@ -12,6 +12,8 @@ public class User {
     private String name;
     private String email;
     private String password;
+    private String token;
+    private String role;
 
     public User(){}
     public User(String name, String email, String password){
@@ -41,6 +43,14 @@ public class User {
     public long getId() { return id; }
 
     public void setId(long id) { this.id = id; }
+
+    public String getToken() { return token; }
+
+    public void setToken(String token) { this.token = token;  }
+
+    public String getRole() { return role;  }
+
+    public void setRole(String role) { this.role = role; }
 
     /*This will save the user in the preferences so we have it available for all the app*/
     private static final String USER_PREFS = "Usr_prfs";
