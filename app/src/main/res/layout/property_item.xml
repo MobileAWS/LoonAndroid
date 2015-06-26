@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_centerVertical="true"
+        android:id="@id/nameTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Property Name"
+    />
+
+    <ToggleButton
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/delayET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/enabledTB"
+        android:checked="true"
+        android:layout_gravity="right"
+        style="@style/Toggle"/>
+
+    <EditText
+        android:layout_centerVertical="true"
+        android:id="@+id/delayET"
+        android:layout_alignParentRight="true"
+        android:inputType="number"
+        android:digits="4"
+        android:layout_gravity="right"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content">
+
+    </EditText>
+
+</RelativeLayout>
