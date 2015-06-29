@@ -1,18 +1,19 @@
 package com.maws.loonandroid.requests;
 
 import android.content.Context;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
+
 import com.maws.loonandroid.R;
-import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
-import com.maws.loonandroid.views.CustomProgressSpinner;
+
 import com.maws.loonandroid.volley.VolleySingleton;
 
 import org.json.JSONArray;
@@ -22,9 +23,9 @@ import org.json.JSONObject;
 import java.util.List;
 
 /**
- * Created by SANTIAGO on 6/22/2015.
+ * Created by Aprada on 6/22/2015.
  */
-public class UpLoadRequestHandler {
+public class UploadRequestHandler {
 
     static final public String URL_SERVICE = "device/addproperties";
     private static final String TAG = "UploadRequestHandler";
@@ -44,7 +45,7 @@ public class UpLoadRequestHandler {
 
 
     public void sendDevicePropertiesToServer(final Context context,
-                                             final UploadListener listener,final List<DeviceProperty> listDeviceProperties, final String token,final String hardwareID,final int actualPos, final int totalDevices){
+                                             final UploadListener listener,final List<DeviceProperty> listDeviceProperties, final String token,final String hardwareID,final View progressBarView){
 
 
         VolleySingleton vs = VolleySingleton.getInstance();
@@ -52,32 +53,34 @@ public class UpLoadRequestHandler {
 
         String url = VolleySingleton.SERVER_URL + URL_SERVICE ;
 
-        JSONObject deviceProperties = new JSONObject();
+        JSONObject devicePropertiesJson = new JSONObject();
         try {
-            deviceProperties=createJsonObjectToSend(deviceProperties,listDeviceProperties,token,hardwareID);
+            devicePropertiesJson=createJsonObjectToSend(devicePropertiesJson,listDeviceProperties,token,hardwareID);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,url,deviceProperties,
+       progressBarView.findViewById(R.id.progressBarUploadIV).setVisibility(View.VISIBLE);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,url,devicePropertiesJson,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                    listener.onSuccess(response,listDeviceProperties,context,actualPos,totalDevices);
+                    listener.onSuccess(response,listDeviceProperties,context, progressBarView);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        listener.onFailure( VolleySingleton.getResponseData(error.networkResponse),context );
+                        listener.onFailure( VolleySingleton.getResponseData(error.networkResponse),context ,progressBarView );
                         error.printStackTrace();
                     }
                 });
         queue.add(jsObjRequest);
     }
     public interface UploadListener{
-        void onFailure(String error,Context context);
-        void onSuccess(JSONObject response, List<DeviceProperty> listDeviceProperties, Context context,int actualPost,int total);
+        void onFailure(String error,Context context,View view);
+        void onSuccess(JSONObject response, List<DeviceProperty> listDeviceProperties,Context context, View view);
     }
 
 
@@ -86,10 +89,11 @@ public class UpLoadRequestHandler {
         long id = listDeviceProperties.get(0).getDeviceId();
         devicePropertiesJson.put(KEY_TOKEN, token);
         JSONObject propertyJson = new JSONObject();
-        if(listDeviceProperties.get(0).getDeviceId() == 1) //TODO poner el valor standart para enviar al server
-        propertyJson.put(KEY_DEVICE_ID, 14/*Long.valueOf(hardwareID)*/);
-        if(listDeviceProperties.get(0).getDeviceId() == 2)
-            propertyJson.put(KEY_DEVICE_ID, 15/*Long.valueOf(hardwareID)*/);
+        propertyJson.put(KEY_DEVICE_ID, Long.valueOf(hardwareID));
+       /* if(listDeviceProperties.get(0).getDeviceId() == 1) //TODO put the value to prove if all changes they were not made in backend
+            propertyJson.put(KEY_DEVICE_ID, 14/);
+       /* if(listDeviceProperties.get(0).getDeviceId() == 2)
+            propertyJson.put(KEY_DEVICE_ID, 15);*/
         devicePropertiesJson.put(KEY_DEVICE, propertyJson);
         JSONArray jsonArray = new JSONArray();
         for (DeviceProperty deviceProperty:listDeviceProperties) {

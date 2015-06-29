@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.maws.loonandroid.R;
@@ -27,6 +28,7 @@ public class UploadSensorListAdapter extends BaseAdapter implements MultipleSele
     static class ViewHolder {
         TextView nameTV;
         ImageView checkIV;
+        ProgressBar progressBarUploadIV;
     }
 
     public UploadSensorListAdapter(Context context, List<Device> values) {
@@ -60,6 +62,7 @@ public class UploadSensorListAdapter extends BaseAdapter implements MultipleSele
             viewHolder = new ViewHolder();
             viewHolder.nameTV = (TextView) convertView.findViewById(R.id.nameTV);
             viewHolder.checkIV = (ImageView) convertView.findViewById(R.id.checkIV);
+            viewHolder.progressBarUploadIV = (ProgressBar) convertView.findViewById(R.id.progressBarUploadIV);
 
             // store the holder with the view.
             convertView.setTag(viewHolder);
@@ -82,6 +85,7 @@ public class UploadSensorListAdapter extends BaseAdapter implements MultipleSele
 
         return convertView;
     }
+
 
 
     @Override
