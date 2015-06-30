@@ -21,13 +21,14 @@ public class VolleySingleton {
     public static final String DEFAULT_PARAMS_ENCODING = "UTF-8";
 
     private static final int NUM_RETRIES = 3;
+    private static final int TIMEOUT =60000; //1 min timeout
 
     private static final VolleySingleton instance = new VolleySingleton(LoonAndroid.globalApplicationContext);
     private RequestQueue requestQueue;
     private ImageLoader imageLoader;
 
     public static DefaultRetryPolicy getRetryPolicy(){
-        return new DefaultRetryPolicy(10000,
+        return new DefaultRetryPolicy(TIMEOUT,
                 NUM_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
     }

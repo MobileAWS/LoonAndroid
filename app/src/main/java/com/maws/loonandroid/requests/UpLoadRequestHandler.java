@@ -33,7 +33,7 @@ public class UploadRequestHandler {
     /* values json Objectt */
     private static final String KEY_TOKEN = "token";
     private static final String KEY_DEVICE ="device";
-    private static final String KEY_DEVICE_ID = "id";
+    private static final String KEY_DEVICE_ID = "hw_id";
     private static final String KEY_PROPERTY_ID = "key";
     private static final String KEY_PROPERTY_METRIC = "metric";
     private static final String KEY_PROPERTY_VALUE = "value";
@@ -86,14 +86,9 @@ public class UploadRequestHandler {
 
     private JSONObject createJsonObjectToSend (JSONObject devicePropertiesJson ,List<DeviceProperty> listDeviceProperties ,String token,String hardwareID) throws JSONException {
 
-        long id = listDeviceProperties.get(0).getDeviceId();
         devicePropertiesJson.put(KEY_TOKEN, token);
         JSONObject propertyJson = new JSONObject();
-        propertyJson.put(KEY_DEVICE_ID, Long.valueOf(hardwareID));
-       /* if(listDeviceProperties.get(0).getDeviceId() == 1) //TODO put the value to prove if all changes they were not made in backend
-            propertyJson.put(KEY_DEVICE_ID, 14/);
-       /* if(listDeviceProperties.get(0).getDeviceId() == 2)
-            propertyJson.put(KEY_DEVICE_ID, 15);*/
+        propertyJson.put(KEY_DEVICE_ID, hardwareID);
         devicePropertiesJson.put(KEY_DEVICE, propertyJson);
         JSONArray jsonArray = new JSONArray();
         for (DeviceProperty deviceProperty:listDeviceProperties) {

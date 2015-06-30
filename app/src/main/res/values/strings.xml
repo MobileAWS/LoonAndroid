@@ -94,8 +94,8 @@
     <string name="from">From</string>
     <string name="to">To</string>
     <string name="upload_fail">Error to Sync with the server</string>
-    <string name="upload_server_error">error to connect with the server.</string>
-    <string name="upload_login_error">You are login like off line  </string>
-    <string name="empty_sensor_upload">current devices don't have Properties to upload</string>
+    <string name="upload_server_error">Error uploading data to server.</string>
+    <string name="upload_login_error">You need to be online to upload</string>
+    <string name="empty_sensor_upload">Current devices do not have  Properties to upload</string>
     <string name="no_sensors_found_upload">No Devices to Upload</string>
 </resources>

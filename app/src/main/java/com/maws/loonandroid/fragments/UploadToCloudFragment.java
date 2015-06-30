@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.maws.loonandroid.R;
@@ -25,7 +23,6 @@ import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.requests.UploadRequestHandler;
 import com.maws.loonandroid.util.Util;
-import com.maws.loonandroid.views.CustomProgressSpinner;
 import com.maws.loonandroid.views.CustomToast;
 
 import org.json.JSONException;
@@ -75,6 +72,9 @@ public class UploadToCloudFragment extends Fragment {
         sensorsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(view.findViewById(R.id.successIV).isShown()){
+                    refreshDevicesAdapter( verificationDevicesWithProperties());
+                }
                 adapter.toogleItem(position);
             }
         });
@@ -130,11 +130,9 @@ public class UploadToCloudFragment extends Fragment {
                 public void onFailure(String error,Context context, View progressBarView) {
                     try {
                         JSONObject object = new JSONObject(error);
-                        progressBarView.findViewById(R.id.progressBarUploadIV).setVisibility(View.GONE);
-                        TextView textView = (TextView) progressBarView.findViewById(R.id.SuccessIV);
-                        textView.setText("Fail");
-                        textView.setTextColor(Color.RED);
-                        textView.setVisibility(View.VISIBLE);
+                        setUpMessageUpload(progressBarView, Color.RED, "Fail");
+
+
                         CustomToast.showAlert(context, getString(R.string.upload_server_error), CustomToast._TYPE_ERROR);
                     } catch (Exception ex) {
                         CustomToast.showAlert(context, getString(R.string.default_request_error_message), CustomToast._TYPE_ERROR);
@@ -149,12 +147,7 @@ public class UploadToCloudFragment extends Fragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    progressBarView.findViewById(R.id.progressBarUploadIV).setVisibility(View.GONE);
-                    TextView textView = (TextView) progressBarView.findViewById(R.id.SuccessIV);
-                    textView.setText("Done");
-                    textView.setTextColor(Color.green(45));
-                    textView.setVisibility(View.VISIBLE);
-                    progressBarView.findViewById(R.id.checkIV).setVisibility(View.INVISIBLE);
+                    setUpMessageUpload(progressBarView, Color.green(45),"Done");
                     if("done".equalsIgnoreCase(responseServer)){
                         DevicePropertyDao dPDao = new DevicePropertyDao(context);
                         for(DeviceProperty deviceProperty:listDeviceProperties) {
@@ -185,5 +178,16 @@ public class UploadToCloudFragment extends Fragment {
     private void refreshDevicesAdapter(List<Device> devicesWithAlarm){
         adapter = new UploadSensorListAdapter(this.getActivity(), devicesWithAlarm);
         sensorsLV.setAdapter(adapter);
+    }
+
+
+    private void setUpMessageUpload(View progressBarView,int color,String text){
+        progressBarView.findViewById(R.id.progressBarUploadIV).setVisibility(View.GONE);
+        TextView textView = (TextView) progressBarView.findViewById(R.id.successIV);
+        textView.setText(text);
+        textView.setTextColor(color);
+        textView.setVisibility(View.VISIBLE);
+        progressBarView.findViewById(R.id.checkIV).setVisibility(View.INVISIBLE);
+        progressBarView.findViewById(R.id.checkIV).setVisibility(View.GONE);
     }
 }

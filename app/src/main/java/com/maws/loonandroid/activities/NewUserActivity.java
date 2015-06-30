@@ -13,6 +13,8 @@ import com.maws.loonandroid.listener.StandardRequestListener;
 import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.requests.UserRequestHandler;
 import com.maws.loonandroid.views.CustomToast;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -24,6 +26,7 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
     private static final String TAG = "NEW USER";
     private EditText emailET, confirmEmailET, passwordET, confirmPasswordET;
     private Button createUserBtn;
+    private User userToSave;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,17 +89,14 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
             User user = new User();
             user.setEmail(email);
             user.setPassword(password);
-            uDao.create(user, lDao.getWritableDatabase());
-            CustomToast.showAlert(this, getString(R.string.user_created_successfully), CustomToast._TYPE_SUCCESS);
-            this.finish();
-
-            /*UserRequestHandler.signUp(this, email, password, new StandardRequestListener() {
+            userToSave = user;
+            UserRequestHandler.signUp(this, user, new StandardRequestListener() {
                 @Override
                 public void onSuccess(JSONObject jsonObject) {
 
                     try {
                         if (jsonObject.getString("response").equalsIgnoreCase("done")) {
-
+                            saveUserLocalDb();
                         }
                     }catch(Exception ex){
                         onFailure(ex.getMessage());
@@ -105,14 +105,15 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
 
                 @Override
                 public void onFailure(String error) {
-                    try{
-                        JSONObject object = new JSONObject(error);
-                        CustomToast.showAlert(NewUserActivity.this, object.getString("message"), CustomToast._TYPE_ERROR);
-                    }catch(Exception ex) {
+                    try {
+                        JSONObject errorJsonObject = new JSONObject(error);
+                        CustomToast.showAlert(NewUserActivity.this, errorJsonObject.getString("message"), CustomToast._TYPE_ERROR);
+                    } catch (JSONException e) {
                         CustomToast.showAlert(NewUserActivity.this, NewUserActivity.this.getString(R.string.default_request_error_message), CustomToast._TYPE_ERROR);
+                        e.printStackTrace();
                     }
                 }
-            });*/
+            });
         }
     };
 
@@ -121,5 +122,12 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
         if(v == createUserBtn){
             attemptUserCreation();
         }
+    }
+    private void saveUserLocalDb(){
+        LoonMedicalDao lDao = new LoonMedicalDao(this);
+        UserDao uDao = new UserDao(this);
+        uDao.create(userToSave, lDao.getWritableDatabase());
+        CustomToast.showAlert(this, getString(R.string.user_created_successfully), CustomToast._TYPE_SUCCESS);
+        this.finish();
     }
 }

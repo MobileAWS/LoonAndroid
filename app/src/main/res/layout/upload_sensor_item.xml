@@ -27,7 +27,15 @@
             android:textSize="16sp"
             />
     </LinearLayout>
-
+    <TextView
+        android:id="@+id/successIV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done"
+        android:textStyle="italic"
+        android:visibility="invisible"
+        android:textSize="20sp"
+        />
     <ProgressBar
         android:id="@+id/progressBarUploadIV"
         android:tint="@color/green"
@@ -46,14 +54,4 @@
         android:layout_gravity="center_vertical"
     >
     </ImageView>
-    <TextView
-        android:id="@+id/SuccessIV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Done"
-        android:textStyle="italic"
-        android:visibility="invisible"
-        android:textSize="20sp"
-        />
-
 </LinearLayout>

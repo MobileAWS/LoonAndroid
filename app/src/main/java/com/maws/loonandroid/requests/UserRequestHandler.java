@@ -8,6 +8,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.listener.StandardRequestListener;
@@ -30,8 +31,9 @@ import java.util.Map;
 public class UserRequestHandler {
 
     private static final String TAG = "UserRequestHandler";
+    public static final String KEY_ROLE_ID = "caregiver";
 
-    public static void signUp( final Context context, final String email, final String pass, final StandardRequestListener listener){
+    public static void signUp( final Context context, final User user, final StandardRequestListener listener){
 
         final CustomProgressSpinner spinner = new CustomProgressSpinner(context, context.getString(R.string.creating_user));
         spinner.show();
@@ -40,45 +42,41 @@ public class UserRequestHandler {
         RequestQueue queue = vs.getRequestQueue();
         String url = VolleySingleton.SERVER_URL + "user/sign_up";
         Log.d("Sign Up URL: ", url);
-        StringRequest signUpRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    spinner.dismiss();
-                    JSONObject jsonObject = new JSONObject(response);
-                    listener.onSuccess(jsonObject);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    listener.onFailure(e.toString());
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                spinner.dismiss();
-                listener.onFailure( VolleySingleton.getResponseData(error.networkResponse) );
-                error.printStackTrace();
-            }
-        }){
-            @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("email",email);
-                params.put("password",pass);
-                params.put("confirm_password",pass);
-                Log.d(TAG, params.toString());
-                return params;
-            }
+        JSONObject userJson = null;
+        try {
+            userJson = createJsonObject(user);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest jsObjRequest =  new JsonObjectRequest(Request.Method.POST,url,userJson,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                            spinner.dismiss();
+                            JSONObject jsonObject = response;
+                            listener.onSuccess(jsonObject);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        spinner.dismiss();
+                        listener.onFailure(VolleySingleton.getResponseData(error.networkResponse));
+                        error.printStackTrace();
+                    }
+                });
+        jsObjRequest.setRetryPolicy( VolleySingleton.getRetryPolicy() );
+        queue.add(jsObjRequest);
+    }
 
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("Content-Type","application/x-www-form-urlencoded");
-                return params;
-            }
-        };
-        signUpRequest.setRetryPolicy( VolleySingleton.getRetryPolicy() );
-        queue.add(signUpRequest);
+    private static JSONObject createJsonObject(User user) throws JSONException {
+        JSONObject userJsonObject = new JSONObject();
+        userJsonObject.put("email", user.getEmail());
+        userJsonObject.put("password",user.getPassword());
+        userJsonObject.put("confirm_password",user.getPassword());
+        userJsonObject.put("role_id",UserRequestHandler.KEY_ROLE_ID);
+
+        return userJsonObject;
     }
 
     public static void generateUserId(final Context context, final StandardRequestListener listener){
@@ -154,7 +152,7 @@ public class UserRequestHandler {
             @Override
             public void onErrorResponse(VolleyError error) {
                 spinner.dismiss();
-                listener.onFailure( VolleySingleton.getResponseData(error.networkResponse) );
+                listener.onFailure(VolleySingleton.getResponseData(error.networkResponse));
                 error.printStackTrace();
             }
         }){
@@ -181,6 +179,7 @@ public class UserRequestHandler {
         void onSuccess(JSONObject response, User user, String siteId, String customerId,Context context);
         void onFailure(String error);
     }
+
 
     public static void login( final Context context,
                               final LoginListener listener,
@@ -210,7 +209,7 @@ public class UserRequestHandler {
         } catch (Exception e) {
             //ignore it for now. We control the UTF chars on this encoding
         }
-
+        Log.e("json login",url.toString());
         StringRequest signUpRequest = new StringRequest(Request.Method.GET, url.toString(), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -232,8 +231,14 @@ public class UserRequestHandler {
             @Override
             public void onErrorResponse(VolleyError error) {
                 spinner.dismiss();
-                listener.onFailure(VolleySingleton.getResponseData(error.networkResponse));
-                Log.d(TAG, new String(error.networkResponse.data));
+
+                if( error.networkResponse != null) {
+                    listener.onFailure(VolleySingleton.getResponseData(error.networkResponse));
+                    Log.d(TAG, new String(error.networkResponse.data));
+                }else{
+                    listener.onFailure(error.getCause().getMessage());
+                    Log.d(TAG, new String(error.getCause().getMessage()));
+                }
                 error.printStackTrace();
             }
         }){
@@ -247,4 +252,6 @@ public class UserRequestHandler {
         signUpRequest.setRetryPolicy( VolleySingleton.getRetryPolicy() );
         queue.add(signUpRequest);
     }
+
+
 }

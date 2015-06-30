@@ -29,6 +29,7 @@ public class UploadSensorListAdapter extends BaseAdapter implements MultipleSele
         TextView nameTV;
         ImageView checkIV;
         ProgressBar progressBarUploadIV;
+        TextView successIV;
     }
 
     public UploadSensorListAdapter(Context context, List<Device> values) {
@@ -63,7 +64,7 @@ public class UploadSensorListAdapter extends BaseAdapter implements MultipleSele
             viewHolder.nameTV = (TextView) convertView.findViewById(R.id.nameTV);
             viewHolder.checkIV = (ImageView) convertView.findViewById(R.id.checkIV);
             viewHolder.progressBarUploadIV = (ProgressBar) convertView.findViewById(R.id.progressBarUploadIV);
-
+            viewHolder.successIV = (TextView) convertView.findViewById(R.id.successIV);
             // store the holder with the view.
             convertView.setTag(viewHolder);
 
@@ -76,13 +77,13 @@ public class UploadSensorListAdapter extends BaseAdapter implements MultipleSele
         Device thisDevice = items.get(position);
         viewHolder.nameTV.setText(thisDevice.getName());
 
+
         //select or unselect items
         if(selectedItems.contains( new Integer(position) )){
             viewHolder.checkIV.setVisibility(View.VISIBLE);
         }else{
             viewHolder.checkIV.setVisibility(View.GONE);
         }
-
         return convertView;
     }
 
@@ -99,6 +100,7 @@ public class UploadSensorListAdapter extends BaseAdapter implements MultipleSele
 
     @Override
     public void toogleItem(int position){
+
         if(selectedItems.contains( new Integer(position) )){
             unselectItem(position);
         }else{
@@ -106,6 +108,7 @@ public class UploadSensorListAdapter extends BaseAdapter implements MultipleSele
         }
         notifyDataSetInvalidated();
     }
+
 
     @Override
     public void selectItem(int position) {

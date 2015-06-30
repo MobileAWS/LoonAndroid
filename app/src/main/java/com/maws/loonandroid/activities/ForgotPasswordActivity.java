@@ -57,6 +57,8 @@ public class ForgotPasswordActivity extends Activity implements View.OnClickList
                     CustomToast.showAlert(ForgotPasswordActivity.this, getString(R.string.error_password_reset), CustomToast._TYPE_ERROR);
                 }
             }
+
+
         }, email);
     };
 
