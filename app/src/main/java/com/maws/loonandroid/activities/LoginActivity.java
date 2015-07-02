@@ -144,18 +144,21 @@ public class LoginActivity extends Activity implements OnClickListener {
                         if (jsonObject.getString("response").equalsIgnoreCase("done")) {
                             finish();
                         }
-                        if (response.getString("token") != null && response.getString("role") != null ) {
-                            user.setToken(response.getString("token"));
-                            user.setRole(response.getString("role"));
-                            User.setCurrent(user, context);
-                            goTonextPage();
-                            finish();
+                        if( !response.isNull("error") &&  response.getString("error").equalsIgnoreCase("true")) {
+                            CustomToast.showAlert(LoginActivity.this, response.getString("message"), CustomToast._TYPE_ERROR);
+                        }else {
+                            if ( !response.isNull("token") && response.getString("token") != null && !response.isNull("role") ) {
+                                user.setToken(response.getString("token"));
+                                user.setRole(response.getString("role"));
+                                User.setCurrent(user, context);
+                                goToNextPage();
+                                finish();
+                            }
                         }
                     } catch (Exception ex) {
                         onFailure(ex.getMessage());
                     }
                 }
-
                 @Override
                 public void onFailure(String error) {
                     try {
@@ -194,7 +197,7 @@ public class LoginActivity extends Activity implements OnClickListener {
             //if everything is good, i set the current user, site and customerId for the app
             User.setCurrent(user, this);
 
-            goTonextPage();
+            goToNextPage();
             this.finish();
         }
     };
@@ -216,7 +219,7 @@ public class LoginActivity extends Activity implements OnClickListener {
         }
     }
 
-    private  void goTonextPage(){
+    private  void goToNextPage(){
         String siteId = siteIdET.getText().toString();
         String customerId = customerIdET.getText().toString();
         CustomerDao cDao = new CustomerDao(this);

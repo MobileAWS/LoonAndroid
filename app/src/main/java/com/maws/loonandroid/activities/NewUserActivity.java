@@ -120,7 +120,7 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
         LoonMedicalDao lDao = new LoonMedicalDao(this);
         UserDao uDao = new UserDao(this);
         User inDbUser = uDao.get(userToSave.getEmail(), lDao.getReadableDatabase());
-        if(inDbUser != null) {
+        if(inDbUser == null) {
             uDao.create(userToSave, lDao.getWritableDatabase());
             CustomToast.showAlert(this, getString(R.string.user_created_successfully), CustomToast._TYPE_SUCCESS);
             this.finish();
