@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">LoonAndroid</string>
+    <string name="app_name">Care Sentinel</string>
     <string name="prompt_client_number">Client Number</string>
     <string name="prompt_site_id">Site ID</string>
     <string name="prompt_email">Email</string>
@@ -84,7 +84,7 @@
     <string name="property_chair">Chair</string>
     <string name="property_toilet">Toilet</string>
     <string name="property_incontinence">Incontinence</string>
-    <string name="view_history">View History</string>
+    <string name="view_history">History</string>
     <string name="title_activity_history_sensor">Alert History</string>
     <string name="list_Alarm_Description">Description </string>
     <string name="list_Alarm_header2">Alerted On:</string>
@@ -96,6 +96,15 @@
     <string name="upload_fail">Error to Sync with the server</string>
     <string name="upload_server_error">Error uploading data to server.</string>
     <string name="upload_login_error">You need to be online to upload</string>
-    <string name="empty_sensor_upload">Current devices do not have  Properties to upload</string>
+    <string name="empty_sensor_upload">Current devices do not have Alerts to upload</string>
     <string name="no_sensors_found_upload">No Devices to Upload</string>
+    <string name="property_call">Call</string>
+    <string name="property_pri">Portal</string>
+    <string name="device_serial">Serial #: %1$s</string>
+    <string name="device_version">Version: %1$s / %2$s</string>
+    <string name="device_battery">Battery:</string>
+    <string name="device_signal">Signal:</string>
+    <string name="device_temperature">Temperature: %1$s / %2$s</string>
+
+
 </resources>

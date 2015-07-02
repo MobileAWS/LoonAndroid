@@ -1,6 +1,7 @@
 package com.maws.loonandroid.adapters;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -26,7 +27,7 @@ public class UploadSensorListAdapter extends BaseAdapter implements MultipleSele
     private List<Integer> selectedItems;
 
     static class ViewHolder {
-        TextView nameTV;
+        TextView nameTV, serialTV;
         ImageView checkIV;
         ProgressBar progressBarUploadIV;
         TextView successIV;
@@ -62,6 +63,7 @@ public class UploadSensorListAdapter extends BaseAdapter implements MultipleSele
             // well set up the ViewHolder
             viewHolder = new ViewHolder();
             viewHolder.nameTV = (TextView) convertView.findViewById(R.id.nameTV);
+            viewHolder.serialTV = (TextView) convertView.findViewById(R.id.serialTV);
             viewHolder.checkIV = (ImageView) convertView.findViewById(R.id.checkIV);
             viewHolder.progressBarUploadIV = (ProgressBar) convertView.findViewById(R.id.progressBarUploadIV);
             viewHolder.successIV = (TextView) convertView.findViewById(R.id.successIV);
@@ -75,8 +77,8 @@ public class UploadSensorListAdapter extends BaseAdapter implements MultipleSele
         }
 
         Device thisDevice = items.get(position);
-        viewHolder.nameTV.setText(thisDevice.getName());
-
+        viewHolder.nameTV.setText( TextUtils.isEmpty(thisDevice.getDescription())?thisDevice.getName():thisDevice.getDescription());
+        viewHolder.serialTV.setText( TextUtils.isEmpty(thisDevice.getDescription())? thisDevice.getHardwareId(): thisDevice.getName());
 
         //select or unselect items
         if(selectedItems.contains( new Integer(position) )){

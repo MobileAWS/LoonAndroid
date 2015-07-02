@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import com.maws.loonandroid.contentproviders.DeviceContentProvider;
 import com.maws.loonandroid.contentproviders.DeviceEnabledPropertyContentProvider;
 import com.maws.loonandroid.models.DeviceEnabledProperty;
 
@@ -71,7 +70,6 @@ public class DeviceEnabledPropertyDao {
     // Updating single object
     public long update(DeviceEnabledProperty dp) {
 
-        //Don't update firmwareVersion, hardwareVersion or hardwareId because they're updated async and we may delete them
         ContentValues values = new ContentValues();
         values.put(KEY_USER_ID, dp.getUserId());
         values.put(KEY_DEVICE_ID, dp.getDeviceId());
@@ -79,7 +77,7 @@ public class DeviceEnabledPropertyDao {
         values.put(KEY_ENABLED, dp.isEnabled()?1:0);
         values.put(KEY_DELAY, dp.getDelay());
 
-        context.getContentResolver().update(DeviceContentProvider.CONTENT_URI,
+        context.getContentResolver().update(DeviceEnabledPropertyContentProvider.CONTENT_URI,
                 values,
                 KEY_ID + "=?",
                 new String[]{
@@ -90,9 +88,9 @@ public class DeviceEnabledPropertyDao {
     }
 
     // Getting single object
-    public DeviceEnabledProperty findByDeviceAndProperty(long deviceId, long propertyId) {
+    public DeviceEnabledProperty findByDevicePropertyUser(long deviceId, long propertyId, long userId) {
 
-        Cursor cursor = context.getContentResolver().query(DeviceContentProvider.CONTENT_URI,
+        Cursor cursor = context.getContentResolver().query(DeviceEnabledPropertyContentProvider.CONTENT_URI,
                 new String[]{
                         KEY_ID,
                         KEY_USER_ID,
@@ -101,9 +99,11 @@ public class DeviceEnabledPropertyDao {
                         KEY_ENABLED,
                         KEY_DELAY
                 },
-                KEY_DEVICE_ID + "=? AND " + KEY_PROPERTY_ID + "=?",
+                KEY_DEVICE_ID + "=? AND " + KEY_USER_ID + "=? AND "  + KEY_PROPERTY_ID + "=?",
                 new String[]{
-                        String.valueOf(deviceId), String.valueOf(propertyId)
+                        String.valueOf(deviceId),
+                        String.valueOf(userId),
+                        String.valueOf(propertyId)
                 },
                 null
         );

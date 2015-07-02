@@ -18,6 +18,7 @@ import com.maws.loonandroid.dao.DeviceCharacteristicDao;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
+import com.maws.loonandroid.util.Util;
 
 /**
  * Created by Andrexxjc on 15/05/2015.
@@ -29,9 +30,9 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
     public static final int CODE_RESULT = 10;
 
     private long sensorId;
-    private TextView nameTV, codeTV;
+    private TextView nameTV, serialTV, versionTV, temperatureTV;
     private Button viewHistory;
-    private ImageView signalIV, batteryIV, checkIV;
+    private ImageView signalIV, batteryIV;
     private ListView propertiesLV;
     private PropertyAdapter adapter;
 
@@ -41,12 +42,12 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitor);
         sensorId = getIntent().getLongExtra(MONITOR_ID, -1);
-
         nameTV = (TextView) findViewById(R.id.nameTV);
-        codeTV = (TextView) findViewById(R.id.codeTV);
+        serialTV = (TextView) findViewById(R.id.serialTV);
+        versionTV = (TextView) findViewById(R.id.versionTV);
+        temperatureTV = (TextView) findViewById(R.id.temperatureTV);
         signalIV = (ImageView) findViewById(R.id.signalIV);
         batteryIV = (ImageView) findViewById(R.id.batteryIV);
-        checkIV = (ImageView) findViewById(R.id.checkIV);
         propertiesLV = (ListView) findViewById(R.id.propertiesLV);
         viewHistory = (Button) findViewById(R.id.historyBtn);
         viewHistory.setOnClickListener(this);
@@ -60,18 +61,21 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
         }
     }
 
-
     private void loadInformation(){
         DeviceDao sDao = new DeviceDao(this);
         Device currentDevice = sDao.get(sensorId);
 
         if(currentDevice != null) {
+            this.setTitle(TextUtils.isEmpty(currentDevice.getDescription()) ? currentDevice.getName() : currentDevice.getDescription());
             DeviceCharacteristicDao ssDao = new DeviceCharacteristicDao(this);
-            nameTV.setText(TextUtils.isEmpty(currentDevice.getDescription())? currentDevice.getName(): currentDevice.getDescription());
-            codeTV.setText(currentDevice.getName());
-
+            nameTV.setText( currentDevice.getName() );
+            serialTV.setText(String.format(getString(R.string.device_serial), currentDevice.getHardwareId()));
+            versionTV.setText( String.format(getString(R.string.device_version), currentDevice.getFirmwareVersion(), currentDevice.getHardwareVersion()) );
+            temperatureTV.setText( String.format(getString(R.string.device_temperature), currentDevice.getTemperature(), currentDevice.getCelsiusTemperature()) );
+            Util.setUpBatteryView(this, batteryIV, currentDevice );
+            Util.setUpSignalView(this,  signalIV, currentDevice );
             //i need to create a device enabled and delay controls for each property
-            adapter = new PropertyAdapter(this, Property.defaultProperties);
+            adapter = new PropertyAdapter(this, Property.defaultProperties, currentDevice);
             propertiesLV.setAdapter(adapter);
         }
     }

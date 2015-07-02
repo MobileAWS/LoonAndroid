@@ -9,4 +9,5 @@ public class GattEvent {
     public static final String GATT_SERVICES_DISCOVERED = "gatt_sdv";
     public static final String GATT_CHARACTERISTIC_CHANGED = "gatt_chg";
     public static final String GATT_CHARACTERISTIC_READ = "gatt_chr";
+    public static final String GATT_RSSI_READ = "gatt_rssi";
 }

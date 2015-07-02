@@ -24,9 +24,9 @@ public class Device implements Parcelable {
     private String macAddress;
     private boolean connected = false;
     private boolean active = true;
-    private float batteryStatus;
+    private int batteryStatus;
     private int signalStrength;
-    private String temperature;
+    private double temperature;
 
     public Device(){}
 
@@ -51,11 +51,11 @@ public class Device implements Parcelable {
         this.code = code;
     }
 
-    public float getBatteryStatus() {
+    public int getBatteryStatus() {
         return batteryStatus;
     }
 
-    public void setBatteryStatus(float batteryStatus) {
+    public void setBatteryStatus(int batteryStatus) {
         this.batteryStatus = batteryStatus;
     }
 
@@ -67,11 +67,11 @@ public class Device implements Parcelable {
         this.signalStrength = signalStrenght;
     }
 
-    public String getTemperature() {
+    public double getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(String temperature) {
+    public void setTemperature(double temperature) {
         this.temperature = temperature;
     }
 
@@ -136,9 +136,9 @@ public class Device implements Parcelable {
         pc.writeString(this.hardwareVersion);
         pc.writeString(this.description);
         pc.writeString(this.macAddress);
-        pc.writeFloat(this.batteryStatus);
+        pc.writeInt(this.batteryStatus);
         pc.writeInt(this.signalStrength);
-        pc.writeString(this.temperature);
+        pc.writeDouble(this.temperature);
         pc.writeInt(this.active ? 1 : 0);
         pc.writeInt(this.connected ? 1: 0);
     }
@@ -166,9 +166,9 @@ public class Device implements Parcelable {
         this.hardwareVersion = pc.readString();
         this.description = pc.readString();
         this.macAddress = pc.readString();
-        this.batteryStatus = pc.readFloat();
+        this.batteryStatus = pc.readInt();
         this.signalStrength = pc.readInt();
-        this.temperature = pc.readString();
+        this.temperature = pc.readDouble();
         this.active = pc.readInt() == 1;
         this.connected = pc.readInt() == 1;
     }
@@ -187,10 +187,14 @@ public class Device implements Parcelable {
         device.setMacAddress("00-00-" + currentTimeStr.substring(currentTimeStr.length() - 4, currentTimeStr.length() - 2 ) + "-"+ currentTimeStr.substring(currentTimeStr.length() - 2));
         device.setBatteryStatus(3);
         device.setSignalStrength(5);
-        device.setTemperature("80");
+        device.setTemperature(80f);
         device.setActive(true);
         device.setConnected(false);
         return device;
+    }
+
+    public float getCelsiusTemperature(){
+        return 0f;
     }
 
 }

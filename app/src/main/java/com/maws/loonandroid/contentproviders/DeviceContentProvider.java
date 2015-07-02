@@ -187,7 +187,10 @@ public class DeviceContentProvider extends ContentProvider {
                 DeviceDao.KEY_MAC_ADDRESS,
                 DeviceDao.KEY_ACTIVE,
                 DeviceDao.KEY_CONNECTED,
-                DeviceDao.KEY_HARDWARE_ID
+                DeviceDao.KEY_HARDWARE_ID,
+                DeviceDao.KEY_BATTERY_STATUS,
+                DeviceDao.KEY_TEMPERATURE,
+                DeviceDao.KEY_SIGNAL
         };
         if (projection != null) {
             HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));

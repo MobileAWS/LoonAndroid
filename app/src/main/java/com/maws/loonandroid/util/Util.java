@@ -6,12 +6,18 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.dao.DeviceEnabledPropertyDao;
+import com.maws.loonandroid.models.Device;
+import com.maws.loonandroid.models.DeviceEnabledProperty;
 import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.User;
 
@@ -43,16 +49,26 @@ public class Util {
 
     public static void generateAlarm(Context context, DeviceProperty dProperty){
 
-        Intent intent = new Intent();
-        Bundle bundle = new Bundle();
+        //before generating an alarm, i need to make sure the property is not disabled
+        User user = User.getCurrent(context);
+        if(user == null) {
+            return;
+        }
+        DeviceEnabledPropertyDao depDao = new DeviceEnabledPropertyDao(context);
+        DeviceEnabledProperty deviceEnabledProperty =  depDao.findByDevicePropertyUser(dProperty.getDeviceId(), dProperty.getPropertyId(), user.getId());
+        boolean isEnabled = deviceEnabledProperty == null?true:deviceEnabledProperty.isEnabled();
 
-        intent.setAction("com.maws.loonandroid.deviceproperty");
-        bundle.putLong("deviceId", dProperty.getDeviceId());
-        bundle.putLong("propertyId", dProperty.getPropertyId());
-        bundle.putString("value", dProperty.getValue());
-        bundle.putLong("dateMillis", new Date().getTime());
-        intent.putExtras(bundle);
-        context.sendBroadcast(intent);
+        if(isEnabled) {
+            Intent intent = new Intent();
+            Bundle bundle = new Bundle();
+            intent.setAction("com.maws.loonandroid.deviceproperty");
+            bundle.putLong("deviceId", dProperty.getDeviceId());
+            bundle.putLong("propertyId", dProperty.getPropertyId());
+            bundle.putString("value", dProperty.getValue());
+            bundle.putLong("dateMillis", new Date().getTime());
+            intent.putExtras(bundle);
+            context.sendBroadcast(intent);
+        }
     }
 
     public static void generateNotification(Context context, String title, String message) {
@@ -120,6 +136,39 @@ public class Util {
         } else {
             final int childIndex = pos - firstListItemPosition;
             return listView.getChildAt(childIndex);
+        }
+    }
+
+    public static void setUpSignalView(Context context, ImageView signalIV, Device device){int signal = device.getSignalStrength();
+        if(signal <= -90){
+            signalIV.setImageResource(R.drawable.wifi1);
+            signalIV.setColorFilter( context.getResources().getColor(R.color.dark_orange));
+        }else if(signal < -65 ){
+            signalIV.setImageResource(R.drawable.wifi2);
+            signalIV.setColorFilter(context.getResources().getColor(R.color.toast_warning_border));
+        }else if(signal < 0){
+            signalIV.setImageResource(R.drawable.wifi3);
+            signalIV.setColorFilter(context.getResources().getColor(R.color.green));
+        }else{
+            signalIV.setImageResource(R.drawable.wifi1);
+            signalIV.setColorFilter(context.getResources().getColor(R.color.light_gray));
+        }
+    }
+
+    public static void setUpBatteryView(Context context, ImageView batteryIV, Device device){
+        int battery = device.getBatteryStatus();
+        if(battery >= 80){
+            batteryIV.setImageResource(R.drawable.battery4);
+            batteryIV.setColorFilter(context.getResources().getColor(R.color.green));
+        }else if(battery > 50 ){
+            batteryIV.setImageResource(R.drawable.battery3);
+            batteryIV.setColorFilter(context.getResources().getColor(R.color.green));
+        }else if(battery > 25 ){
+            batteryIV.setImageResource(R.drawable.battery2);
+            batteryIV.setColorFilter(context.getResources().getColor(R.color.toast_warning_border));
+        }else{
+            batteryIV.setImageResource(R.drawable.battery1);
+            batteryIV.setColorFilter(context.getResources().getColor(R.color.dark_orange));
         }
     }
 

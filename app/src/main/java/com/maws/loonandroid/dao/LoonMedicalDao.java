@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class LoonMedicalDao extends SQLiteOpenHelper {
 
     public static final String _DATABASE_NAME = "loonmedical";
-    public static final int _DATABASE_VERSION = 16;
+    public static final int _DATABASE_VERSION = 21;
     private Context context;
 
     public LoonMedicalDao( Context context ) {

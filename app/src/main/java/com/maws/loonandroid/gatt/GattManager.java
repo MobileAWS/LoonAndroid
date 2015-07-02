@@ -7,15 +7,12 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothProfile;
 import android.os.AsyncTask;
-
+import android.os.Handler;
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.gatt.events.GattEvent;
-import com.maws.loonandroid.gatt.operations.GattCharacteristicReadOperation;
 import com.maws.loonandroid.gatt.operations.GattDescriptorReadOperation;
 import com.maws.loonandroid.gatt.operations.GattOperation;
-import org.droidparts.Injector;
 import org.droidparts.bus.EventBus;
-import org.droidparts.bus.EventReceiver;
 import org.droidparts.util.L;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,15 +27,42 @@ public class GattManager {
     private GattOperation mCurrentOperation;
     private HashMap<UUID, ArrayList<CharacteristicChangeListener>> mCharacteristicChangeListeners;
     private AsyncTask<Void, Void, Void> mCurrentOperationTimeout;
-    private BluetoothGattCallback callback;
-    private EventReceiver eventReceiver;
+    private static GattManager instance;
+    private Handler handler = new Handler();
+
+    public static GattManager getInstance(){
+        if(instance == null){
+            instance = new GattManager();
+        }
+        return instance;
+    }
 
     public GattManager( ) {
         mQueue = new ConcurrentLinkedQueue<>();
         mGatts = new ConcurrentHashMap<>();
         mCurrentOperation = null;
         mCharacteristicChangeListeners = new HashMap<>();
+
+        //i need a constant task that asks for rssi on active gatts every 7 seconds
+        handler.post(sendData);
     }
+
+    private final Runnable sendData = new Runnable(){
+        public void run(){
+            try {
+                if(mGatts.size() > 0) {
+                    //read all of the rssi on the gatt queue
+                    for (BluetoothGatt mGatt : mGatts.values()) {
+                        mGatt.readRemoteRssi();
+                    }
+                }
+                handler.postDelayed(this, 7000); //this will run every 7 seconds
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     public void onDestroy(){
         mQueue.clear();
@@ -46,6 +70,7 @@ public class GattManager {
         for(BluetoothGatt gatt: mGatts.values()){
             gatt.close();
         }
+        handler.removeCallbacks(sendData);
     }
 
     public synchronized void cancelCurrentOperationBundle() {
@@ -211,12 +236,17 @@ public class GattManager {
                                     0,
                                     GattEvent.GATT_CHARACTERISTIC_CHANGED,
                                     characteristic));
+                }
 
-                    /*if (mCharacteristicChangeListeners.containsKey(characteristic.getUuid())) {
-                        for (CharacteristicChangeListener listener : mCharacteristicChangeListeners.get(characteristic.getUuid())) {
-                            listener.onCharacteristicChanged(device.getAddress(), characteristic);
-                        }
-                    }*/
+                @Override
+                public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
+                    EventBus.postEvent(GattEvent.GATT_RSSI_READ,
+                            new GattManagerBundle(
+                                    device.getAddress(),
+                                    gatt,
+                                    status,
+                                    GattEvent.GATT_RSSI_READ,
+                                    rssi));
                 }
             });
         }
@@ -260,6 +290,7 @@ public class GattManager {
         public final int newState;
         public final String address;
         public final BluetoothGattCharacteristic characteristic;
+        public final int rssi;
 
         public GattManagerBundle(String address, BluetoothGatt gatt,int newState, String gattEvent) {
             this.address = address;
@@ -267,6 +298,16 @@ public class GattManager {
             this.newState = newState;
             this.gattEvent = gattEvent;
             this.characteristic = null;
+            this.rssi = 0;
+        }
+
+        public GattManagerBundle(String address, BluetoothGatt gatt,int newState, String gattEvent, int rssi) {
+            this.address = address;
+            this.gatt = gatt;
+            this.newState = newState;
+            this.gattEvent = gattEvent;
+            this.characteristic = null;
+            this.rssi = rssi;
         }
 
         public GattManagerBundle(String address, BluetoothGatt gatt,int newState, String gattEvent, BluetoothGattCharacteristic characteristic) {
@@ -275,6 +316,7 @@ public class GattManager {
             this.newState = newState;
             this.gattEvent = gattEvent;
             this.characteristic = characteristic;
+            this.rssi = 0;
         }
     }
 

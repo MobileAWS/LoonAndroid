@@ -110,6 +110,11 @@
         <service android:name=".services.BLEService" />
 
         <provider
+            android:name=".contentproviders.DeviceEnabledPropertyContentProvider"
+            android:authorities="com.maws.loonandroid.contentproviders.DeviceEnabledPropertyContentProvider"
+            android:enabled="true"
+            android:exported="false" />
+        <provider
             android:name=".contentproviders.DevicePropertyContentProvider"
             android:authorities="com.maws.loonandroid.contentproviders.DevicePropertyContentProvider"
             android:enabled="true"
@@ -144,6 +149,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.maws.loonandroid.activities.MonitorActivity" />
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="e690ff966aed71fce389bb7a08e54f3978fa5b17" />
     </application>
 
 </manifest>

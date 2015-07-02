@@ -20,7 +20,7 @@
             android:textStyle="bold"
         />
         <TextView
-            android:id="@+id/codeTV"
+            android:id="@+id/serialTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Sensor Code"

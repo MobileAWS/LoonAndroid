@@ -12,11 +12,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Property Name"
+        android:textStyle="bold"
     />
 
     <ToggleButton
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/delayET"
+        android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/enabledTB"
@@ -32,7 +34,8 @@
         android:digits="4"
         android:layout_gravity="right"
         android:layout_width="50dp"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
     </EditText>
 

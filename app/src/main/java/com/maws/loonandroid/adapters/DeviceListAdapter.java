@@ -139,7 +139,7 @@ public class DeviceListAdapter extends BaseAdapter {
                         return;
                     }
 
-                    GattManager manager = new GattManager();
+                    GattManager manager = GattManager.getInstance();
                     GattConnectOperation operation = new GattConnectOperation(device);
                     manager.queue(operation);
                 }
@@ -149,9 +149,11 @@ public class DeviceListAdapter extends BaseAdapter {
             viewHolder.nameTV.setText( TextUtils.isEmpty(thisDevice.getDescription())? thisDevice.getName(): thisDevice.getDescription() );
             viewHolder.addressTV.setText(thisDevice.getName());
             viewHolder.connectBtn.setVisibility(View.GONE);
-            viewHolder.checkIV.setVisibility(View.VISIBLE);
+            viewHolder.checkIV.setVisibility(View.GONE);
             viewHolder.signalIV.setVisibility(View.VISIBLE);
             viewHolder.batteryIV.setVisibility(View.VISIBLE);
+            Util.setUpSignalView(context, viewHolder.signalIV, thisDevice);
+            Util.setUpBatteryView(context, viewHolder.batteryIV, thisDevice);
         }else{
             viewHolder.nameTV.setText( thisDevice.getName() );
             viewHolder.addressTV.setText(thisDevice.getMacAddress());
