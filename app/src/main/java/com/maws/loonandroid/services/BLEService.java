@@ -310,18 +310,22 @@ public class BLEService extends Service
                         sDao.updateBatteryStatus(device);
                     }else if(data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_THERMOMETER)){
                         //let's read thermometer data here
+                        boolean isCelsius = true;
+                        if(data.characteristic.getValue()[0] == 1){
+                            isCelsius = false;
+                        }
+
                         int mantissa = (
                                 data.characteristic.getValue()[1] |
                                 ((data.characteristic.getValue()[2] << 8) |
                                 (data.characteristic.getValue()[3] << 16)) );
 
-                        int exponent = (data.characteristic.getValue()[4]);
-                        if (exponent >= 0)
-                            exponent = 0;
-                        else
-                            exponent = Math.abs(exponent);
-
+                        int exponent = data.characteristic.getValue()[4];
                         double value = mantissa * Math.pow(10, exponent);
+                        value = Util.to2Decimal(value);
+                        if(!isCelsius){
+                            value = Util.fahrenheitToCelsius(value);
+                        }
                         device.setTemperature(value);
                         sDao.updateTemperature(device);
                     }

@@ -71,7 +71,7 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
             nameTV.setText( currentDevice.getName() );
             serialTV.setText(String.format(getString(R.string.device_serial), currentDevice.getHardwareId()));
             versionTV.setText( String.format(getString(R.string.device_version), currentDevice.getFirmwareVersion(), currentDevice.getHardwareVersion()) );
-            temperatureTV.setText( String.format(getString(R.string.device_temperature), currentDevice.getTemperature(), currentDevice.getCelsiusTemperature()) );
+            temperatureTV.setText( String.format(getString(R.string.device_temperature), Util.celsiusToFahrenheit( currentDevice.getTemperature() ), currentDevice.getTemperature()) );
             Util.setUpBatteryView(this, batteryIV, currentDevice );
             Util.setUpSignalView(this,  signalIV, currentDevice );
             //i need to create a device enabled and delay controls for each property

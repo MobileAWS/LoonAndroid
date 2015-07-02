@@ -21,6 +21,8 @@ import com.maws.loonandroid.models.DeviceEnabledProperty;
 import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.User;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -172,4 +174,18 @@ public class Util {
         }
     }
 
+
+    public static double fahrenheitToCelsius(double value) {
+        double toReturn = (value - 32) * 5/9;
+        return to2Decimal(toReturn);
+    }
+
+    public static double celsiusToFahrenheit(double value){
+        double toReturn = (value * 9/5) + 32;
+        return to2Decimal(toReturn);
+    }
+
+    public static double to2Decimal(double value){
+        return new BigDecimal(String.valueOf(value)).setScale(2, RoundingMode.HALF_UP).doubleValue();
+    }
 }
