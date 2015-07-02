@@ -14,6 +14,7 @@ import com.maws.loonandroid.LoonAndroid;
 public class VolleySingleton {
 
     public static final String SERVER_URL = "https://caresentinel-maws.herokuapp.com/";
+
     public static final String ENVIRONMENT = "production"; //"development";
 
     /*public static final String SERVER_URL = "http://mike.caresentinel.ngrok.io/";

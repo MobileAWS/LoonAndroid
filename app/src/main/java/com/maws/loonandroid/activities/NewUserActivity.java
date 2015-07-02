@@ -73,14 +73,6 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
         }
 
         //let's see if this user already exists in the local database
-        LoonMedicalDao lDao = new LoonMedicalDao(this);
-        UserDao uDao = new UserDao(this);
-        User inDbUser = uDao.get(email, lDao.getReadableDatabase());
-        if(inDbUser != null){
-            errors.append( getString(R.string.validation_user_exists) );
-            errors.append( " " );
-        }
-
         if(errors.length() > 0){
             CustomToast.showAlert(this, errors.toString(), CustomToast._TYPE_ERROR);
         }else{
@@ -124,10 +116,16 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
         }
     }
     private void saveUserLocalDb(){
+
         LoonMedicalDao lDao = new LoonMedicalDao(this);
         UserDao uDao = new UserDao(this);
-        uDao.create(userToSave, lDao.getWritableDatabase());
-        CustomToast.showAlert(this, getString(R.string.user_created_successfully), CustomToast._TYPE_SUCCESS);
-        this.finish();
+        User inDbUser = uDao.get(userToSave.getEmail(), lDao.getReadableDatabase());
+        if(inDbUser != null) {
+            uDao.create(userToSave, lDao.getWritableDatabase());
+            CustomToast.showAlert(this, getString(R.string.user_created_successfully), CustomToast._TYPE_SUCCESS);
+            this.finish();
+        } else {
+            uDao.update(userToSave,lDao.getReadableDatabase());
+        }
     }
 }
