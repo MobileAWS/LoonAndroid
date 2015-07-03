@@ -58,7 +58,7 @@ public class UserDao {
         ContentValues values = new ContentValues();
         values.put(KEY_EMAIL, user.getEmail());
         values.put(KEY_NAME, user.getName());
-        values.put(KEY_PASSWORD, Util.MD5(user.getPassword()));
+        values.put(KEY_PASSWORD, user.getPassword());
 
         // Inserting Row
         db.insert(TABLE_NAME, null, values);
@@ -163,7 +163,7 @@ public class UserDao {
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, user.getName());
         if(!TextUtils.isEmpty( user.getPassword() ) ) {
-            values.put(KEY_PASSWORD, Util.MD5( user.getPassword()));
+            values.put(KEY_PASSWORD, user.getPassword());
         }
         values.put(KEY_EMAIL, user.getEmail());
 

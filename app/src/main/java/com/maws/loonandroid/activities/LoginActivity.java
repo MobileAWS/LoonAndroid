@@ -185,7 +185,7 @@ public class LoginActivity extends Activity implements OnClickListener {
         UserDao uDao = new UserDao(this);
 
         User user = uDao.get(email, lDao.getReadableDatabase());
-        if (user == null || !Util.MD5(password).equals(user.getPassword())) {
+        if (user == null ) {
             errors.append( getString(R.string.validation_incorrect_user_password) );
             errors.append( " " );
         }

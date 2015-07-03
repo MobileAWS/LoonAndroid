@@ -219,12 +219,16 @@ public class UserRequestHandler {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         spinner.dismiss();
-                        if( error.networkResponse != null) {
-                            listener.onFailure(VolleySingleton.getResponseData(error.networkResponse));
-                            Log.d(TAG, new String(error.networkResponse.data));
-                        }else{
-                            listener.onFailure(error.getCause().getMessage());
-                            Log.d(TAG, new String(error.getCause().getMessage()));
+                        try {
+                            if (error.networkResponse != null) {
+                                listener.onFailure(VolleySingleton.getResponseData(error.networkResponse));
+                                Log.d(TAG, new String(error.networkResponse.data));
+                            } else {
+                                listener.onFailure(error.getCause().getMessage());
+                                Log.d(TAG, new String(error.getCause().getMessage()));
+                            }
+                        }catch (Exception e) {
+                            listener.onFailure(null);
                         }
                         error.printStackTrace();
                     }

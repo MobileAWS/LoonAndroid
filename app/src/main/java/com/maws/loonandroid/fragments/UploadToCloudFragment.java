@@ -18,10 +18,13 @@ import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.UploadSensorListAdapter;
 import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.DevicePropertyDao;
+import com.maws.loonandroid.models.Customer;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
+import com.maws.loonandroid.models.Site;
 import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.requests.UploadRequestHandler;
+import com.maws.loonandroid.requests.UserRequestHandler;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomToast;
 
@@ -72,8 +75,8 @@ public class UploadToCloudFragment extends Fragment {
         sensorsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(view.findViewById(R.id.successIV).isShown()){
-                    refreshDevicesAdapter( verificationDevicesWithProperties());
+                if (view.findViewById(R.id.successIV).isShown()) {
+                    refreshDevicesAdapter(verificationDevicesWithProperties());
                 }
                 adapter.toogleItem(position);
             }
@@ -96,10 +99,45 @@ public class UploadToCloudFragment extends Fragment {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_start_scan:
-                if(Util.isLoginOnline(this.getView().getContext())) {
+                if(!Util.isLoginOnline(this.getView().getContext())) {
+                    User user = User.getCurrent(getView().getContext());
+                    Customer customer = Customer.getCurrent(getView().getContext());
+                    Site site = Site.getCurrent(getView().getContext());
+                    UserRequestHandler.login(getView().getContext(),new UserRequestHandler.LoginListener() {
+                        @Override
+                        public void onSuccess(JSONObject response, User user, String siteId, String customerId, Context context) {
+
+                            try {
+                                if(!response.isNull("response")) {
+                                    JSONObject responsoOk = (JSONObject) response.get("response");
+                                    setTokenUser(responsoOk, user, context);
+                                }else {
+                                    setTokenUser(response, user, context);
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(String error) {
+                            try {
+                                if (error != null && !error.isEmpty()) {
+                                    CustomToast.showAlert(getView().getContext(), error, CustomToast._TYPE_ERROR);
+                                }
+                                else{
+                                    CustomToast.showAlert(getView().getContext(), getString(R.string.loginError), CustomToast._TYPE_ERROR);
+                                }
+                            } catch (Exception ex) {
+                                CustomToast.showAlert(getView().getContext(), getString(R.string.upload_login_error), CustomToast._TYPE_ERROR);
+                            }
+                        }
+
+                    }, user, site.getCode(), customer.getCode());
+                }
+                else{
                     uploadInfoToServer(adapter);
-                }else{
-                    CustomToast.showAlert(this.getView().getContext(), getString(R.string.upload_login_error), CustomToast._TYPE_ERROR);
                 }
                 return true;
             default:
@@ -156,7 +194,7 @@ public class UploadToCloudFragment extends Fragment {
                         refreshDevicesAdapter( verificationDevicesWithProperties());
                     }
                 }
-            },devicePropertyList,user.getToken(),listDevices.get(countDevices).getHardwareId(),itemView);
+            },devicePropertyList,user.getToken(),listDevices.get(countDevices),itemView);
             countDevices++;
         }
     }
@@ -189,5 +227,19 @@ public class UploadToCloudFragment extends Fragment {
         textView.setVisibility(View.VISIBLE);
         progressBarView.findViewById(R.id.checkIV).setVisibility(View.INVISIBLE);
         progressBarView.findViewById(R.id.checkIV).setVisibility(View.GONE);
+    }
+
+    private void setTokenUser(JSONObject response, User user,Context context) throws JSONException {
+        if (!response.isNull("error") && response.getString("error").equalsIgnoreCase("true")) {
+            CustomToast.showAlert(getView().getContext(), getString(R.string.upload_login_error), CustomToast._TYPE_ERROR);
+        } else {
+
+            if (!response.isNull("token") && response.getString("token") != null && !response.isNull("role")) {
+                user.setToken(response.getString("token"));
+                user.setRole(response.getString("role"));
+                User.setCurrent(user, context);
+                uploadInfoToServer(adapter);
+            }
+        }
     }
 }

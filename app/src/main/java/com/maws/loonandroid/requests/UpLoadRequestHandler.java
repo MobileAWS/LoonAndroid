@@ -11,6 +11,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
 
@@ -34,6 +35,7 @@ public class UploadRequestHandler {
     private static final String KEY_TOKEN = "token";
     private static final String KEY_DEVICE ="device";
     private static final String KEY_DEVICE_ID = "hw_id";
+    private static final String KEY_DEVICE_NAME = "name";
     private static final String KEY_PROPERTY_ID = "key";
     private static final String KEY_PROPERTY_METRIC = "metric";
     private static final String KEY_PROPERTY_VALUE = "value";
@@ -45,7 +47,7 @@ public class UploadRequestHandler {
 
 
     public void sendDevicePropertiesToServer(final Context context,
-                                             final UploadListener listener,final List<DeviceProperty> listDeviceProperties, final String token,final String hardwareID,final View progressBarView){
+                                             final UploadListener listener,final List<DeviceProperty> listDeviceProperties, final String token,final Device device,final View progressBarView){
 
 
         VolleySingleton vs = VolleySingleton.getInstance();
@@ -55,7 +57,7 @@ public class UploadRequestHandler {
 
         JSONObject devicePropertiesJson = new JSONObject();
         try {
-            devicePropertiesJson=createJsonObjectToSend(devicePropertiesJson,listDeviceProperties,token,hardwareID);
+            devicePropertiesJson=createJsonObjectToSend(devicePropertiesJson,listDeviceProperties,token,device);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -84,11 +86,12 @@ public class UploadRequestHandler {
     }
 
 
-    private JSONObject createJsonObjectToSend (JSONObject devicePropertiesJson ,List<DeviceProperty> listDeviceProperties ,String token,String hardwareID) throws JSONException {
+    private JSONObject createJsonObjectToSend (JSONObject devicePropertiesJson ,List<DeviceProperty> listDeviceProperties ,String token,Device device) throws JSONException {
 
         devicePropertiesJson.put(KEY_TOKEN, token);
         JSONObject propertyJson = new JSONObject();
-        propertyJson.put(KEY_DEVICE_ID, hardwareID);
+        propertyJson.put(KEY_DEVICE_ID, device.getHardwareId());
+        propertyJson.put(KEY_DEVICE_NAME,device.getName());
         devicePropertiesJson.put(KEY_DEVICE, propertyJson);
         JSONArray jsonArray = new JSONArray();
         for (DeviceProperty deviceProperty:listDeviceProperties) {
