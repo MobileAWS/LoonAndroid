@@ -61,7 +61,7 @@ public class UploadRequestHandler {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-       progressBarView.findViewById(R.id.progressBarUploadIV).setVisibility(View.VISIBLE);
+        progressBarView.findViewById(R.id.progressBarUploadIV).setVisibility(View.VISIBLE);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,url,devicePropertiesJson,
                 new Response.Listener<JSONObject>() {

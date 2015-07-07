@@ -51,9 +51,21 @@ public class UserRequestHandler {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                            spinner.dismiss();
-                            JSONObject jsonObject = response;
+                        spinner.dismiss();
+                        JSONObject errorObject = null;
+                        JSONObject jsonObject = response;
+                        boolean isError = false;
+                        try{
+                            isError = response.getJSONObject("response").getString("error").equalsIgnoreCase("true");
+                            errorObject = response.getJSONObject("response");
+                        }catch(Exception ex){
+                            //ignore. Controlled exception
+                        }
+                        if(isError){
+                            listener.onFailure(errorObject.toString());
+                        }else{
                             listener.onSuccess(jsonObject);
+                        }
                     }
                 },
                 new Response.ErrorListener() {
