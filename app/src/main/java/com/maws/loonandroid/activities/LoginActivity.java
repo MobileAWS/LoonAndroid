@@ -124,8 +124,8 @@ public class LoginActivity extends Activity implements OnClickListener {
                             if ( !response.isNull("token") && response.getString("token") != null && !response.isNull("role") ) {
                                 user.setToken(response.getString("token"));
                                 user.setRole(response.getString("role"));
-                                User.setCurrent(user, context);
-                                userExistDb(user, context);
+                                User userDb = userExistDb(user, context);
+                                User.setCurrent(userDb, context);
                                 goToNextPage();
                                 finish();
                             }
@@ -147,7 +147,7 @@ public class LoginActivity extends Activity implements OnClickListener {
         }
     }
 
-    private void userExistDb(User user, Context context) {
+    private User userExistDb(User user, Context context) {
         UserDao uDao = new UserDao(context);
         LoonMedicalDao lDao = new LoonMedicalDao(this);
         User userDb = uDao.get(user.getEmail(),lDao.getReadableDatabase());
@@ -156,6 +156,8 @@ public class LoginActivity extends Activity implements OnClickListener {
         }else {
             uDao.create(user,lDao.getReadableDatabase());
         }
+        userDb = uDao.get(user.getEmail(),lDao.getReadableDatabase());
+        return userDb;
     }
 
 
