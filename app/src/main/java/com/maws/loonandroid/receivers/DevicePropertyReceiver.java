@@ -8,11 +8,13 @@ import android.text.TextUtils;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.dao.DeviceDao;
+import com.maws.loonandroid.dao.UserDao;
 import com.maws.loonandroid.models.Customer;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.models.Site;
+import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.util.Util;
 import java.util.Date;
 
@@ -32,6 +34,7 @@ public class DevicePropertyReceiver extends BroadcastReceiver {
         DeviceDao sDao = new DeviceDao(context);
         Device device = sDao.get(deviceId);
 
+
         if( deviceId > 0 && propertyId > -1 && alarmDateMillis >= 0 && device != null ) {
 
             //when i receive an alarm, i want to do 2 things: Save it to the db and show a notification
@@ -40,6 +43,7 @@ public class DevicePropertyReceiver extends BroadcastReceiver {
             DeviceProperty dProperty = new DeviceProperty();
             dProperty.setDeviceId(deviceId);
             dProperty.setPropertyId(propertyId);
+            dProperty.setUserId(User.getCurrent(context).getId());
             dProperty.setValue(value);
             dProperty.setCreatedAt(new Date(alarmDateMillis));
             dProperty.setCostumerId(Customer.getCurrent(context).getId());

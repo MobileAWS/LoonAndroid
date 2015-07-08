@@ -94,7 +94,6 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
                         onFailure(ex.getMessage());
                     }
                 }
-
                 @Override
                 public void onFailure(String error) {
                     try {

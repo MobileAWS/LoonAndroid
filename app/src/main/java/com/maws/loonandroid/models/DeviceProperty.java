@@ -11,6 +11,7 @@ public class DeviceProperty {
     private long deviceId;
     private long costumerId;
     private long siteId;
+    private long userId;
     private long propertyId;
     private Date createdAt;
     private Date dismissedAt;
@@ -88,4 +89,8 @@ public class DeviceProperty {
     public void setValue(String value) {
         this.value = value;
     }
+
+    public long getUserId() { return userId; }
+
+    public void setUserId(long userId) { this.userId = userId; }
 }

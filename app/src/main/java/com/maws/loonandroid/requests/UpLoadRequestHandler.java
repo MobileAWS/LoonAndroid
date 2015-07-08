@@ -2,7 +2,6 @@ package com.maws.loonandroid.requests;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -26,7 +25,7 @@ import java.util.List;
 /**
  * Created by Aprada on 6/22/2015.
  */
-public class UploadRequestHandler {
+public class UpLoadRequestHandler {
 
     static final public String URL_SERVICE = "device/addproperties";
     private static final String TAG = "UploadRequestHandler";
@@ -103,9 +102,9 @@ public class UploadRequestHandler {
             } else {
                 devicePropertyJson.put(KEY_PROPERTY_VALUE, 0);
             }
-            devicePropertyJson.put(KEY_PROPERTY_CREATE_AT,deviceProperty.getCreatedAt().getTime());
+            devicePropertyJson.put(KEY_PROPERTY_CREATE_AT,String.valueOf(deviceProperty.getCreatedAt().getTime()));
             if(deviceProperty.getDismissedAt() != null)
-                devicePropertyJson.put(KEY_PROPERTY_DISMISS,deviceProperty.getDismissedAt().getTime());
+                devicePropertyJson.put(KEY_PROPERTY_DISMISS,String.valueOf(deviceProperty.getDismissedAt().getTime()));
             else
                 devicePropertyJson.put(KEY_PROPERTY_DISMISS,null);
             devicePropertyJson.put(KEY_PROPERTY_DISMISS_DURATION,deviceProperty.getTotalTimeAlarm());

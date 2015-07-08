@@ -1,57 +1,31 @@
 package com.maws.loonandroid.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.CustomerDao;
-import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
 import com.maws.loonandroid.dao.PropertyDao;
 import com.maws.loonandroid.dao.SiteDao;
 import com.maws.loonandroid.dao.UserDao;
-import com.maws.loonandroid.listener.StandardRequestListener;
 import com.maws.loonandroid.models.Customer;
-import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.models.Site;
 import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.requests.UserRequestHandler;
-import com.maws.loonandroid.services.BLEService;
-import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomToast;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A login screen that offers login via email/password.
@@ -151,6 +125,7 @@ public class LoginActivity extends Activity implements OnClickListener {
                                 user.setToken(response.getString("token"));
                                 user.setRole(response.getString("role"));
                                 User.setCurrent(user, context);
+                                userExistDb(user, context);
                                 goToNextPage();
                                 finish();
                             }
@@ -170,7 +145,20 @@ public class LoginActivity extends Activity implements OnClickListener {
                 }
             }, user, siteId, customerId);
         }
-    };
+    }
+
+    private void userExistDb(User user, Context context) {
+        UserDao uDao = new UserDao(context);
+        LoonMedicalDao lDao = new LoonMedicalDao(this);
+        User userDb = uDao.get(user.getEmail(),lDao.getReadableDatabase());
+        if(userDb != null){
+            uDao.update(user,lDao.getReadableDatabase());
+        }else {
+            uDao.create(user,lDao.getReadableDatabase());
+        }
+    }
+
+
 
     private void attemptOfflineLogin(){
 
@@ -200,7 +188,7 @@ public class LoginActivity extends Activity implements OnClickListener {
             goToNextPage();
             this.finish();
         }
-    };
+    }
 
     @Override
     public void onClick(View v) {
@@ -229,7 +217,13 @@ public class LoginActivity extends Activity implements OnClickListener {
             customer.setCode(customerId);
             cDao.create(customer);
         }
-        Customer.setCurrent(customer, this);
+        Customer customerSave = cDao.get(customerId);//save id in current customer
+        if(customerSave != null){
+            Customer.setCurrent(customerSave, this);
+        }else {
+            Customer.setCurrent(customer, this);
+        }
+
 
         SiteDao sDao = new SiteDao(this);
         Site site = sDao.get(siteId);
@@ -238,7 +232,12 @@ public class LoginActivity extends Activity implements OnClickListener {
             site.setCode(siteId);
             sDao.create(site);
         }
-        Site.setCurrent(site, this);
+        Site siteSave = sDao.get(siteId);
+        if(siteSave != null) {
+            Site.setCurrent(siteSave, this);
+        }else {
+            Site.setCurrent(site, this);
+        }
 
         Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(newUserIntent);

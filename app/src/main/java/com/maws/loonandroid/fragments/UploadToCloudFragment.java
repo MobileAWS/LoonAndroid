@@ -23,7 +23,7 @@ import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Site;
 import com.maws.loonandroid.models.User;
-import com.maws.loonandroid.requests.UploadRequestHandler;
+import com.maws.loonandroid.requests.UpLoadRequestHandler;
 import com.maws.loonandroid.requests.UserRequestHandler;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomToast;
@@ -62,8 +62,8 @@ public class UploadToCloudFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_upload, container, false);
         sensorsLV = (ListView) rootView.findViewById(R.id.sensorsLV);
-
-        List<Device> devicesWithAlarm = verificationDevicesWithProperties();
+        final Context context = this.getActivity();
+        List<Device> devicesWithAlarm = verificationDevicesWithProperties(context);
         emptyLayoutUpload = rootView.findViewById(R.id.emptyLayoutUpload);
         if(devicesWithAlarm != null && devicesWithAlarm.size() > 0){
             emptyLayoutUpload.setVisibility(View.GONE);
@@ -76,7 +76,7 @@ public class UploadToCloudFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (view.findViewById(R.id.successIV).isShown()) {
-                    refreshDevicesAdapter(verificationDevicesWithProperties());
+                    refreshDevicesAdapter(verificationDevicesWithProperties(context));
                 }
                 adapter.toogleItem(position);
             }
@@ -149,21 +149,17 @@ public class UploadToCloudFragment extends Fragment {
     private void uploadInfoToServer(UploadSensorListAdapter adapter){
 
         List<Device> listDevices = adapter.getSelectedItems();
+        Context context= this.getActivity();
 
         DevicePropertyDao devicePropertyDao = new DevicePropertyDao(this.getView().getContext());
-        ArrayList<List<DeviceProperty>> listToUpload = new ArrayList<>();
-        for(Device device:listDevices){
-            List<DeviceProperty> devicePropertyList = devicePropertyDao.getAllByDeviceId(device.getId());
-            if (devicePropertyList != null && !devicePropertyList.isEmpty()) {
-                listToUpload.add(devicePropertyList);
-            }
-        }
+        ArrayList<List<DeviceProperty>> listToUpload =selectDevicesWithAlarm( devicePropertyDao,  context ,listDevices);
+
         int countDevices = 0;
         for(List<DeviceProperty> devicePropertyList:listToUpload ){
             View itemView = Util.getViewByPosition(countDevices,sensorsLV);
-            UploadRequestHandler uploadRequestHandler = new UploadRequestHandler();
+            UpLoadRequestHandler uploadRequestHandler = new UpLoadRequestHandler();
             User user =User.getCurrent(this.getView().getContext());
-            uploadRequestHandler.sendDevicePropertiesToServer(this.getView().getContext(), new UploadRequestHandler.UploadListener() {
+            uploadRequestHandler.sendDevicePropertiesToServer(this.getView().getContext(), new UpLoadRequestHandler.UploadListener() {
                 @Override
                 public void onFailure(String error,Context context, View progressBarView) {
                     try {
@@ -191,7 +187,7 @@ public class UploadToCloudFragment extends Fragment {
                         for(DeviceProperty deviceProperty:listDeviceProperties) {
                             dPDao.delete(deviceProperty);
                         }
-                        refreshDevicesAdapter( verificationDevicesWithProperties());
+                        refreshDevicesAdapter( verificationDevicesWithProperties(context));
                     }
                 }
             },devicePropertyList,user.getToken(),listDevices.get(countDevices),itemView);
@@ -199,13 +195,13 @@ public class UploadToCloudFragment extends Fragment {
         }
     }
 
-    private List<Device> verificationDevicesWithProperties(){
+    private List<Device> verificationDevicesWithProperties(Context context){
         List<Device> resultDevices = new ArrayList<>();
         DeviceDao sDao = new DeviceDao(this.getActivity());
         List<Device> devicesActives = sDao.getAllActive();
         for(Device device:devicesActives){
             DevicePropertyDao dPDao= new DevicePropertyDao(this.getActivity());
-            List<DeviceProperty> devicePropertiesList = dPDao.getAllByDeviceId(device.getId());
+            List<DeviceProperty> devicePropertiesList = dPDao.getAllByIndex(device.getId(), Util.getCustomerId(context),Util.getSiteId(context),Util.getUserId(context));;
             if(devicePropertiesList != null && devicePropertiesList.size() > 0){
                 resultDevices.add(device);
             }
@@ -241,5 +237,16 @@ public class UploadToCloudFragment extends Fragment {
                 uploadInfoToServer(adapter);
             }
         }
+    }
+
+    private ArrayList<List<DeviceProperty>> selectDevicesWithAlarm(DevicePropertyDao devicePropertyDao, Context context , List<Device> listDevices){
+        ArrayList<List<DeviceProperty>> listToUpload = new ArrayList<>();
+        for(Device device:listDevices){
+            List<DeviceProperty> devicePropertyList = devicePropertyDao.getAllByIndex(device.getId(), Util.getCustomerId(context),Util.getSiteId(context),Util.getUserId(context));
+            if (devicePropertyList != null && !devicePropertyList.isEmpty()) {
+                listToUpload.add(devicePropertyList);
+            }
+        }
+        return listToUpload;
     }
 }

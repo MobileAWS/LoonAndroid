@@ -16,9 +16,11 @@ import android.widget.ListView;
 
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.DeviceEnabledPropertyDao;
+import com.maws.loonandroid.models.Customer;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceEnabledProperty;
 import com.maws.loonandroid.models.DeviceProperty;
+import com.maws.loonandroid.models.Site;
 import com.maws.loonandroid.models.User;
 
 import java.math.BigDecimal;
@@ -140,6 +142,14 @@ public class Util {
             return listView.getChildAt(childIndex);
         }
     }
+    public static long getCustomerId(Context context){
+        Customer customer = Customer.getCurrent(context);
+        return customer.getId();
+    }
+    public static long getSiteId(Context context){
+        return Site.getCurrent(context).getId();
+    }
+    public static long getUserId(Context context) { return  User.getCurrent(context).getId(); }
 
     public static void setUpSignalView(Context context, ImageView signalIV, Device device){int signal = device.getSignalStrength();
         if(signal <= -90){

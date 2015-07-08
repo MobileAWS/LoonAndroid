@@ -181,6 +181,7 @@ public class DevicePropertyContentProvider extends ContentProvider {
                 DevicePropertyDao.KEY_DEVICE_ID,
                 DevicePropertyDao.KEY_CREATED_AT,
                 DevicePropertyDao.KEY_PROPERTY_ID,
+                DevicePropertyDao.KEY_USER_ID,
                 DevicePropertyDao.KEY_VALUE,
                 DevicePropertyDao.KEY_DISMISSED_DATE,
                 DevicePropertyDao.KEY_TOTAL_TIME_ALARM,

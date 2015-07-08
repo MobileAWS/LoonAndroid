@@ -166,7 +166,7 @@ public class DeviceListAdapter extends BaseAdapter {
         //i need to look for this item's active alarms and list them
         DevicePropertyDao aDao = new DevicePropertyDao(context);
         //viewHolder.alarmsLL.removeAllViews();
-        DeviceProperty dProperty = aDao.getLastAlertForDevice(thisDevice.getId());
+        DeviceProperty dProperty = aDao.getLastAlertForDevice(thisDevice.getId(),Util.getCustomerId(context),Util.getSiteId(context),Util.getUserId(context));
         viewHolder.alarmsLL.removeAllViews();
         if (dProperty != null && dProperty.getDismissedAt() == null) {
 
@@ -194,7 +194,5 @@ public class DeviceListAdapter extends BaseAdapter {
             viewHolder.alarmsLL.addView(alertView);
         }
         return convertView;
-
     }
-
 }

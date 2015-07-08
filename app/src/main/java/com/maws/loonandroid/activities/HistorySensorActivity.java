@@ -9,6 +9,7 @@ import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.DevicePropertyHistoryListAdapter;
 import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.models.DeviceProperty;
+import com.maws.loonandroid.util.Util;
 
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class HistorySensorActivity extends ActionBarActivity {
 
     private DevicePropertyHistoryListAdapter loadInformation (long deviceId) {
         DevicePropertyDao devicePropertyDao = new DevicePropertyDao(this);
-        List<DeviceProperty> listDeviceProperty = devicePropertyDao.getAllByDeviceId(deviceId);
+        List<DeviceProperty> listDeviceProperty = devicePropertyDao.getAllByIndex(deviceId, Util.getCustomerId(this),Util.getSiteId(this),Util.getUserId(this));
         if (listDeviceProperty != null && listDeviceProperty.size() > 0 ) {
             adapter= new DevicePropertyHistoryListAdapter(listDeviceProperty,this);
         }
