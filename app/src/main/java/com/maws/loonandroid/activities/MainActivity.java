@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
+import android.widget.TextView;
 
+import com.maws.loonandroid.BuildConfig;
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.enums.FragmentType;
@@ -65,7 +67,10 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-
+        int versionCode = BuildConfig.VERSION_CODE;
+        String versionName = BuildConfig.VERSION_NAME;
+        TextView versionTV = (TextView) findViewById(R.id.versionTV);
+        versionTV.setText("Version "+versionName+" "+ String.valueOf(versionCode));
     }
 
     @Override

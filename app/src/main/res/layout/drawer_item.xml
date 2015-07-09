@@ -22,7 +22,6 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         style="@style/DrawerItemText"
-        android:background="@drawable/button_navigation_drawer"
-        />
+          /><!-- android:background="@drawable/button_navigation_drawer" -->
 
 </LinearLayout>

@@ -24,8 +24,8 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:paddingLeft="15dp"
-        android:background="@drawable/button_navigation_drawer"
-        style="@style/DrawerItemText"
-        />
+
+        /><!-- android:background="@drawable/button_navigation_drawer"
+        style="@style/DrawerItemText" -->
 
 </LinearLayout>
