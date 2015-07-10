@@ -292,6 +292,14 @@ public class DevicePropertyDao {
         );
     }
 
+    public void deleteForDeviceId(long deviceId){
+        context.getContentResolver().delete(
+                DevicePropertyContentProvider.CONTENT_URI,
+                KEY_DEVICE_ID + " = ?",
+                new String[]{String.valueOf(deviceId)}
+        );
+    }
+
     public void deleteAll(SQLiteDatabase db){
         db.delete(TABLE_NAME, null, null);
     }

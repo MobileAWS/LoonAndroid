@@ -122,17 +122,38 @@
 
             </LinearLayout>
         </LinearLayout>
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:layout_gravity="right"
+
+            >
 
         <Button
-            android:layout_gravity="right"
             style="@style/Button.dark_green"
             android:textSize="@dimen/font_medium"
-            android:padding="5dp"
-            android:id="@+id/historyBtn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/view_history"
+            android:layout_height="45dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_alignParentLeft="@+id/historyBtn"
+            android:id="@+id/deleteBtn"
+            android:text="@string/view_delete"
+
         />
+        <Button
+            style="@style/Button.dark_green"
+            android:id="@+id/historyBtn"
+            android:textSize="@dimen/font_medium"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:text="@string/view_history"
+            />
+            </RelativeLayout>
 
     </LinearLayout>
 
