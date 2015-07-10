@@ -18,6 +18,7 @@ import com.maws.loonandroid.enums.FragmentType;
 import com.maws.loonandroid.fragments.NavigationDrawerFragment;
 import com.maws.loonandroid.fragments.PushNotificationsFragment;
 import com.maws.loonandroid.fragments.DeviceFragment;
+import com.maws.loonandroid.fragments.SensorsFragment;
 import com.maws.loonandroid.fragments.UploadToCloudFragment;
 import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.services.BLEService;
@@ -30,7 +31,8 @@ public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     public final static int REQUEST_SCAN = 1002;
-    public static final String TAG_SENSOR = "ss";
+    public static final String TAG_MONITOR ="ss";
+    public static final String TAG_SENSOR = "ss1";
     public static final String TAG_PUSH_NOTIFICATION = "pn";
     public static final String TAG_UPLOAD = "up";
 
@@ -81,8 +83,12 @@ public class MainActivity extends ActionBarActivity
         Fragment toReplace = null;
         String tag = "";
         switch (type){
-            case SENSOR:
+            case MONITOR:
                 toReplace = DeviceFragment.newInstance();
+                tag = TAG_SENSOR;
+                break;
+            case SENSOR:
+                toReplace= SensorsFragment.newInstance();
                 tag = TAG_SENSOR;
                 break;
             case PUSH_NOTIFICATION:

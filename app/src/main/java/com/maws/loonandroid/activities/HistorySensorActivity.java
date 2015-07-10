@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.DevicePropertyHistoryListAdapter;
 import com.maws.loonandroid.dao.DevicePropertyDao;
@@ -26,7 +30,16 @@ public class HistorySensorActivity extends ActionBarActivity {
         Bundle extras =  i.getExtras();
         deviceId = extras.getLong(MonitorActivity.MONITOR_ID, -1);
         listView = (ListView) findViewById(R.id.listAlarmHistory);
-        listView.setAdapter(loadInformation(deviceId));
+        LinearLayout emptyMessage = (LinearLayout) findViewById(R.id.messageHistoryEmptyRL);
+        DevicePropertyHistoryListAdapter devicePropertyHistoryListAdapter = loadInformation(deviceId);
+        listView.setAdapter(devicePropertyHistoryListAdapter);
+        if( devicePropertyHistoryListAdapter != null && devicePropertyHistoryListAdapter.getCount() > 0){
+            listView.setVisibility(View.VISIBLE);
+            emptyMessage.setVisibility(View.GONE);
+        }else {
+            listView.setVisibility(View.GONE);
+            emptyMessage.setVisibility(View.VISIBLE);
+        }
 
     }
 

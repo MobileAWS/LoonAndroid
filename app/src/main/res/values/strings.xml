@@ -106,6 +106,12 @@
     <string name="device_battery">Battery:</string>
     <string name="device_signal">Signal:</string>
     <string name="device_temperature">Temperature: %1$s °F / %2$s °C</string>
+    <string name="empty_history_layout">There are no alerts to show‏</string>
+    <string name="empty_alarm_history">No Alerts Found</string>
+    <string name="empty_sensor_fragment">There are no Sensors to show‏</string>
+    <string name="empty_sensor">No Sensors Found</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

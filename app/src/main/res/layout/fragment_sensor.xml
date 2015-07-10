@@ -1,80 +1,52 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    >
+    tools:context="com.maws.loonandroid.fragments.SensorsFragment">
 
-    <RelativeLayout
-        android:id="@+id/emptyLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_centerInParent="true"
+    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:id="@+id/emptyMessageLV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         >
 
-            <ImageView
-                android:src="@drawable/heart_monitor"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center_horizontal"
-                android:tint="@color/background_floating_material_dark"
-            />
-            
-            <TextView
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:text="@string/no_sensors_found"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
+        <ImageView
+            android:src="@drawable/heart_monitor"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:tint="@color/background_floating_material_dark"
             />
 
-            <TextView
-                android:textSize="18sp"
-                android:text="@string/empty_sensor_add_instructions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
+        <TextView
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:text="@string/empty_sensor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
             />
 
-        </LinearLayout>
+        <TextView
+            android:textSize="18sp"
+            android:text="@string/empty_sensor_fragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            />
 
-
-
-    </RelativeLayout>
-
-    <TextView
-        style="@style/DarkHeader"
-        android:id="@+id/activeSensorHeaderTV"
-        android:text="@string/active_sensors"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
+    </LinearLayout>
     <ListView
-        android:id="@+id/sensorsLV"
+        android:id="@+id/devicesLV"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="invisible">
     </ListView>
 
-    <TextView
-        style="@style/DarkHeader"
-        android:id="@+id/inactiveSensorHeaderTV"
-        android:text="@string/inactive_sensors"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <ListView
-        android:id="@+id/inactiveSensorsLV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </ListView>
-
-</LinearLayout>
+</FrameLayout>

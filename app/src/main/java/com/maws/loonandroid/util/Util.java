@@ -20,13 +20,16 @@ import com.maws.loonandroid.models.Customer;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceEnabledProperty;
 import com.maws.loonandroid.models.DeviceProperty;
+import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.models.Site;
 import com.maws.loonandroid.models.User;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Andrexxjc on 04/05/2015.
@@ -197,5 +200,13 @@ public class Util {
 
     public static double to2Decimal(double value){
         return new BigDecimal(String.valueOf(value)).setScale(2, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    public static List<Property> convertArrayToList (Property[] arrayPropertie ){
+        List<Property> propertyList = new ArrayList<>();
+        for(int i = 0; i< arrayPropertie.length; i++){
+            propertyList.add(arrayPropertie[i]);
+        }
+        return propertyList;
     }
 }
