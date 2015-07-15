@@ -65,13 +65,8 @@ public class UploadToCloudFragment extends Fragment {
         final Context context = this.getActivity();
         List<Device> devicesWithAlarm = verificationDevicesWithProperties(context);
         emptyLayoutUpload = rootView.findViewById(R.id.emptyLayoutUpload);
-        if(devicesWithAlarm != null && devicesWithAlarm.size() > 0){
-            emptyLayoutUpload.setVisibility(View.GONE);
-        }else {
-            emptyLayoutUpload.setVisibility(View.VISIBLE);
-        }
+        loadEmptyPage(devicesWithAlarm);
         refreshDevicesAdapter(devicesWithAlarm);
-
         sensorsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -81,9 +76,7 @@ public class UploadToCloudFragment extends Fragment {
                 adapter.toogleItem(position);
             }
         });
-
         adapter.selectAll();
-
         return rootView;
     }
 
@@ -148,7 +141,7 @@ public class UploadToCloudFragment extends Fragment {
 
     private void uploadInfoToServer(UploadSensorListAdapter adapter){
 
-        List<Device> listDevices = adapter.getSelectedItems();
+        final List<Device> listDevices = adapter.getSelectedItems();
         Context context= this.getActivity();
 
         DevicePropertyDao devicePropertyDao = new DevicePropertyDao(this.getView().getContext());
@@ -187,7 +180,9 @@ public class UploadToCloudFragment extends Fragment {
                         for(DeviceProperty deviceProperty:listDeviceProperties) {
                             dPDao.delete(deviceProperty);
                         }
+                        List<Device> listDevicesAlarm =  verificationDevicesWithProperties(context);
                         refreshDevicesAdapter( verificationDevicesWithProperties(context));
+                        loadEmptyPage(listDevicesAlarm);
                     }
                 }
             },devicePropertyList,user.getToken(),listDevices.get(countDevices),itemView);
@@ -248,5 +243,13 @@ public class UploadToCloudFragment extends Fragment {
             }
         }
         return listToUpload;
+    }
+
+    private  void loadEmptyPage(List<Device> devicesWithAlarm){
+        if(devicesWithAlarm != null && devicesWithAlarm.size() > 0){
+            emptyLayoutUpload.setVisibility(View.GONE);
+        }else {
+            emptyLayoutUpload.setVisibility(View.VISIBLE);
+        }
     }
 }

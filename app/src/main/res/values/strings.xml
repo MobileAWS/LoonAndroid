@@ -113,12 +113,13 @@
     <string name="empty_sensor_fragment">There are no Sensors to show‏</string>
     <string name="empty_sensor">No Sensors Found</string>
 <!-- TODO: Remove or change this placeholder text -->
-    <string name="owner_text">CareSentinel, a Loon Medical, Inc. suite product</string>
+    <string name="owner_text">CareSentinel</string>
+    <string name="owner_text2">A Loon Medical, Inc. suite product</string>
     <string name="owner_subtext">Tolland, CT</string>
     <string name="phone_text">‎1-855-282-0004‎</string>
     <string name="phone_subtext">Phone</string>
     <string name="website_devices_text">http://www.shopcaresentinel.com/product-category/build-your-own-sensor-system/</string>
-    <string name="website_devices_subtext">for replacement sensors and other medical devices</string>
+    <string name="website_devices_subtext">For replacement sensors and other medical devices</string>
     <string name="website_text">http://www.shopcaresentinel.com/resources/</string>
     <string name="website_subtext">More info</string>
     <string name="email_text">Info@shopcaresentinel.com</string>

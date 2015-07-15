@@ -8,6 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:orientation="horizontal">
      <LinearLayout
          android:layout_width="match_parent"
@@ -24,19 +25,25 @@
             android:layout_height="40dp"
             android:id="@+id/drawer_item_image"
             android:src="@drawable/ic_team_black"
+            android:background="@drawable/background_circle"
             android:paddingRight="10dp"/>
             <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingLeft="5dp">
                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
                     android:text="@string/owner_text"
+                    android:textStyle="normal|bold"
+                    android:textSize="16dp"/>
+                <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:text="@string/owner_text2"
                     android:textStyle="normal|bold"
                     android:textSize="16dp"/>
 
                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
                     android:text="@string/owner_subtext"
-                    android:textSize="10dp"/>
+                    android:textSize="13dp"/>
             </LinearLayout>
         </LinearLayout>
         <LinearLayout
@@ -52,21 +59,38 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/ic_phone"
+                android:background="@drawable/background_circle"
                 android:paddingRight="10dp"/>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+
                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
                     android:text="@string/phone_text"
                     android:textStyle="normal|bold"
+                    android:paddingLeft="5dp"
                     android:textSize="17dp"/>
-
-                <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-                    android:text="@string/phone_subtext"
-                    android:textSize="10dp"/>
-            </LinearLayout>
         </LinearLayout>
+        <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:paddingTop="15dp"
+             android:paddingLeft="9dp"
+             android:paddingBottom="15dp"
+             android:id="@+id/emailSupportTV"
+             android:onClick="onResourcesContact"
+             android:clickable="true">
+             <ImageView
+                 android:layout_width="40dp"
+                 android:layout_height="40dp"
+                 android:src="@drawable/ic_mail"
+                 android:paddingRight="10dp"
+                 android:background="@drawable/background_circle"
+                 />
+
+                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                     android:text="@string/email_text"
+                     android:textStyle="normal|bold"
+                     android:paddingLeft="5dp"
+                     android:textSize="17dp"/>
+         </LinearLayout>
         <LinearLayout
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
@@ -80,11 +104,13 @@
                  android:layout_width="40dp"
                  android:layout_height="40dp"
                  android:src="@drawable/ic_web_site"
-                 android:paddingRight="10dp"/>
+                 android:paddingRight="10dp"
+                 android:background="@drawable/background_circle"/>
              <LinearLayout
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
-                 android:orientation="vertical">
+                 android:orientation="vertical"
+                 android:paddingLeft="5dp">
                  <TextView android:layout_width="match_parent" android:layout_height="match_parent"
                      android:text="@string/website_text"
                      android:textStyle="normal|bold"
@@ -92,7 +118,7 @@
 
                  <TextView android:layout_width="match_parent" android:layout_height="match_parent"
                      android:text="@string/website_devices_subtext"
-                     android:textSize="10dp"/>
+                     android:textSize="13dp"/>
              </LinearLayout>
          </LinearLayout>
         <LinearLayout
@@ -108,11 +134,13 @@
                  android:layout_width="40dp"
                  android:layout_height="40dp"
                  android:src="@drawable/ic_web_site"
-                 android:paddingRight="10dp"/>
+                 android:paddingRight="10dp"
+                 android:background="@drawable/background_circle"/>
              <LinearLayout
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
-                 android:orientation="vertical">
+                 android:orientation="vertical"
+                 android:paddingLeft="5dp">
                  <TextView android:layout_width="match_parent" android:layout_height="match_parent"
                      android:text="@string/website_devices_text"
                      android:textSize="17dp"
@@ -120,37 +148,10 @@
 
                  <TextView android:layout_width="match_parent" android:layout_height="match_parent"
                      android:text="@string/website_devices_subtext"
-                     android:textSize="10dp"/>
+                     android:textSize="13dp"/>
              </LinearLayout>
          </LinearLayout>
-        <LinearLayout
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:paddingTop="15dp"
-             android:paddingLeft="9dp"
-             android:paddingBottom="15dp"
-             android:id="@+id/emailSupportTV"
-             android:onClick="onResourcesContact"
-             android:clickable="true">
-             <ImageView
-                 android:layout_width="40dp"
-                 android:layout_height="40dp"
-                 android:src="@drawable/ic_mail"
-                 android:paddingRight="10dp"/>
-             <LinearLayout
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:orientation="vertical">
-                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-                     android:text="@string/email_text"
-                     android:textStyle="normal|bold"
-                     android:textSize="17dp"/>
 
-                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-                     android:text="@string/email_subtext"
-                     android:textSize="10dp"/>
-             </LinearLayout>
-         </LinearLayout>
      </LinearLayout>
     </RelativeLayout>
 
