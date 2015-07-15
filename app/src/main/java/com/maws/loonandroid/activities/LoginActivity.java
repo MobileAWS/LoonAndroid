@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.maws.loonandroid.BuildConfig;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.CustomerDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
@@ -56,6 +57,11 @@ public class LoginActivity extends Activity implements OnClickListener {
         newUserTV.setOnClickListener(this);
         loginBtn.setOnClickListener(this);
         loginNoCloudBtn.setOnClickListener(this);
+
+        String versionName = BuildConfig.VERSION_NAME;
+        TextView versionTV = (TextView) findViewById(R.id.versionTV);
+        versionTV.setText("V " + versionName);
+
         createDefaultProperties();
     }
 

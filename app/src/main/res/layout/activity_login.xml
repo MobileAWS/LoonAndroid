@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/prompt_email"
             android:inputType="textEmailAddress"
-            android:text=""
+            android:text="jandresjc@gmail.com"
         />
 
         <EditText
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/prompt_password"
             android:inputType="textPassword"
-            android:text=""
+            android:text="password"
         />
 
         <EditText
@@ -56,7 +56,7 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_site_id"
-            android:text=""
+            android:text="maws"
         />
 
         <EditText
@@ -65,12 +65,13 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_customer_id"
-            android:text=""
+            android:text="123"
             />
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/buttonsLL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/email_login_form"
@@ -98,6 +99,18 @@
             android:layout_marginLeft="5dp"
         />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/versionTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/DrawerItemText"
+        android:layout_below="@+id/buttonsLL"
+        android:layout_alignRight="@+id/buttonsLL"
+        android:textSize="14sp"
+        android:layout_marginRight="5dp"
+        android:textStyle="bold"
+        android:text="version"/>
 
     <TextView
         android:id="@+id/newUserTV"

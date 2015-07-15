@@ -4,8 +4,10 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -27,71 +29,84 @@ import java.util.List;
 /**
  * Created by Andrexxjc on 12/04/2015.
  */
-public class DeviceListAdapter extends BaseAdapter {
+public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.ViewHolder> {
 
     private static final String TAG = "DeviceListAdapter";
     private final Context context;
     private final List<Device> items;
+    private DeviceViewHolderClickListener listener;
 
-    static class ViewHolder {
-        Button connectBtn;
-        TextView nameTV, addressTV;
-        ImageView checkIV, signalIV, batteryIV;
-        LinearLayout alarmsLL;
+    public static interface DeviceViewHolderClickListener {
+        void onClick(Device device);
     }
 
-    public DeviceListAdapter(Context context, List<Device> values) {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        Button connectBtn;
+        TextView nameTV, addressTV, headerTV;
+        ImageView signalIV, batteryIV;
+        LinearLayout alarmsLL;
+        View mainView;
+
+        public ViewHolder(View v) {
+            super(v);
+            this.mainView = v;
+        }
+    }
+
+    public DeviceListAdapter(Context context, List<Device> values, DeviceViewHolderClickListener listener) {
         this.context = context;
         this.items = values;
+        this.listener = listener;
     }
 
     @Override
-    public int getCount() {
-        return items.size();
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+
+        View convertView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.sensor_item, viewGroup, false);
+        ViewHolder viewHolder = new ViewHolder(convertView);
+        viewHolder.headerTV = (TextView) convertView.findViewById(R.id.headerTV);
+        viewHolder.nameTV = (TextView) convertView.findViewById(R.id.nameTV);
+        viewHolder.addressTV = (TextView) convertView.findViewById(R.id.addressTV);
+        viewHolder.signalIV = (ImageView) convertView.findViewById(R.id.signalIV);
+        viewHolder.batteryIV = (ImageView) convertView.findViewById(R.id.batteryIV);
+        viewHolder.alarmsLL = (LinearLayout) convertView.findViewById(R.id.alarmsLL);
+        viewHolder.connectBtn = (Button) convertView.findViewById(R.id.connectBtn);
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(listener != null) {
+                    int position = (int) v.getTag();
+                    if(items.get(position).isActive()) {
+                        listener.onClick(items.get(position));
+                    }
+                }
+            }
+        });
+        return viewHolder;
     }
-    @Override
-    public Object getItem(int position) {
-        return items.get(position);
-    }
-    @Override
-    public long getItemId(int position) {
-        return items.get(position).getId();
-    }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public void onBindViewHolder(ViewHolder viewHolder, int position) {
 
-        ViewHolder viewHolder;
-        if(convertView==null){
-            // inflate the layout
-            convertView = LinearLayout.inflate(context, R.layout.sensor_item, null);
-
-            // well set up the ViewHolder
-            viewHolder = new ViewHolder();
-            viewHolder.nameTV = (TextView) convertView.findViewById(R.id.nameTV);
-            viewHolder.addressTV = (TextView) convertView.findViewById(R.id.addressTV);
-            viewHolder.checkIV = (ImageView) convertView.findViewById(R.id.checkIV);
-            viewHolder.signalIV = (ImageView) convertView.findViewById(R.id.signalIV);
-            viewHolder.batteryIV = (ImageView) convertView.findViewById(R.id.batteryIV);
-            viewHolder.alarmsLL = (LinearLayout) convertView.findViewById(R.id.alarmsLL);
-            viewHolder.connectBtn = (Button) convertView.findViewById(R.id.connectBtn);
-
-            // store the holder with the view.
-            convertView.setTag(viewHolder);
-
-        }else{
-            // we've just avoided calling findViewById() on resource everytime
-            // just use the viewHolder
-            viewHolder = (ViewHolder) convertView.getTag();
-        }
+        boolean showHeader = position == 0 || items.get(position).isActive() != items.get(position - 1).isActive();
 
         Device thisDevice = items.get(position);
+        viewHolder.mainView.setTag(position);
+        if(showHeader){
+            viewHolder.headerTV.setVisibility(View.VISIBLE);
+        }else{
+            viewHolder.headerTV.setVisibility(View.GONE);
+        }
+        if(thisDevice.isActive()){
+            viewHolder.headerTV.setText(context.getString(R.string.active_sensors));
+        }else{
+            viewHolder.headerTV.setText(context.getString(R.string.inactive_sensors));
+        }
 
         if(!thisDevice.isConnected() && !LoonAndroid.demoMode){
             viewHolder.nameTV.setText( TextUtils.isEmpty(thisDevice.getDescription())? thisDevice.getName(): thisDevice.getDescription() );
             viewHolder.addressTV.setText(thisDevice.getName());
             viewHolder.connectBtn.setVisibility(View.VISIBLE);
-            viewHolder.checkIV.setVisibility(View.GONE);
             viewHolder.signalIV.setVisibility(View.GONE);
             viewHolder.batteryIV.setVisibility(View.GONE);
             viewHolder.connectBtn.setTag(thisDevice.getMacAddress());
@@ -145,11 +160,10 @@ public class DeviceListAdapter extends BaseAdapter {
                 }
             });
 
-        }else if( thisDevice.isActive() && thisDevice.isConnected() ){
+        }else if( (thisDevice.isActive() && thisDevice.isConnected()) || LoonAndroid.demoMode ){
             viewHolder.nameTV.setText( TextUtils.isEmpty(thisDevice.getDescription())? thisDevice.getName(): thisDevice.getDescription() );
             viewHolder.addressTV.setText(thisDevice.getName());
             viewHolder.connectBtn.setVisibility(View.GONE);
-            viewHolder.checkIV.setVisibility(View.GONE);
             viewHolder.signalIV.setVisibility(View.VISIBLE);
             viewHolder.batteryIV.setVisibility(View.VISIBLE);
             Util.setUpSignalView(context, viewHolder.signalIV, thisDevice);
@@ -158,7 +172,6 @@ public class DeviceListAdapter extends BaseAdapter {
             viewHolder.nameTV.setText( thisDevice.getName() );
             viewHolder.addressTV.setText(thisDevice.getMacAddress());
             viewHolder.connectBtn.setVisibility(View.GONE);
-            viewHolder.checkIV.setVisibility(View.GONE);
             viewHolder.signalIV.setVisibility(View.GONE);
             viewHolder.batteryIV.setVisibility(View.GONE);
         }
@@ -193,6 +206,20 @@ public class DeviceListAdapter extends BaseAdapter {
             });
             viewHolder.alarmsLL.addView(alertView);
         }
-        return convertView;
     }
+
+    @Override
+    public long getItemId(int position) {
+        return items.get(position).getId();
+    }
+
+    @Override
+    public int getItemCount() {
+        return items.size();
+    }
+
+    public Device getItem(int position) {
+        return items.get(position);
+    }
+
 }

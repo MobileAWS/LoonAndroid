@@ -6,18 +6,9 @@
     tools:context="com.maws.loonandroid.fragments.NavigationDrawerFragment"
     android:background="@color/dark_green"
     >
-    <TextView
-        android:id="@+id/versionTV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="right"
-        android:paddingBottom="10dp"
-        style="@style/DrawerItemText"
-        android:text="version"/>
+
     <ListView
         android:id="@+id/navigationLV"
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:choiceMode="singleChoice"

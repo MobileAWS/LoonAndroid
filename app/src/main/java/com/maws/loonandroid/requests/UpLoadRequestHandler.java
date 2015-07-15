@@ -98,16 +98,15 @@ public class UpLoadRequestHandler {
             devicePropertyJson.put(KEY_PROPERTY_ID,Property.getDefaultProperty(deviceProperty.getPropertyId()).getName());
             devicePropertyJson.put(KEY_PROPERTY_METRIC,"Boolean");
             if(deviceProperty.getValue().equals("On")) {
-                devicePropertyJson.put(KEY_PROPERTY_VALUE, 1);
+                devicePropertyJson.put(KEY_PROPERTY_VALUE, "On");
             } else {
-                devicePropertyJson.put(KEY_PROPERTY_VALUE, 0);
+                devicePropertyJson.put(KEY_PROPERTY_VALUE, "Off");
             }
             devicePropertyJson.put(KEY_PROPERTY_CREATE_AT,String.valueOf(deviceProperty.getCreatedAt().getTime()));
-            if(deviceProperty.getDismissedAt() != null)
-                devicePropertyJson.put(KEY_PROPERTY_DISMISS,String.valueOf(deviceProperty.getDismissedAt().getTime()));
-            else
-                devicePropertyJson.put(KEY_PROPERTY_DISMISS,null);
-            devicePropertyJson.put(KEY_PROPERTY_DISMISS_DURATION,deviceProperty.getTotalTimeAlarm());
+            if(deviceProperty.getDismissedAt() != null ) {
+                devicePropertyJson.put(KEY_PROPERTY_DISMISS, "'"+ String.valueOf(deviceProperty.getDismissedAt().getTime()) + "'");
+                devicePropertyJson.put(KEY_PROPERTY_DISMISS_DURATION , "'"+ deviceProperty.getTotalTimeAlarm() +"'");
+            }
             jsonArray.put(devicePropertyJson);
         }
         devicePropertiesJson.put(KEY_LIST_PROPERTIES, jsonArray);

@@ -11,25 +11,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
-import android.widget.TextView;
-
-import com.maws.loonandroid.BuildConfig;
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.enums.FragmentType;
 import com.maws.loonandroid.fragments.NavigationDrawerFragment;
-import com.maws.loonandroid.fragments.PushNotificationsFragment;
 import com.maws.loonandroid.fragments.DeviceFragment;
 import com.maws.loonandroid.fragments.SensorsFragment;
 import com.maws.loonandroid.fragments.SupportFragment;
 import com.maws.loonandroid.fragments.UploadToCloudFragment;
-import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomProgressSpinner;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -75,10 +67,6 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-        int versionCode = BuildConfig.VERSION_CODE;
-        String versionName = BuildConfig.VERSION_NAME;
-        TextView versionTV = (TextView) findViewById(R.id.versionTV);
-        versionTV.setText("Version "+versionName+" "+ String.valueOf(versionCode));
     }
 
     @Override
@@ -96,10 +84,6 @@ public class MainActivity extends ActionBarActivity
             case SENSOR:
                 toReplace= SensorsFragment.newInstance();
                 tag = TAG_SENSOR;
-                break;
-            case PUSH_NOTIFICATION:
-                toReplace = PushNotificationsFragment.newInstance();
-                tag = TAG_PUSH_NOTIFICATION;
                 break;
             case UPLOAD:
                 toReplace = UploadToCloudFragment.newInstance();
@@ -160,20 +144,6 @@ public class MainActivity extends ActionBarActivity
         startActivity(logOutIntent);
         this.finish();
     }
-
-    private static List<User> users = null;
-    public List<User> getUsers(){
-        if(users == null) {
-            users = new ArrayList<User>();
-            users.add(new User("Andres J.", "andres@mobileaws.com", "password"));
-            users.add(new User("Joel G.", "joel@mobileaws.com", "password"));
-            users.add(new User("Mike A.", "mike@mobileaws.com", "password"));
-            users.add(new User("Edison G.", "edison@mobileaws.com", "password"));
-        }
-        return users;
-    }
-
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){

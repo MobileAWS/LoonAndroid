@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,9 +44,8 @@ public class DeviceFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
     private View emptyLayout;
-    private TextView activeSensorHeaderTV, inactiveSensorHeaderTV;
-    private ListView sensorsLV, inactiveSensorsLV;
-    private DeviceListAdapter adapter, inactiveAdapter;
+    private RecyclerView sensorsLV;
+    private DeviceListAdapter adapter;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -64,20 +65,14 @@ public class DeviceFragment extends Fragment implements
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_device, container, false);
-        sensorsLV = (ListView) rootView.findViewById(R.id.sensorsLV);
-        sensorsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        sensorsLV = (RecyclerView) rootView.findViewById(R.id.sensorsLV);
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), MonitorActivity.class);
-                intent.putExtra(MonitorActivity.MONITOR_ID, id);
-                startActivity(intent);
-            }
-        });
+        // Setup layout manager for items
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
 
-        inactiveSensorsLV = (ListView) rootView.findViewById(R.id.inactiveSensorsLV);
-        activeSensorHeaderTV = (TextView) rootView.findViewById(R.id.activeSensorHeaderTV);
-        inactiveSensorHeaderTV = (TextView) rootView.findViewById(R.id.inactiveSensorHeaderTV);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        layoutManager.scrollToPosition(0);
+        sensorsLV.setLayoutManager(layoutManager);
         emptyLayout = rootView.findViewById(R.id.emptyLayout);
 
         //i need a loader to listen to alarm changes on the db alerts
@@ -93,34 +88,22 @@ public class DeviceFragment extends Fragment implements
         LoonMedicalDao loonDao = new LoonMedicalDao(this.getActivity());
         DeviceDao sDao = new DeviceDao(this.getActivity());
 
-        List<Device> devices = sDao.getAllActive();
+        List<Device> devices = sDao.getAll();
         if(devices.size() > 0) {
-            adapter = new DeviceListAdapter(this.getActivity(), devices);
+            adapter = new DeviceListAdapter(this.getActivity(), devices, new DeviceListAdapter.DeviceViewHolderClickListener() {
+                @Override
+                public void onClick(Device device) {
+                    Intent intent = new Intent(getActivity(), MonitorActivity.class);
+                    intent.putExtra(MonitorActivity.MONITOR_ID, device.getId());
+                    startActivity(intent);
+                }
+            });
             sensorsLV.setAdapter(adapter);
-
             sensorsLV.setVisibility(View.VISIBLE);
-            activeSensorHeaderTV.setVisibility(View.VISIBLE);
-        }else{
-            sensorsLV.setVisibility(View.GONE);
-            activeSensorHeaderTV.setVisibility(View.GONE);
-        }
-
-        List<Device> inactiveDevices = sDao.getAllInactive();
-        if(inactiveDevices.size() > 0) {
-            inactiveAdapter = new DeviceListAdapter(this.getActivity(), inactiveDevices);
-            inactiveSensorsLV.setAdapter(inactiveAdapter);
-
-            inactiveSensorsLV.setVisibility(View.VISIBLE);
-            inactiveSensorHeaderTV.setVisibility(View.VISIBLE);
-        }else{
-            inactiveSensorsLV.setVisibility(View.GONE);
-            inactiveSensorHeaderTV.setVisibility(View.GONE);
-        }
-
-        if(devices.size() <= 0 && inactiveDevices.size() <= 0){
-            emptyLayout.setVisibility(View.VISIBLE);
-        }else{
             emptyLayout.setVisibility(View.GONE);
+        }else{
+            emptyLayout.setVisibility(View.VISIBLE);
+            sensorsLV.setVisibility(View.GONE);
         }
 
     }
@@ -173,11 +156,25 @@ public class DeviceFragment extends Fragment implements
     }
 
     private void generateRandomAlert(){
+        if(adapter == null){
+            return;
+        }
+
+        //let's count active sensors
+        int activeCount = 0;
+        for(int i = 0; i < adapter.getItemCount(); i++){
+            if(adapter.getItem(i).isActive()){
+                activeCount++;
+            }else{
+                break;
+            }
+        }
+
         //let's pick one of the sensors at random
-        if(adapter != null && adapter.getCount() > 0){
+        if(activeCount > 0){
 
             Random ran = new Random();
-            int x = ran.nextInt(adapter.getCount());
+            int x = ran.nextInt(activeCount);
             Device sDevice = (Device)adapter.getItem(x);
 
             //now let's pick a service at random

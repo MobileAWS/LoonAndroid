@@ -124,7 +124,7 @@ public class StatusListAdapter extends BaseExpandableListAdapter {
         if(convertView == null){
             convertView = LinearLayout.inflate(context, R.layout.status_item, null);
             viewHolder = new ChildViewHolder();
-            viewHolder.sensorTv = (TextView) convertView.findViewById(R.id.sensorTv);
+            viewHolder.sensorTv = (TextView) convertView.findViewById(R.id.sensorTV);
             convertView.setTag(viewHolder);
         }else {
             viewHolder = (ChildViewHolder) convertView.getTag();
@@ -143,14 +143,14 @@ public class StatusListAdapter extends BaseExpandableListAdapter {
             }
             if (isOn) {
                 viewHolder.sensorTv.setTextColor(context.getResources().getColor(R.color.green));
-                viewHolder.sensorTv.setText(property.getName());
+                viewHolder.sensorTv.setText(context.getString(property.getDisplayId()));
             } else {
                 viewHolder.sensorTv.setTextColor(context.getResources().getColor(R.color.dark_orange));
-                viewHolder.sensorTv.setText(property.getName());
+                viewHolder.sensorTv.setText(context.getString(property.getDisplayId()));
             }
         }else {
             viewHolder.sensorTv.setTextColor(context.getResources().getColor(R.color.light_gray));
-            viewHolder.sensorTv.setText(property.getName());
+            viewHolder.sensorTv.setText(context.getString(property.getDisplayId()));
         }
         return convertView;
     }
