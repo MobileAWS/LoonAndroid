@@ -18,9 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.DrawerListAdapter;
@@ -274,12 +272,13 @@ public class NavigationDrawerFragment extends Fragment {
 
     private IconTextOption[] getMenuOptions(){
         if( menuOptions == null ) {
-            menuOptions = new IconTextOption[4];
+            menuOptions = new IconTextOption[5];
             menuOptions[0] = new IconTextOption( getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor, FragmentType.MONITOR );
             menuOptions[1] = new IconTextOption("Status",R.drawable.ic_status,FragmentType.SENSOR);
             //menuOptions[1] = new IconTextOption( getString(R.string.navigation_push_notification), R.drawable.ic_launcher, FragmentType.PUSH_NOTIFICATION );
             menuOptions[2] = new IconTextOption( getString(R.string.navigation_upload_to_cloud), R.drawable.ic_action_upload_to_cloud, FragmentType.UPLOAD );
-            menuOptions[3] = new IconTextOption( getString(R.string.navigation_log_out), R.drawable.ic_action_logout, FragmentType.LOGOUT );
+            menuOptions[3] = new IconTextOption(getString(R.string.support_option),R.drawable.ic_suport,FragmentType.SUPPORT);
+            menuOptions[4] = new IconTextOption( getString(R.string.navigation_log_out), R.drawable.ic_action_logout, FragmentType.LOGOUT );
         }
         return menuOptions;
     }

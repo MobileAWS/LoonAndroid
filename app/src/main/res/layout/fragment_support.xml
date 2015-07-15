@@ -1,0 +1,161 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="com.maws.loonandroid.fragments.SupportFragment">
+
+
+
+    <!-- TODO: Update blank fragment layout -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingLeft="9dp"
+            android:paddingBottom="15dp">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/drawer_item_image"
+            android:src="@drawable/ic_team_black"
+            android:paddingRight="10dp"/>
+            <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:text="@string/owner_text"
+                    android:textStyle="normal|bold"
+                    android:textSize="16dp"/>
+
+                <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:text="@string/owner_subtext"
+                    android:textSize="10dp"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:id="@+id/phoneSupportTv"
+            android:clickable="true"
+            android:onClick="onResourcesContact"
+            android:paddingLeft="9dp"
+            android:paddingBottom="15dp">
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_phone"
+                android:paddingRight="10dp"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:text="@string/phone_text"
+                    android:textStyle="normal|bold"
+                    android:textSize="17dp"/>
+
+                <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:text="@string/phone_subtext"
+                    android:textSize="10dp"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+            android:id="@+id/resourceSupportTV"
+             android:paddingTop="15dp"
+             android:paddingLeft="9dp"
+             android:paddingBottom="15dp"
+             android:onClick="onResourcesContact"
+             android:clickable="true">
+             <ImageView
+                 android:layout_width="40dp"
+                 android:layout_height="40dp"
+                 android:src="@drawable/ic_web_site"
+                 android:paddingRight="10dp"/>
+             <LinearLayout
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:orientation="vertical">
+                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                     android:text="@string/website_text"
+                     android:textStyle="normal|bold"
+                     android:textSize="17dp"/>
+
+                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                     android:text="@string/website_devices_subtext"
+                     android:textSize="10dp"/>
+             </LinearLayout>
+         </LinearLayout>
+        <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:paddingTop="15dp"
+             android:paddingLeft="9dp"
+             android:paddingBottom="15dp"
+            android:id="@+id/urlHomeSupportTV"
+             android:onClick="onResourcesContact"
+             android:clickable="true">
+             <ImageView
+                 android:layout_width="40dp"
+                 android:layout_height="40dp"
+                 android:src="@drawable/ic_web_site"
+                 android:paddingRight="10dp"/>
+             <LinearLayout
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:orientation="vertical">
+                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                     android:text="@string/website_devices_text"
+                     android:textSize="17dp"
+                     android:textStyle="normal|bold"/>
+
+                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                     android:text="@string/website_devices_subtext"
+                     android:textSize="10dp"/>
+             </LinearLayout>
+         </LinearLayout>
+        <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:paddingTop="15dp"
+             android:paddingLeft="9dp"
+             android:paddingBottom="15dp"
+             android:id="@+id/emailSupportTV"
+             android:onClick="onResourcesContact"
+             android:clickable="true">
+             <ImageView
+                 android:layout_width="40dp"
+                 android:layout_height="40dp"
+                 android:src="@drawable/ic_mail"
+                 android:paddingRight="10dp"/>
+             <LinearLayout
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:orientation="vertical">
+                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                     android:text="@string/email_text"
+                     android:textStyle="normal|bold"
+                     android:textSize="17dp"/>
+
+                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                     android:text="@string/email_subtext"
+                     android:textSize="10dp"/>
+             </LinearLayout>
+         </LinearLayout>
+     </LinearLayout>
+    </RelativeLayout>
+
+
+
+</FrameLayout>
+
+

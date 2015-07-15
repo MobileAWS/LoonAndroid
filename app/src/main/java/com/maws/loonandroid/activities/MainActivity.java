@@ -1,6 +1,7 @@
 package com.maws.loonandroid.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
+import android.view.View;
 import android.widget.TextView;
 
 import com.maws.loonandroid.BuildConfig;
@@ -19,10 +21,12 @@ import com.maws.loonandroid.fragments.NavigationDrawerFragment;
 import com.maws.loonandroid.fragments.PushNotificationsFragment;
 import com.maws.loonandroid.fragments.DeviceFragment;
 import com.maws.loonandroid.fragments.SensorsFragment;
+import com.maws.loonandroid.fragments.SupportFragment;
 import com.maws.loonandroid.fragments.UploadToCloudFragment;
 import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
+import com.maws.loonandroid.views.CustomProgressSpinner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +38,9 @@ public class MainActivity extends ActionBarActivity
     public static final String TAG_MONITOR ="ss";
     public static final String TAG_SENSOR = "ss1";
     public static final String TAG_PUSH_NOTIFICATION = "pn";
+    public static final String TAG_SUPPORT = "sp";
     public static final String TAG_UPLOAD = "up";
+
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -98,6 +104,10 @@ public class MainActivity extends ActionBarActivity
             case UPLOAD:
                 toReplace = UploadToCloudFragment.newInstance();
                 tag = TAG_UPLOAD;
+                break;
+            case SUPPORT:
+                toReplace = SupportFragment.newInstance();
+                tag = TAG_SUPPORT;
                 break;
             case LOGOUT:
                 logout();
@@ -163,6 +173,8 @@ public class MainActivity extends ActionBarActivity
         return users;
     }
 
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
 
@@ -172,5 +184,39 @@ public class MainActivity extends ActionBarActivity
             ((DeviceFragment)f).loadSensors();
         }
 
+    }
+    public void onResourcesContact(View v){
+        final CustomProgressSpinner spinner = new CustomProgressSpinner(this, this.getString(R.string.support_spinner));
+        spinner.show();
+        if(v.getId() == R.id.resourceSupportTV ) {
+            String url = "http://www.shopcaresentinel.com/product-category/build-your-own-sensor-system";
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
+            spinner.dismiss();
+        }
+        if(v.getId() == R.id.urlHomeSupportTV){
+            String url = "http://www.shopcaresentinel.com/resources/";
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
+            spinner.dismiss();
+        }
+        if(v.getId() == R.id.emailSupportTV){
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                    "mailto","Info@shopcaresentinel.com", null));
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "");
+            emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+            startActivity(Intent.createChooser(emailIntent, "Send email..."));
+            spinner.dismiss();
+        }
+        if(v.getId() == R.id.phoneSupportTv){
+            String posted_by = "1-855-282-0004";
+            String uri = "tel:" + posted_by.trim() ;
+            Intent intent = new Intent(Intent.ACTION_CALL);
+            intent.setData(Uri.parse(uri));
+            startActivity(intent);
+            spinner.dismiss();
+        }
     }
 }

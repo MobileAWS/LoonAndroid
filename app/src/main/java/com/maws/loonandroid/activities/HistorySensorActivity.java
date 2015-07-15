@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.DevicePropertyHistoryListAdapter;
