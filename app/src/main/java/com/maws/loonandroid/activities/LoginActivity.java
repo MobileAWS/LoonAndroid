@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,6 +26,7 @@ import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.models.Site;
 import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.requests.UserRequestHandler;
+import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomToast;
 
 import org.json.JSONObject;
@@ -57,6 +60,8 @@ public class LoginActivity extends Activity implements OnClickListener {
         newUserTV.setOnClickListener(this);
         loginBtn.setOnClickListener(this);
         loginNoCloudBtn.setOnClickListener(this);
+
+       getLoginInit();
 
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionTV = (TextView) findViewById(R.id.versionTV);
@@ -156,7 +161,7 @@ public class LoginActivity extends Activity implements OnClickListener {
     private User userExistDb(User user, Context context) {
         UserDao uDao = new UserDao(context);
         LoonMedicalDao lDao = new LoonMedicalDao(this);
-        User userDb = uDao.get(user.getEmail(),lDao.getReadableDatabase());
+        User userDb = uDao.get(user.getEmail(), lDao.getReadableDatabase());
         if(userDb != null){
             uDao.update(user,lDao.getReadableDatabase());
         }else {
@@ -183,7 +188,7 @@ public class LoginActivity extends Activity implements OnClickListener {
         User user = uDao.get(email, lDao.getReadableDatabase());
         if (user == null ) {
             errors.append( getString(R.string.validation_incorrect_user_password) );
-            errors.append( " " );
+            errors.append(" ");
         }
 
         if(errors.length() > 0){
@@ -246,11 +251,22 @@ public class LoginActivity extends Activity implements OnClickListener {
         }else {
             Site.setCurrent(site, this);
         }
-
+        Util.setLoginInit(User.getCurrent(this).getEmail(),siteId,customerId,this);
         Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(newUserIntent);
     }
-
+    private  void getLoginInit() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String email = preferences.getString(Util.EMAIL_PREFERENCE, "");
+        String customerId = preferences.getString(Util.CUSTOMER_ID_PREFERENCE, "");
+        String siteId = preferences.getString(Util.SITE_ID_PREFERENCE, "");
+        if(!email.isEmpty())
+            emailET.setText(email);
+        if(!siteId.isEmpty())
+            siteIdET.setText(siteId);
+        if(!customerId.isEmpty())
+            customerIdET.setText(customerId);
+    }
 }
 
 

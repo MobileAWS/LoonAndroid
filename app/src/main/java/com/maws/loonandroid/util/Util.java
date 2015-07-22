@@ -6,11 +6,14 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -39,6 +42,9 @@ public class Util {
     public static final SimpleDateFormat sdf = new SimpleDateFormat("EEE dd MMM, h:mm a");
     public static final SimpleDateFormat longDateFormat = new SimpleDateFormat("EEE dd MMM");
     public static final SimpleDateFormat timeOnlyFormat = new SimpleDateFormat("hh:mm:ss a");
+    public static final String EMAIL_PREFERENCE = "email";
+    public static final String CUSTOMER_ID_PREFERENCE = "customerId";
+    public static final String SITE_ID_PREFERENCE = "siteId";
 
     public static String MD5(String md5) {
         try {
@@ -208,5 +214,16 @@ public class Util {
             propertyList.add(arrayPropertie[i]);
         }
         return propertyList;
+    }
+
+
+    public static void setLoginInit(String email, String siteId, String customerId,Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(Util.EMAIL_PREFERENCE,email);
+        editor.putString(Util.CUSTOMER_ID_PREFERENCE,customerId);
+        editor.putString(Util.SITE_ID_PREFERENCE,siteId);
+        editor.apply();
+
     }
 }
