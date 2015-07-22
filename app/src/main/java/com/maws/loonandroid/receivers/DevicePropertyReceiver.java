@@ -31,10 +31,20 @@ public class DevicePropertyReceiver extends BroadcastReceiver {
         String value = bundle.getString("value");
         long alarmDateMillis = bundle.getLong("dateMillis");
 
+        //ignore the alarm if it has no ON or OFF text
+        Property thisProp = Property.getDefaultProperty(propertyId);
+        String propertyMessage = "";
+        if(value.equalsIgnoreCase("on") ){
+            propertyMessage = context.getString(thisProp.getOnTextId());
+        }else{
+            propertyMessage = context.getString(thisProp.getOffTextId());
+        }
+        if(TextUtils.isEmpty(propertyMessage)){
+            return;
+        }
+
         DeviceDao sDao = new DeviceDao(context);
         Device device = sDao.get(deviceId);
-
-
         if( deviceId > 0 && propertyId > -1 && alarmDateMillis >= 0 && device != null ) {
 
             //when i receive an alarm, i want to do 2 things: Save it to the db and show a notification
@@ -54,12 +64,7 @@ public class DevicePropertyReceiver extends BroadcastReceiver {
 
             //let's show the notification
             String title = TextUtils.isEmpty(device.getDescription())? device.getName() : device.getDescription();
-            String message = String.format(
-                    context.getString(R.string.push_notification_message_alert),
-                    context.getString(Property.getDefaultProperty(propertyId).getDisplayId()),
-                    value
-            );
-            Util.generateNotification(context, title, message);
+            Util.generateNotification(context, title, propertyMessage);
         }
     }
 

@@ -201,6 +201,5 @@ public class DeviceContentProvider extends ContentProvider {
             }
         }
     }
-
 }
 

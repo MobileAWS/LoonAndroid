@@ -7,8 +7,8 @@
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Login</string>
     <string name="action_sign_in_no_cloud">Login (No Cloud)</string>
-    <string name="new_user_question">New User?</string>
-    <string name="forgot_password_question">Forgot Password?</string>
+    <string name="new_user_question">New User</string>
+    <string name="forgot_password_question">Forgot Password</string>
     <string name="reset_password">Reset Password</string>
     <string name="prompt_confirm_password">Confirm Password</string>
     <string name="create_user">Create User</string>
@@ -81,10 +81,6 @@
     <string name="push_notification_message_alert_on">The sensor %1$s has been activated.</string>
     <string name="push_notification_message_alert_off">The sensor %1$s has been deactivated.</string>
     <string name="push_notification_message_alert">%1$s sensor has changed to %2$s.</string>
-    <string name="property_bed">Bed</string>
-    <string name="property_chair">Chair</string>
-    <string name="property_toilet">Toilet</string>
-    <string name="property_incontinence">Incontinence</string>
     <string name="view_history">History</string>
     <string name="view_delete">Delete</string>
     <string name="title_activity_history_sensor">Alert History</string>
@@ -101,8 +97,6 @@
     <string name="loginError">Error to login in server, please try again.</string>
     <string name="empty_sensor_upload">Current devices do not have Alerts to upload</string>
     <string name="no_sensors_found_upload">No Devices to Upload</string>
-    <string name="property_call">Call</string>
-    <string name="property_pri">Portal</string>
     <string name="device_serial">Serial #: %1$s</string>
     <string name="device_version">Version: %1$s / %2$s</string>
     <string name="device_battery">Battery:</string>
@@ -112,7 +106,6 @@
     <string name="empty_alarm_history">No Alerts Found</string>
     <string name="empty_sensor_fragment">There are no Sensors to show‏</string>
     <string name="empty_sensor">No Sensors Found</string>
-<!-- TODO: Remove or change this placeholder text -->
     <string name="owner_text">CareSentinel</string>
     <string name="owner_text2">A Loon Medical, Inc. suite product</string>
     <string name="owner_subtext">Tolland, CT</string>
@@ -125,4 +118,31 @@
     <string name="email_text">Info@shopcaresentinel.com</string>
     <string name="email_subtext">Email</string>
     <string name="support_spinner">Connecting...</string>
+    <string name="delete">Delete</string>
+
+    <!-- SENSORS -->
+    <string name="property_bed">Bed</string>
+    <string name="property_bed_on">Bed Occupied</string>
+    <string name="property_bed_off">Bed Empty</string>
+
+    <string name="property_chair">Chair</string>
+    <string name="property_chair_on">Chair Occupied</string>
+    <string name="property_chair_off">Chair Empty</string>
+
+    <string name="property_toilet">Toilet</string>
+    <string name="property_toilet_on">Toilet Occupied</string>
+    <string name="property_toilet_off">Toilet Empty</string>
+
+    <string name="property_incontinence">Incontinence</string>
+    <string name="property_incontinence_on">Incontinence Sensor Alert</string>
+    <string name="property_incontinence_off"></string>
+
+    <string name="property_call">Call</string>
+    <string name="property_call_on">Call Button Service Requested</string>
+    <string name="property_call_off"></string>
+
+    <string name="property_pri">Portal</string>
+    <string name="property_pri_on">Doorway Motion Detected</string>
+    <string name="property_pri_off"></string>
+
 </resources>

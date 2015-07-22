@@ -18,8 +18,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:text="Sensor Name"
-            android:layout_centerVertical="true" />
+            android:text="Sensor Name" />
 
         <TextView
             android:id="@+id/alertDateTV"
@@ -29,7 +28,7 @@
             android:textStyle="bold"
             android:text="Sensor Name"
             android:layout_marginRight="10dp"
-            android:layout_centerVertical="true"
+            android:layout_below="@+id/serviceTV"
             android:layout_toLeftOf="@+id/dismissIV" />
 
         <ImageView

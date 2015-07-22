@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Created by Andrexxjc on 12/04/2015.
  */
-public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.ViewHolder> {
+public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.DeviceViewHolder> {
 
     private static final String TAG = "DeviceListAdapter";
     private final Context context;
@@ -40,16 +40,24 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Vi
         void onClick(Device device);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class DeviceViewHolder extends RecyclerView.ViewHolder {
         Button connectBtn;
-        TextView nameTV, addressTV, headerTV;
+        TextView nameTV, addressTV, headerTV, deleteBtn;
         ImageView signalIV, batteryIV;
         LinearLayout alarmsLL;
         View mainView;
 
-        public ViewHolder(View v) {
+        public DeviceViewHolder(View v) {
             super(v);
             this.mainView = v;
+        }
+
+        public void showDelete(){
+            deleteBtn.setVisibility(View.VISIBLE);
+        }
+
+        public void hideDelete(){
+            deleteBtn.setVisibility(View.GONE);
         }
     }
 
@@ -60,12 +68,13 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Vi
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public DeviceViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
 
         View convertView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.sensor_item, viewGroup, false);
-        ViewHolder viewHolder = new ViewHolder(convertView);
+        DeviceViewHolder viewHolder = new DeviceViewHolder(convertView);
         viewHolder.headerTV = (TextView) convertView.findViewById(R.id.headerTV);
         viewHolder.nameTV = (TextView) convertView.findViewById(R.id.nameTV);
+        viewHolder.deleteBtn = (TextView) convertView.findViewById(R.id.deleteBtn);
         viewHolder.addressTV = (TextView) convertView.findViewById(R.id.addressTV);
         viewHolder.signalIV = (ImageView) convertView.findViewById(R.id.signalIV);
         viewHolder.batteryIV = (ImageView) convertView.findViewById(R.id.batteryIV);
@@ -86,7 +95,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(DeviceViewHolder viewHolder, int position) {
 
         boolean showHeader = position == 0 || items.get(position).isActive() != items.get(position - 1).isActive();
 
@@ -184,10 +193,13 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Vi
         if (dProperty != null && dProperty.getDismissedAt() == null) {
 
             Property alertProperty = Property.getDefaultProperty(dProperty.getPropertyId());
+            String propertyMessage = dProperty.getValue().equalsIgnoreCase("on")?
+                    context.getString(alertProperty.getOnTextId()):
+                    context.getString(alertProperty.getOffTextId());
 
             View alertView = LinearLayout.inflate(context, R.layout.alert_item, null);
             ((TextView) alertView.findViewById(R.id.alertDateTV)).setText(Util.sdf.format(dProperty.getCreatedAt()));
-            ((TextView) alertView.findViewById(R.id.serviceTV)).setText(context.getString(alertProperty.getDisplayId()));
+            ((TextView) alertView.findViewById(R.id.serviceTV)).setText(propertyMessage);
             alertView.setTag(dProperty.getId());
 
             alertView.setOnClickListener(new View.OnClickListener() {

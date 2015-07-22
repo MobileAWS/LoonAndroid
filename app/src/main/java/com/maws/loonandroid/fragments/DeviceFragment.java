@@ -2,13 +2,17 @@ package com.maws.loonandroid.fragments;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -67,9 +71,34 @@ public class DeviceFragment extends Fragment implements
         View rootView = inflater.inflate(R.layout.fragment_device, container, false);
         sensorsLV = (RecyclerView) rootView.findViewById(R.id.sensorsLV);
 
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                //Remove swiped item from list and notify the RecyclerView
+                ((DeviceListAdapter.DeviceViewHolder)viewHolder).showDelete();
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                View itemView = viewHolder.itemView;
+                Drawable d = ContextCompat.getDrawable(DeviceFragment.this.getActivity(), R.drawable.toast_red);
+                d.setBounds(itemView.getLeft(), itemView.getTop(), (int) dX, itemView.getBottom());
+                d.draw(c);
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        //itemTouchHelper.attachToRecyclerView(sensorsLV);
+
         // Setup layout manager for items
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
-
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         layoutManager.scrollToPosition(0);
         sensorsLV.setLayoutManager(layoutManager);
