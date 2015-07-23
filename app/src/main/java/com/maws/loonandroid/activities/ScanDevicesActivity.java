@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -163,12 +164,17 @@ public class ScanDevicesActivity extends ActionBarActivity {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 short defaultShort = 0;
                 short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, defaultShort);
+                String name = intent.getStringExtra(BluetoothDevice.EXTRA_NAME);
+                if(TextUtils.isEmpty(name) || !name.equalsIgnoreCase("Sensor CS01")){
+                    return;
+                }
 
                 //i need to know if this device is already on our database
                 DeviceDao sDao = new DeviceDao(ScanDevicesActivity.this);
                 Device mDevice = sDao.findByMacAddress(device.getAddress());
                 if(mDevice == null){
                     mDevice = new Device(device);
+                    mDevice.setSignalStrength(rssi);
                 }
                 scanAdapter.add(mDevice);
                 scanAdapter.notifyDataSetChanged();
