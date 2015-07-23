@@ -7,15 +7,13 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
-
     <application
         android:name=".LoonAndroid"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -26,7 +24,6 @@
             android:windowSoftInputMode="adjustPan|stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -38,7 +35,6 @@
             android:windowSoftInputMode="adjustPan|stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -50,7 +46,6 @@
             android:windowSoftInputMode="adjustPan|stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -63,7 +58,6 @@
             android:windowSoftInputMode="adjustPan|stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -76,10 +70,8 @@
             android:windowSoftInputMode="adjustPan|stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
@@ -93,15 +85,21 @@
             android:windowSoftInputMode="adjustPan|stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
-
+        <activity
+            android:name=".activities.HistorySensorActivity"
+            android:label="@string/title_activity_history_sensor"
+            android:theme="@style/LoonActionBarTheme"
+            android:parentActivityName=".activities.MonitorActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.maws.loonandroid.activities.MonitorActivity" />
+        </activity>
         <receiver android:name=".receivers.DevicePropertyReceiver" >
             <intent-filter>
                 <action android:name="com.maws.loonandroid.deviceproperty" />
@@ -140,16 +138,6 @@
             android:authorities="com.maws.loonandroid.contentproviders.PropertyContentProvider"
             android:enabled="true"
             android:exported="false" />
-
-        <activity
-            android:name=".activities.HistorySensorActivity"
-            android:label="@string/title_activity_history_sensor"
-            android:theme="@style/LoonActionBarTheme"
-            android:parentActivityName=".activities.MonitorActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.maws.loonandroid.activities.MonitorActivity" />
-        </activity>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="e690ff966aed71fce389bb7a08e54f3978fa5b17" />

@@ -42,7 +42,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
 
     public static class DeviceViewHolder extends RecyclerView.ViewHolder {
         Button connectBtn;
-        TextView nameTV, addressTV, headerTV, deleteBtn;
+        TextView nameTV, addressTV, headerTV;
         ImageView signalIV, batteryIV;
         LinearLayout alarmsLL;
         View mainView;
@@ -52,13 +52,6 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
             this.mainView = v;
         }
 
-        public void showDelete(){
-            deleteBtn.setVisibility(View.VISIBLE);
-        }
-
-        public void hideDelete(){
-            deleteBtn.setVisibility(View.GONE);
-        }
     }
 
     public DeviceListAdapter(Context context, List<Device> values, DeviceViewHolderClickListener listener) {
@@ -74,7 +67,6 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
         DeviceViewHolder viewHolder = new DeviceViewHolder(convertView);
         viewHolder.headerTV = (TextView) convertView.findViewById(R.id.headerTV);
         viewHolder.nameTV = (TextView) convertView.findViewById(R.id.nameTV);
-        viewHolder.deleteBtn = (TextView) convertView.findViewById(R.id.deleteBtn);
         viewHolder.addressTV = (TextView) convertView.findViewById(R.id.addressTV);
         viewHolder.signalIV = (ImageView) convertView.findViewById(R.id.signalIV);
         viewHolder.batteryIV = (ImageView) convertView.findViewById(R.id.batteryIV);
@@ -234,4 +226,8 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
         return items.get(position);
     }
 
+    public void remove(int position){
+        items.remove(position);
+        this.notifyDataSetChanged();
+    }
 }

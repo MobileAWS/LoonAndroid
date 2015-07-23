@@ -45,7 +45,7 @@
     <string name="default_request_error_message">There was an error. Please try again later.</string>
     <string name="message_account_creation_success">Account Created. Please confirm the account on your email before attempting to login.</string>
     <string name="signing_in">Signing In...</string>
-    <string name="add_sensor_instructions"><![CDATA[Enter a description (e.g. JaJacket Activator) & tap \"Register\".]]></string>
+    <string name="add_sensor_instructions"><![CDATA[Enter a description (e.g. Jacket Activator) & tap \"Register\".]]></string>
     <string name="sensor_found_name">Found: Sensor LM01</string>
     <string name="sensor_found_label">Found:</string>
     <string name="sensor_serial_label">S/N:</string>
@@ -144,5 +144,8 @@
     <string name="property_pri">Portal</string>
     <string name="property_pri_on">Doorway Motion Detected</string>
     <string name="property_pri_off"></string>
+    <string name="device_deleted">Device Deleted</string>
+    <string name="undo">Undo</string>
+    <string name="device_removed">Device succesfully removed</string>
 
 </resources>

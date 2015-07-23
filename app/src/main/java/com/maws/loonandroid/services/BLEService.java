@@ -16,6 +16,7 @@ import com.maws.loonandroid.gatt.GattManager;
 import com.maws.loonandroid.gatt.events.GattEvent;
 import com.maws.loonandroid.gatt.operations.GattCharacteristicReadOperation;
 import com.maws.loonandroid.gatt.operations.GattConnectOperation;
+import com.maws.loonandroid.gatt.operations.GattDisconnectOperation;
 import com.maws.loonandroid.gatt.operations.GattSetNotificationOperation;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceCharacteristic;
@@ -132,6 +133,32 @@ public class BLEService extends Service
 
         GattConnectOperation operation = new GattConnectOperation(device);
         manager.queue(operation);
+    }
+
+    public void disconnect(String address){
+        if (mBluetoothAdapter == null || address == null) {
+            Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
+            return;
+        }
+
+        BluetoothDevice device = null;
+        try{
+            device = mBluetoothAdapter.getRemoteDevice(address);
+        }catch(Exception ex){
+            //just don't connect to the device if the mac address is weird
+        }
+
+        DeviceDao deviceDao = new DeviceDao(this);
+        Device currentDevice = deviceDao.findByMacAddress(address);
+        if(currentDevice != null) {
+            currentDevice.setConnected(false);
+            deviceDao.update(currentDevice);
+        }
+
+        if(device != null) {
+            GattDisconnectOperation operation = new GattDisconnectOperation(device);
+            manager.queue(operation);
+        }
     }
 
 

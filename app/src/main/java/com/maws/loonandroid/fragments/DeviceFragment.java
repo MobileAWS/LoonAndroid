@@ -38,6 +38,8 @@ import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
+import com.maws.loonandroid.views.CustomToast;
+
 import java.util.List;
 import java.util.Random;
 
@@ -81,21 +83,24 @@ public class DeviceFragment extends Fragment implements
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 //Remove swiped item from list and notify the RecyclerView
-                ((DeviceListAdapter.DeviceViewHolder)viewHolder).showDelete();
+                BLEService service = BLEService.getInstance();
+                if(service != null){
+                    service.disconnect( adapter.getItem( viewHolder.getAdapterPosition() ).getMacAddress() );
+                }
+
+                DeviceDao deviceDao = new DeviceDao(getActivity());
+                deviceDao.delete( adapter.getItem( viewHolder.getAdapterPosition() ) );
+                adapter.remove(viewHolder.getAdapterPosition());
+                CustomToast.showAlert(getActivity(), getActivity().getString(R.string.device_removed), CustomToast._TYPE_SUCCESS);
+                if(adapter.getItemCount() == 0){
+                    emptyLayout.setVisibility(View.VISIBLE);
+                    sensorsLV.setVisibility(View.GONE);
+                }
             }
 
-            @Override
-            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-
-                View itemView = viewHolder.itemView;
-                Drawable d = ContextCompat.getDrawable(DeviceFragment.this.getActivity(), R.drawable.toast_red);
-                d.setBounds(itemView.getLeft(), itemView.getTop(), (int) dX, itemView.getBottom());
-                d.draw(c);
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-            }
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        //itemTouchHelper.attachToRecyclerView(sensorsLV);
+        itemTouchHelper.attachToRecyclerView(sensorsLV);
 
         // Setup layout manager for items
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());

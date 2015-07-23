@@ -1,81 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:baselineAligned="false"
-    android:orientation="vertical">
+    android:id="@+id/lyt_container" >
 
-    <TextView
-        android:id="@+id/headerTV"
-        style="@style/DarkHeader"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/active_sensors" />
+        android:baselineAligned="false"
+        android:orientation="vertical"
+    >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="15dp">
+        <TextView
+            android:id="@+id/headerTV"
+            style="@style/DarkHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/active_sensors" />
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/nameTV"
+            android:orientation="horizontal"
+            android:padding="15dp"
+            android:background="@color/white">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/nameTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sensor Name"
+                    android:textSize="@dimen/font_big"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/addressTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sensor Code"
+                    android:textSize="@dimen/font_medium" />
+            </LinearLayout>
+            <ImageView
+                android:id="@+id/signalIV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sensor Name"
-                android:textSize="@dimen/font_big"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/addressTV"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/wifi3"
+                android:tint="@color/green" />
+            <ImageView
+                android:id="@+id/batteryIV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sensor Code"
-                android:textSize="@dimen/font_medium" />
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/battery4"
+                android:tint="@color/green" />
+            <Button
+                android:id="@+id/connectBtn"
+                style="@style/Button.dark_green"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:text="@string/connect"
+                android:visibility="gone" />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/signalIV"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/alarmsLL"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/wifi3"
-            android:tint="@color/green" />
-
-        <ImageView
-            android:id="@+id/batteryIV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/battery4"
-            android:tint="@color/green" />
-
-        <Button
-            android:id="@+id/connectBtn"
-            style="@style/Button.dark_green"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:text="@string/connect"
-            android:visibility="gone" />
-
+            android:orientation="vertical">
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/alarmsLL"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:padding="10dp"
+        android:background="@color/dark_green"
+        android:visibility="gone"
+    >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/txt_delete"
+            android:gravity="center_vertical"
+            android:text="@string/device_deleted"
+            android:clickable="false"
+            android:layout_weight="2"
+            android:hapticFeedbackEnabled="true"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+        />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:id="@+id/undoBtn"
+            android:text="@string/undo"
+            android:clickable="false"
+            android:textColor="@color/dark_green"
+            android:background="@color/white"
+        />
     </LinearLayout>
+</FrameLayout>
 
-</LinearLayout>
+
+
 
