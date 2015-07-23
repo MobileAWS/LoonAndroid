@@ -1,5 +1,8 @@
 package com.maws.loonandroid.fragments;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Canvas;
@@ -72,7 +75,7 @@ public class DeviceFragment extends Fragment implements
 
         View rootView = inflater.inflate(R.layout.fragment_device, container, false);
         sensorsLV = (RecyclerView) rootView.findViewById(R.id.sensorsLV);
-
+        final Context context = this.getActivity();
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
             @Override
@@ -87,14 +90,29 @@ public class DeviceFragment extends Fragment implements
                 if(service != null){
                     service.disconnect( adapter.getItem( viewHolder.getAdapterPosition() ).getMacAddress() );
                 }
+                final DeviceDao dDao = new DeviceDao(context);
+                final DevicePropertyDao dpDao = new DevicePropertyDao(context);
+                final long deviceId = adapter.getItem( viewHolder.getAdapterPosition()).getId();
+                try {
+                    new AlertDialog.Builder(context)
+                            .setTitle("Delete Device")
+                            .setMessage("Do you really want to delete this device?")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    Device currentDevice = dDao.get(deviceId);
+                                    dpDao.deleteForDeviceId(currentDevice.getId());
+                                    dDao.delete(currentDevice);
+                                }})
+                            .setNegativeButton(android.R.string.no,
+                                    new DialogInterface.OnClickListener(){
+                                        public void onClick(DialogInterface dialogInterface,int whichButton){
+                                            adapter.notifyDataSetChanged();
+                                        }
+                                    }).show();
 
-                DeviceDao deviceDao = new DeviceDao(getActivity());
-                deviceDao.delete( adapter.getItem( viewHolder.getAdapterPosition() ) );
-                adapter.remove(viewHolder.getAdapterPosition());
-                CustomToast.showAlert(getActivity(), getActivity().getString(R.string.device_removed), CustomToast._TYPE_SUCCESS);
-                if(adapter.getItemCount() == 0){
-                    emptyLayout.setVisibility(View.VISIBLE);
-                    sensorsLV.setVisibility(View.GONE);
+                }catch (Exception e) {
+
                 }
             }
 
