@@ -145,7 +145,7 @@ public class UploadToCloudFragment extends Fragment {
         Context context= this.getActivity();
 
         DevicePropertyDao devicePropertyDao = new DevicePropertyDao(this.getView().getContext());
-        ArrayList<List<DeviceProperty>> listToUpload =selectDevicesWithAlarm( devicePropertyDao,  context ,listDevices);
+        ArrayList<List<DeviceProperty>> listToUpload = selectDevicesWithAlarm( devicePropertyDao,  context ,listDevices);
 
         int countDevices = 0;
         for(List<DeviceProperty> devicePropertyList:listToUpload ){

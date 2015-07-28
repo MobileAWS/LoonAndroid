@@ -23,8 +23,8 @@ android {
         applicationId "com.maws.loonandroid"
         minSdkVersion 18
         targetSdkVersion 21
-        versionCode 5
-        versionName "1.4"
+        versionCode 8
+        versionName "1.7"
     }
     buildTypes {
         release {
@@ -44,5 +44,4 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
         transitive = true;
     }
-    compile 'com.hudomju:swipe-to-dismiss-undo:1.0'
 }

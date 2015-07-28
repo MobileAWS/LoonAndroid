@@ -72,7 +72,6 @@ public class UpLoadRequestHandler {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
                         listener.onFailure( VolleySingleton.getResponseData(error.networkResponse),context ,progressBarView );
                         error.printStackTrace();
                     }
@@ -102,10 +101,10 @@ public class UpLoadRequestHandler {
             } else {
                 devicePropertyJson.put(KEY_PROPERTY_VALUE, "Off");
             }
-            devicePropertyJson.put(KEY_PROPERTY_CREATE_AT,String.valueOf(deviceProperty.getCreatedAt().getTime()));
+            devicePropertyJson.put(KEY_PROPERTY_CREATE_AT, String.valueOf(deviceProperty.getCreatedAt().getTime()));
             if(deviceProperty.getDismissedAt() != null ) {
-                devicePropertyJson.put(KEY_PROPERTY_DISMISS, "'"+ String.valueOf(deviceProperty.getDismissedAt().getTime()) + "'");
-                devicePropertyJson.put(KEY_PROPERTY_DISMISS_DURATION , "'"+ deviceProperty.getTotalTimeAlarm() +"'");
+                devicePropertyJson.put(KEY_PROPERTY_DISMISS, String.valueOf(deviceProperty.getDismissedAt().getTime()));
+                devicePropertyJson.put(KEY_PROPERTY_DISMISS_DURATION , String.valueOf(deviceProperty.getTotalTimeAlarm()));
             }
             jsonArray.put(devicePropertyJson);
         }

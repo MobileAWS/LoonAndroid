@@ -85,21 +85,26 @@ public class DeviceFragment extends Fragment implements
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                //Remove swiped item from list and notify the RecyclerView
-                BLEService service = BLEService.getInstance();
-                if(service != null){
-                    service.disconnect( adapter.getItem( viewHolder.getAdapterPosition() ).getMacAddress() );
-                }
-                final DeviceDao dDao = new DeviceDao(context);
-                final DevicePropertyDao dpDao = new DevicePropertyDao(context);
-                final long deviceId = adapter.getItem( viewHolder.getAdapterPosition()).getId();
                 try {
+                    final long deviceId = adapter.getItem( viewHolder.getAdapterPosition()).getId();
+                    final String macAddress = adapter.getItem(viewHolder.getAdapterPosition()).getMacAddress();
+
                     new AlertDialog.Builder(context)
                             .setTitle("Delete Device")
                             .setMessage("Do you really want to delete this device?")
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
+
+                                    //Remove swiped item from list and notify the RecyclerView
+                                    BLEService service = BLEService.getInstance();
+                                    if(service != null){
+                                        service.disconnect( macAddress );
+                                    }
+                                    final DeviceDao dDao = new DeviceDao(context);
+                                    final DevicePropertyDao dpDao = new DevicePropertyDao(context);
+
+
                                     Device currentDevice = dDao.get(deviceId);
                                     dpDao.deleteForDeviceId(currentDevice.getId());
                                     dDao.delete(currentDevice);
