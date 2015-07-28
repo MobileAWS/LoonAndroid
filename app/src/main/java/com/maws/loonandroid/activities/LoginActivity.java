@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,7 +42,7 @@ public class LoginActivity extends Activity implements OnClickListener {
     private EditText emailET, passwordET, siteIdET, customerIdET;
     private TextView forgotPasswordTV, newUserTV;
     private Button loginBtn, loginNoCloudBtn;
-
+    private int CODE_RESULT_NEW_USER = 100;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,7 +166,7 @@ public class LoginActivity extends Activity implements OnClickListener {
         if(userDb != null){
             uDao.update(user,lDao.getReadableDatabase());
         }else {
-            uDao.create(user,lDao.getReadableDatabase());
+            uDao.create(user, lDao.getReadableDatabase());
         }
         userDb = uDao.get(user.getEmail(),lDao.getReadableDatabase());
         return userDb;
@@ -210,7 +211,9 @@ public class LoginActivity extends Activity implements OnClickListener {
             startActivity(forgotPwdIntent);
         }else if(v == newUserTV){
             Intent newUserIntent = new Intent(LoginActivity.this, NewUserActivity.class);
-            startActivity(newUserIntent);
+            Bundle bundle = new Bundle();
+
+            startActivityForResult(newUserIntent, CODE_RESULT_NEW_USER);
 
         }else if(v == loginBtn){
             attemptLogin();
@@ -251,7 +254,7 @@ public class LoginActivity extends Activity implements OnClickListener {
         }else {
             Site.setCurrent(site, this);
         }
-        Util.setLoginInit(User.getCurrent(this).getEmail(),siteId,customerId,this);
+        Util.setLoginInit(User.getCurrent(this).getEmail(), siteId, customerId, this);
         Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(newUserIntent);
     }
@@ -260,13 +263,23 @@ public class LoginActivity extends Activity implements OnClickListener {
         String email = preferences.getString(Util.EMAIL_PREFERENCE, "");
         String customerId = preferences.getString(Util.CUSTOMER_ID_PREFERENCE, "");
         String siteId = preferences.getString(Util.SITE_ID_PREFERENCE, "");
-        if(!email.isEmpty())
-            emailET.setText(email);
-        if(!siteId.isEmpty())
-            siteIdET.setText(siteId);
-        if(!customerId.isEmpty())
-            customerIdET.setText(customerId);
+        emailET.setText(email);
+        siteIdET.setText(siteId);
+        customerIdET.setText(customerId);
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(CODE_RESULT_NEW_USER == requestCode) {
+            Bundle extras = data.getExtras();
+            if(extras != null) {
+                emailET.setText(data.getExtras().getString("email"));
+                passwordET.setText("");
+                siteIdET.setText("");
+                customerIdET.setText("");
+            }
+        }
+    }
+
 }
 
 

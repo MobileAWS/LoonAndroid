@@ -1,6 +1,7 @@
 package com.maws.loonandroid.requests;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 
 import com.android.volley.Request;
@@ -101,9 +102,9 @@ public class UpLoadRequestHandler {
             } else {
                 devicePropertyJson.put(KEY_PROPERTY_VALUE, "Off");
             }
-            devicePropertyJson.put(KEY_PROPERTY_CREATE_AT, String.valueOf(deviceProperty.getCreatedAt().getTime()));
+            devicePropertyJson.put(KEY_PROPERTY_CREATE_AT, String.valueOf(deviceProperty.getCreatedAt().getTime()/1000L));
             if(deviceProperty.getDismissedAt() != null ) {
-                devicePropertyJson.put(KEY_PROPERTY_DISMISS, String.valueOf(deviceProperty.getDismissedAt().getTime()));
+                devicePropertyJson.put(KEY_PROPERTY_DISMISS, String.valueOf(deviceProperty.getDismissedAt().getTime()/1000L));
                 devicePropertyJson.put(KEY_PROPERTY_DISMISS_DURATION , String.valueOf(deviceProperty.getTotalTimeAlarm()));
             }
             jsonArray.put(devicePropertyJson);

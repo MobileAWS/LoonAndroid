@@ -1,6 +1,7 @@
 package com.maws.loonandroid.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.maws.loonandroid.dao.UserDao;
 import com.maws.loonandroid.listener.StandardRequestListener;
 import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.requests.UserRequestHandler;
+import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomToast;
 
 import org.json.JSONException;
@@ -89,6 +91,7 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
                     try {
                         if (jsonObject.getString("response").equalsIgnoreCase("done")) {
                             saveUserLocalDb();
+
                         }
                     }catch(Exception ex){
                         onFailure(ex.getMessage());
@@ -108,6 +111,16 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
         }
     };
 
+     private void onBackView(String emailBack) {
+        Intent returnIntent = new Intent();
+        if(!emailBack.isEmpty()) {
+            Bundle extras = new Bundle();
+            extras.putString("email", emailBack);
+            returnIntent.putExtras(extras);
+        }
+        this.setResult(RESULT_OK, returnIntent);
+        return;
+    }
     @Override
     public void onClick(View v) {
         if(v == createUserBtn){
@@ -121,10 +134,14 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
         User inDbUser = uDao.get(userToSave.getEmail(), lDao.getReadableDatabase());
         if(inDbUser == null) {
             uDao.create(userToSave, lDao.getWritableDatabase());
+            inDbUser = uDao.get(userToSave.getEmail(), lDao.getReadableDatabase());
             CustomToast.showAlert(this, getString(R.string.user_created_successfully), CustomToast._TYPE_SUCCESS);
+            onBackView(inDbUser.getEmail());
             this.finish();
         } else {
             uDao.update(userToSave,lDao.getReadableDatabase());
         }
+
     }
+
 }
