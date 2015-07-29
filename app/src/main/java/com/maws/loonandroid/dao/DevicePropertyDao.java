@@ -214,7 +214,7 @@ public class DevicePropertyDao {
                         String.valueOf(siteId),
                         String.valueOf(userId)
                 },
-                null
+                KEY_ID + " DESC"
         );
 
         if (cursor != null && cursor.getCount() > 0) {

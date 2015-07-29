@@ -95,7 +95,7 @@
     <string name="upload_server_error">Error uploading data to server.</string>
     <string name="upload_login_error">You need to be online to upload</string>
     <string name="loginError">Error to login in server, please try again.</string>
-    <string name="empty_sensor_upload">Current devices do not have Alerts to upload</string>
+    <string name="empty_sensor_upload">Current Devices do not have Alerts to Upload</string>
     <string name="no_sensors_found_upload">No Devices to Upload</string>
     <string name="device_serial">Serial #: %1$s</string>
     <string name="device_version">Version: %1$s / %2$s</string>
