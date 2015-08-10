@@ -134,7 +134,7 @@ public class StatusListAdapter extends BaseExpandableListAdapter {
 
         boolean isOn = false;
 
-        if(thisDevice.isActive()) {
+        if(thisDevice.isActive() && thisDevice.isConnected()) {
             if (BLEService.switchValues.containsKey(thisDevice.getMacAddress())) {
                 String currentValue = BLEService.switchValues.get(thisDevice.getMacAddress());
                 if (currentValue.charAt(Integer.valueOf(String.valueOf(property.getId()))) == '1') {
@@ -149,7 +149,7 @@ public class StatusListAdapter extends BaseExpandableListAdapter {
                 viewHolder.sensorTv.setText(context.getString(property.getDisplayId()));
             }
         }else {
-            viewHolder.sensorTv.setTextColor(context.getResources().getColor(R.color.light_gray));
+            viewHolder.sensorTv.setTextColor(context.getResources().getColor(R.color.gray));
             viewHolder.sensorTv.setText(context.getString(property.getDisplayId()));
         }
         return convertView;

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.contentproviders.DevicePropertyContentProvider;
 import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.UserDao;
@@ -40,6 +41,7 @@ public class DevicePropertyReceiver extends BroadcastReceiver {
             propertyMessage = context.getString(thisProp.getOffTextId());
         }
         if(TextUtils.isEmpty(propertyMessage)){
+            context.getContentResolver().notifyChange(DevicePropertyContentProvider.CONTENT_URI, null);
             return;
         }
 

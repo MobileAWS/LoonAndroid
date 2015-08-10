@@ -118,6 +118,7 @@
                     android:layout_height="wrap_content"
                     android:text="Temp: 81 F/27.0 C"
                     android:textSize="@dimen/font_medium"
+                    android:visibility="gone"
                     />
 
             </LinearLayout>
@@ -139,9 +140,9 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_alignParentLeft="@+id/historyBtn"
-            android:id="@+id/deleteBtn"
-            android:text="@string/view_delete"
-
+            android:id="@+id/disconnectBtn"
+            android:text="@string/disconnect"
+            android:visibility="gone"
         />
         <Button
             style="@style/Button.dark_green"

@@ -13,6 +13,7 @@ import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.StatusListAdapter;
+import com.maws.loonandroid.contentproviders.DeviceContentProvider;
 import com.maws.loonandroid.contentproviders.DevicePropertyContentProvider;
 import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.DevicePropertyDao;
@@ -55,6 +56,7 @@ public class SensorsFragment extends Fragment implements
 
         //i need a loader to listen to alarm changes on the db alerts
         getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(1, null, this);
         emptyMessageLV.setVisibility(View.VISIBLE);
 
         return rootView;
@@ -63,14 +65,34 @@ public class SensorsFragment extends Fragment implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String[] projection = {
-                DevicePropertyDao.KEY_ID,
-                DevicePropertyDao.KEY_CREATED_AT,
-                DevicePropertyDao.KEY_DISMISSED_DATE
-        };
-        CursorLoader cursorLoader = new CursorLoader(this.getActivity(),
-                DevicePropertyContentProvider.CONTENT_URI, projection, null, null, null);
-        return cursorLoader;
+        if(id == 0) {
+            String[] projection = {
+                    DevicePropertyDao.KEY_ID,
+                    DevicePropertyDao.KEY_CREATED_AT,
+                    DevicePropertyDao.KEY_DISMISSED_DATE
+            };
+            CursorLoader cursorLoader = new CursorLoader(this.getActivity(),
+                    DevicePropertyContentProvider.CONTENT_URI, projection, null, null, null);
+            return cursorLoader;
+
+        } else if(id == 1){
+            String[] projection = {
+                    DeviceDao.KEY_ID,
+                    DeviceDao.KEY_NAME,
+                    DeviceDao.KEY_CODE,
+                    DeviceDao.KEY_HARDWARE_ID,
+                    DeviceDao.KEY_FIRMWARE_VERSION,
+                    DeviceDao.KEY_HARDWARE_VERSION,
+                    DeviceDao.KEY_DESCRIPTION,
+                    DeviceDao.KEY_MAC_ADDRESS,
+                    DeviceDao.KEY_ACTIVE,
+                    DeviceDao.KEY_CONNECTED
+            };
+            CursorLoader cursorLoader = new CursorLoader(this.getActivity(),
+                    DeviceContentProvider.CONTENT_URI, projection, null, null, null);
+            return cursorLoader;
+        }
+        return null;
     }
 
     private void loadStatus(){

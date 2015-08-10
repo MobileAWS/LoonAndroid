@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Loon Medical, Inc</string>
+    <string name="app_name">Care Sentinel</string>
     <string name="prompt_client_number">Client Number</string>
     <string name="prompt_site_id">Site ID</string>
     <string name="prompt_email">Email</string>
@@ -147,5 +147,6 @@
     <string name="device_deleted">Device Deleted</string>
     <string name="undo">Undo</string>
     <string name="device_removed">Device succesfully removed</string>
+    <string name="disconnect">Disconnect</string>
 
 </resources>

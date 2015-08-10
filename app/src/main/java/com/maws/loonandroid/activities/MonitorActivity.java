@@ -20,6 +20,7 @@ import com.maws.loonandroid.dao.DeviceCharacteristicDao;
 import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.Property;
+import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
 
 /**
@@ -33,10 +34,11 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
 
     private long deviceId;
     private TextView nameTV, serialTV, versionTV, temperatureTV;
-    private Button viewHistory,delteDevice;
+    private Button viewHistory,disconnectBtn;
     private ImageView signalIV, batteryIV;
     private ListView propertiesLV;
     private PropertyAdapter adapter;
+    private Device currentDevice;
 
 
     @Override
@@ -52,9 +54,9 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
         batteryIV = (ImageView) findViewById(R.id.batteryIV);
         propertiesLV = (ListView) findViewById(R.id.propertiesLV);
         viewHistory = (Button) findViewById(R.id.historyBtn);
-        delteDevice = (Button) findViewById(R.id.deleteBtn);
+        disconnectBtn = (Button) findViewById(R.id.disconnectBtn);
         viewHistory.setOnClickListener(this);
-        delteDevice.setOnClickListener(this);
+        disconnectBtn.setOnClickListener(this);
         loadInformation();
     }
 
@@ -67,7 +69,7 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
 
     private void loadInformation(){
         DeviceDao sDao = new DeviceDao(this);
-        Device currentDevice = sDao.get(deviceId);
+        currentDevice = sDao.get(deviceId);
 
         if(currentDevice != null) {
             this.setTitle(TextUtils.isEmpty(currentDevice.getDescription()) ? currentDevice.getName() : currentDevice.getDescription());
@@ -97,11 +99,8 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
             startActivityForResult(intent, CODE_RESULT);
 
         }
-        if(v == delteDevice){
-
-            deviceId = getIntent().getLongExtra(MONITOR_ID, -1);
-            deleteAllAboutDevice(deviceId);
-
+        if(v == disconnectBtn && currentDevice != null){
+            BLEService.getInstance().disconnect(currentDevice.getMacAddress());
         }
     }
 
