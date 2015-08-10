@@ -270,9 +270,9 @@ public class LoginActivity extends Activity implements OnClickListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(CODE_RESULT_NEW_USER == requestCode) {
-            Bundle extras = data.getExtras();
-            if(extras != null) {
-                emailET.setText(data.getExtras().getString("email"));
+            if(data !=null && data.getExtras() != null && !data.getExtras().getString("email","").isEmpty()) {
+                Bundle extras = data.getExtras();
+                emailET.setText(extras.getString("email"));
                 passwordET.setText("");
                 siteIdET.setText("");
                 customerIdET.setText("");
