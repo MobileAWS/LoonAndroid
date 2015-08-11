@@ -4,15 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp">
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/add_sensor_instructions"
+        android:text="@string/add_sensor_title"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp"
+        android:textSize="20dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_sensor_description"
         android:textSize="18sp"
         />
 
     <LinearLayout
+        android:visibility="gone"
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,6 +42,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -76,7 +84,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/cancel"
+            android:text="@string/add_sensor_cancel"
         />
 
         <Button
@@ -84,7 +92,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/use_it"
+            android:text="@string/add_sensor_ok"
         />
 
     </LinearLayout>

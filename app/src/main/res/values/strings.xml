@@ -45,6 +45,8 @@
     <string name="default_request_error_message">There was an error. Please try again later.</string>
     <string name="message_account_creation_success">Account Created. Please confirm the account on your email before attempting to login.</string>
     <string name="signing_in">Signing In...</string>
+    <string name="add_sensor_title">New Monitor Device</string>
+    <string name="add_sensor_description">Enter A Description (e.g Bed Room) \u0026 tap Use It. if the device is not yours tap Not Mine to ignore</string>
     <string name="add_sensor_instructions"><![CDATA[Enter a description (e.g. Jacket Activator) & tap \"Register\".]]></string>
     <string name="sensor_found_name">Found: Sensor LM01</string>
     <string name="sensor_found_label">Found:</string>
@@ -71,6 +73,8 @@
     <string name="scan_many_found">%1$s devices were found. Register them to receive alerts.</string>
     <string name="scan_again">Scan Again</string>
     <string name="cancel">Cancel</string>
+    <string name="add_sensor_cancel">Not Mine</string>
+    <string name="add_sensor_ok">Use It</string>
     <string name="device_already_added">Already Added</string>
     <string name="connect">Connect</string>
     <string name="action_restart_service">Restart Service</string>

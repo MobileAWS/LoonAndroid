@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.dao.DeviceEnabledPropertyDao;
 import com.maws.loonandroid.models.Customer;
 import com.maws.loonandroid.models.Device;
@@ -96,10 +97,10 @@ public class Util {
                 .setStyle(
                         new NotificationCompat.BigTextStyle().bigText(message))
                 .setContentText(message);
-
-        PendingIntent intent = PendingIntent.getActivity(context, 0, new Intent(), 0);
+        Intent mainIntent = new Intent(context, MainActivity.class);
+        PendingIntent intent = PendingIntent.getActivity(context, 0,mainIntent , 0);
         mBuilder.setContentIntent(intent);
-
+        mBuilder.setAutoCancel(true);
         Notification notification = mBuilder.build();
         //notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notification.defaults |= Notification.DEFAULT_SOUND;
