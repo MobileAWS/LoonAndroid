@@ -19,6 +19,7 @@ import com.maws.loonandroid.fragments.DeviceFragment;
 import com.maws.loonandroid.fragments.SensorsFragment;
 import com.maws.loonandroid.fragments.SupportFragment;
 import com.maws.loonandroid.fragments.UploadToCloudFragment;
+import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomProgressSpinner;
@@ -47,8 +48,13 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
+        setContentView(R.layout.activity_main);
+        if (User.instance == null ) {
+            Intent i = new Intent(this,LoginActivity.class);
+            startActivity(i);
+            this.finish();
+        }
         if(!Util.isMyServiceRunning(this, BLEService.class) && !LoonAndroid.demoMode){
             Intent intent = new Intent(this,BLEService.class);
             this.startService(intent);
@@ -141,6 +147,8 @@ public class MainActivity extends ActionBarActivity
 
     private void logout(){
         Intent logOutIntent = new Intent(MainActivity.this, LoginActivity.class);
+        User.setCurrent(new User(),this);
+        User.instance = null;
         startActivity(logOutIntent);
         this.finish();
     }
@@ -189,4 +197,6 @@ public class MainActivity extends ActionBarActivity
             spinner.dismiss();
         }
     }
+
+
 }
