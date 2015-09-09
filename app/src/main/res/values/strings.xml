@@ -153,10 +153,10 @@
     <string name="device_removed">Device succesfully removed</string>
     <string name="disconnect">Disconnect</string>
     <string name="title_delete_swipe">Delete Device</string>
-    <string name="title_delete_activate_swipe">Delete Device or Activate</string>
-    <string name="button_activate_device">Activate Device</string>
+    <string name="title_delete_activate_swipe">Activate or Delete Device</string>
+    <string name="button_activate_device">Activate</string>
+    <string name="button_delete_device">Delete</string>
     <string name="button_add_device_swipe">Add to devices</string>
     <string name="message_delete_swipe">Do you really want to delete this device?</string>
-    <string name="message_delete_activate_swipe">What would you like to do with this device? "Add to devices" o "Delete"</string>
 
 </resources>

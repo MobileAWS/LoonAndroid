@@ -89,38 +89,38 @@ public class DeviceFragment extends Fragment implements
                     final Device device =  adapter.getItem(viewHolder.getAdapterPosition());
                     final String macAddress = adapter.getItem(viewHolder.getAdapterPosition()).getMacAddress();
                     String title;
-                    String message;
+                    String message=context.getString(R.string.message_delete_swipe);
                     if(device.isActive()){
                         title=context.getString(R.string.title_delete_swipe);
-                        message=context.getString(R.string.message_delete_swipe);
                     }else{
                         title=context.getString(R.string.title_delete_activate_swipe);
-                        message=context.getString(R.string.message_delete_activate_swipe);
                     }
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setTitle(title);
                     builder.setMessage(message);
-                    builder.setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    builder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             adapter.notifyDataSetChanged();
                         }
                     });
-                    builder.setNegativeButton(R.string.title_delete_swipe,new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            //Remove swiped item from list and notify the RecyclerView
-                            BLEService service = BLEService.getInstance();
-                            if(service != null){
-                                service.disconnect( macAddress );
+
+                        builder.setNegativeButton(R.string.button_delete_device, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                //Remove swiped item from list and notify the RecyclerView
+                                BLEService service = BLEService.getInstance();
+                                if (service != null) {
+                                    service.disconnect(macAddress);
+                                }
+                                final DeviceDao dDao = new DeviceDao(context);
+                                final DevicePropertyDao dpDao = new DevicePropertyDao(context);
+                                Device currentDevice = dDao.get(device.getId());
+                                dpDao.deleteForDeviceId(currentDevice.getId());
+                                dDao.delete(currentDevice);
                             }
-                            final DeviceDao dDao = new DeviceDao(context);
-                            final DevicePropertyDao dpDao = new DevicePropertyDao(context);
-                            Device currentDevice = dDao.get(device.getId());
-                            dpDao.deleteForDeviceId(currentDevice.getId());
-                            dDao.delete(currentDevice);
-                        }
-                    });
+                        });
+
                     if(!device.isActive()){
-                        builder.setNeutralButton(R.string.button_activate_device,new DialogInterface.OnClickListener() {
+                        builder.setPositiveButton(R.string.button_activate_device,new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         device.setActive(true);
                                         adapter.notifyDataSetChanged();
@@ -166,7 +166,7 @@ public class DeviceFragment extends Fragment implements
                     startActivity(intent);
                 }
             });
-            //TODO test desactive device
+            //TODO change jsut one to inactive
             adapter.getItem(0).setActive(false);
             sensorsLV.setAdapter(adapter);
             sensorsLV.setVisibility(View.VISIBLE);
