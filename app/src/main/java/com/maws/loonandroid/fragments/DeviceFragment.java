@@ -166,8 +166,6 @@ public class DeviceFragment extends Fragment implements
                     startActivity(intent);
                 }
             });
-            //TODO change jsut one to inactive
-            adapter.getItem(0).setActive(false);
             sensorsLV.setAdapter(adapter);
             sensorsLV.setVisibility(View.VISIBLE);
             emptyLayout.setVisibility(View.GONE);
