@@ -86,41 +86,52 @@ public class DeviceFragment extends Fragment implements
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 try {
-                    final long deviceId = adapter.getItem( viewHolder.getAdapterPosition()).getId();
+                    final Device device =  adapter.getItem(viewHolder.getAdapterPosition());
                     final String macAddress = adapter.getItem(viewHolder.getAdapterPosition()).getMacAddress();
-
-                    new AlertDialog.Builder(context)
-                            .setTitle("Delete Device")
-                            .setMessage("Do you really want to delete this device?")
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-
-                                    //Remove swiped item from list and notify the RecyclerView
-                                    BLEService service = BLEService.getInstance();
-                                    if(service != null){
-                                        service.disconnect( macAddress );
+                    String title;
+                    String message;
+                    if(device.isActive()){
+                        title=context.getString(R.string.title_delete_swipe);
+                        message=context.getString(R.string.message_delete_swipe);
+                    }else{
+                        title=context.getString(R.string.title_delete_activate_swipe);
+                        message=context.getString(R.string.message_delete_activate_swipe);
+                    }
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle(title);
+                    builder.setMessage(message);
+                    builder.setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                    builder.setNegativeButton(R.string.title_delete_swipe,new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Remove swiped item from list and notify the RecyclerView
+                            BLEService service = BLEService.getInstance();
+                            if(service != null){
+                                service.disconnect( macAddress );
+                            }
+                            final DeviceDao dDao = new DeviceDao(context);
+                            final DevicePropertyDao dpDao = new DevicePropertyDao(context);
+                            Device currentDevice = dDao.get(device.getId());
+                            dpDao.deleteForDeviceId(currentDevice.getId());
+                            dDao.delete(currentDevice);
+                        }
+                    });
+                    if(!device.isActive()){
+                        builder.setNeutralButton(R.string.button_activate_device,new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        device.setActive(true);
+                                        adapter.notifyDataSetChanged();
                                     }
-                                    final DeviceDao dDao = new DeviceDao(context);
-                                    final DevicePropertyDao dpDao = new DevicePropertyDao(context);
-
-
-                                    Device currentDevice = dDao.get(deviceId);
-                                    dpDao.deleteForDeviceId(currentDevice.getId());
-                                    dDao.delete(currentDevice);
-                                }})
-                            .setNegativeButton(android.R.string.no,
-                                    new DialogInterface.OnClickListener(){
-                                        public void onClick(DialogInterface dialogInterface,int whichButton){
-                                            adapter.notifyDataSetChanged();
-                                        }
-                                    }).show();
-
+                        });
+                    }
+                    builder.create().show();
                 }catch (Exception e) {
 
                 }
             }
-
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(sensorsLV);
@@ -155,6 +166,8 @@ public class DeviceFragment extends Fragment implements
                     startActivity(intent);
                 }
             });
+            //TODO test desactive device
+            adapter.getItem(0).setActive(false);
             sensorsLV.setAdapter(adapter);
             sensorsLV.setVisibility(View.VISIBLE);
             emptyLayout.setVisibility(View.GONE);
