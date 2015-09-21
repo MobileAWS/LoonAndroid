@@ -62,7 +62,6 @@ public class LoginActivity extends Activity implements OnClickListener {
         loginBtn.setOnClickListener(this);
         loginNoCloudBtn.setOnClickListener(this);
 
-       getLoginInit();
 
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionTV = (TextView) findViewById(R.id.versionTV);
@@ -254,19 +253,10 @@ public class LoginActivity extends Activity implements OnClickListener {
         }else {
             Site.setCurrent(site, this);
         }
-        Util.setLoginInit(User.getCurrent(this).getEmail(), siteId, customerId, this);
         Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(newUserIntent);
     }
-    private  void getLoginInit() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String email = preferences.getString(Util.EMAIL_PREFERENCE, "");
-        String customerId = preferences.getString(Util.CUSTOMER_ID_PREFERENCE, "");
-        String siteId = preferences.getString(Util.SITE_ID_PREFERENCE, "");
-        emailET.setText(email);
-        siteIdET.setText(siteId);
-        customerIdET.setText(customerId);
-    }
+   
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(CODE_RESULT_NEW_USER == requestCode) {

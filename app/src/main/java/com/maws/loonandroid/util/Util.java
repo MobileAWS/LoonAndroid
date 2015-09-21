@@ -217,14 +217,4 @@ public class Util {
         return propertyList;
     }
 
-
-    public static void setLoginInit(String email, String siteId, String customerId,Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(Util.EMAIL_PREFERENCE,email);
-        editor.putString(Util.CUSTOMER_ID_PREFERENCE,customerId);
-        editor.putString(Util.SITE_ID_PREFERENCE,siteId);
-        editor.apply();
-
-    }
 }
