@@ -137,8 +137,8 @@
             android:textSize="@dimen/font_medium"
             android:layout_width="wrap_content"
             android:layout_height="45dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:layout_alignParentLeft="@+id/historyBtn"
             android:id="@+id/disconnectBtn"
             android:text="@string/disconnect"
@@ -146,12 +146,24 @@
         />
         <Button
             style="@style/Button.dark_green"
+            android:textSize="@dimen/font_medium"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/renameDeviceBtn"
+            android:text="@string/rename_device"
+            android:visibility="visible"
+            />
+        <Button
+            style="@style/Button.dark_green"
             android:id="@+id/historyBtn"
             android:textSize="@dimen/font_medium"
             android:layout_width="wrap_content"
             android:layout_height="45dp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="15dp"
+            android:layout_marginRight="1dp"
             android:text="@string/view_history"
             />
             </RelativeLayout>

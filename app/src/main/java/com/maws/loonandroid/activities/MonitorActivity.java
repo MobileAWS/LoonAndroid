@@ -1,6 +1,7 @@
 package com.maws.loonandroid.activities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +9,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,11 +37,12 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
 
     private long deviceId;
     private TextView nameTV, serialTV, versionTV, temperatureTV;
-    private Button viewHistory,disconnectBtn;
+    private Button viewHistory,disconnectBtn,renameDeviceBtn;
     private ImageView signalIV, batteryIV;
     private ListView propertiesLV;
     private PropertyAdapter adapter;
     private Device currentDevice;
+
 
 
     @Override
@@ -55,8 +59,10 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
         propertiesLV = (ListView) findViewById(R.id.propertiesLV);
         viewHistory = (Button) findViewById(R.id.historyBtn);
         disconnectBtn = (Button) findViewById(R.id.disconnectBtn);
+        renameDeviceBtn = (Button) findViewById(R.id.renameDeviceBtn);
         viewHistory.setOnClickListener(this);
         disconnectBtn.setOnClickListener(this);
+        renameDeviceBtn.setOnClickListener(this);
         loadInformation();
     }
 
@@ -102,6 +108,12 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
         if(v == disconnectBtn && currentDevice != null){
             BLEService.getInstance().disconnect(currentDevice.getMacAddress());
         }
+        if(v == renameDeviceBtn) {
+            DeviceDao deviceDao = new DeviceDao(this);
+            Device device = deviceDao.get(deviceId);
+            changeNameDevice(this, device, deviceDao);
+
+        }
     }
 
     private boolean deleteAllAboutDevice(final long deviceId){
@@ -130,5 +142,47 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
         }
         return result;
     }
+    private void changeNameDevice(final Context context,final  Device device, final DeviceDao deviceDao){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        String oldNameDevice = "";
+        if(device.getDescription() != null & !device.getDescription().isEmpty()){
+            oldNameDevice = device.getDescription();
+        }else {
+            oldNameDevice = device.getName();
+        }
 
+        alertDialog.setTitle(getString(R.string.tittle_dialogbox_rename)+" '"+ oldNameDevice+"'");
+        alertDialog.setMessage(getString(R.string.message_dialogbox_rename));
+
+        final EditText input = new EditText(context);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        lp.setMargins(100, 1, 1, 1);
+        input.setPadding(30, 10, 10, 20);
+        //input.setLayoutParams(lp);
+        alertDialog.setView(input);
+       //
+
+        alertDialog.setPositiveButton("ACCEPT",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(device.getDescription() != null & !device.getDescription().isEmpty()){
+                            device.setDescription(input.getText().toString());
+                        }else {
+                            device.setName(input.getText().toString());
+                        }
+                        deviceDao.update(device);
+                        loadInformation();
+                    }
+                });
+
+        alertDialog.setNegativeButton("CANCEL",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialog.show();
+    }
 }

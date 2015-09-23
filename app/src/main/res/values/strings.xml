@@ -158,5 +158,7 @@
     <string name="button_delete_device">Delete</string>
     <string name="button_add_device_swipe">Add to devices</string>
     <string name="message_delete_swipe">Do you really want to delete this device?</string>
-
+    <string name="rename_device">Rename</string>
+    <string name="message_dialogbox_rename">Enter the new name:</string>
+    <string name="tittle_dialogbox_rename">Rename</string>
 </resources>
