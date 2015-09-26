@@ -7,8 +7,8 @@
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Login</string>
     <string name="action_sign_in_no_cloud">Login (No Cloud)</string>
-    <string name="new_user_question">New User</string>
-    <string name="forgot_password_question">Forgot Password</string>
+    <string name="new_user_question">Create account</string>
+    <string name="forgot_password_question">Forgot Password?</string>
     <string name="reset_password">Reset Password</string>
     <string name="prompt_confirm_password">Confirm Password</string>
     <string name="create_user">Create User</string>

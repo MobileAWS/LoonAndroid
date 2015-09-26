@@ -23,4 +23,6 @@
     <color name="toast_error_border">#f5aca6</color>
     <color name="toast_error">#ffecec</color>
 
+    <color name="light_blue">#4b97d3</color>
+    <color name="text_color">#266297</color>
 </resources>

@@ -256,7 +256,7 @@ public class LoginActivity extends Activity implements OnClickListener {
         Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(newUserIntent);
     }
-   
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(CODE_RESULT_NEW_USER == requestCode) {
