@@ -27,12 +27,15 @@ import com.maws.loonandroid.views.CustomProgressSpinner;
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
+    public static final int REQUEST_ENABLE_BT = 30921;
+    public final static int _REQUEST_MONITOR_ACTIVITY = 1034;
     public final static int REQUEST_SCAN = 1002;
     public static final String TAG_MONITOR ="ss";
     public static final String TAG_SENSOR = "ss1";
     public static final String TAG_PUSH_NOTIFICATION = "pn";
     public static final String TAG_SUPPORT = "sp";
     public static final String TAG_UPLOAD = "up";
+    private boolean initMonitors = false;
 
 
     /**
@@ -48,20 +51,23 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
         if (User.instance == null ) {
             Intent i = new Intent(this,LoginActivity.class);
             startActivity(i);
             this.finish();
         }
+        initMonitors = getIntent().getBooleanExtra("initMonitors", false);
+
         if(!Util.isMyServiceRunning(this, BLEService.class) && !LoonAndroid.demoMode){
             Intent intent = new Intent(this,BLEService.class);
             this.startService(intent);
         }else{
             BLEService service = BLEService.getInstance();
-            if(service != null){
+            if(service != null && initMonitors){
+                //let's only initialize monitors if we come from the login
                 service.initializeMonitors();
+                initMonitors = false;
             }
         }
 
@@ -136,12 +142,12 @@ public class MainActivity extends ActionBarActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        /*switch (item.getItemId()) {
-            case R.id.action_start_scan:
-                scanForMonitors();
+        switch (item.getItemId()) {
+            case R.id.action_log:
+                Intent i = new Intent(this, LogActivity.class);
+                startActivity(i);
                 return true;
-        }*/
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -197,6 +203,5 @@ public class MainActivity extends ActionBarActivity
             spinner.dismiss();
         }
     }
-
 
 }

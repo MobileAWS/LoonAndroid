@@ -73,7 +73,7 @@ public class PropertyAdapter extends BaseAdapter {
                 isOn = true;
             }
         }
-        if(isOn){
+        if(device.isConnected() && isOn){
             nameTV.setTextColor( context.getResources().getColor( R.color.green ) );
         }else{
             nameTV.setTextColor( context.getResources().getColor( R.color.dark_orange ) );

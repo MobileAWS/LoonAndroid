@@ -62,7 +62,6 @@ public class LoginActivity extends Activity implements OnClickListener {
         loginBtn.setOnClickListener(this);
         loginNoCloudBtn.setOnClickListener(this);
 
-
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionTV = (TextView) findViewById(R.id.versionTV);
         versionTV.setText("V " + versionName);
@@ -254,6 +253,7 @@ public class LoginActivity extends Activity implements OnClickListener {
             Site.setCurrent(site, this);
         }
         Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
+        newUserIntent.putExtra("initMonitors", true);
         startActivity(newUserIntent);
     }
 

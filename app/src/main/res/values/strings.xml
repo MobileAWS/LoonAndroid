@@ -46,7 +46,7 @@
     <string name="message_account_creation_success">Account Created. Please confirm the account on your email before attempting to login.</string>
     <string name="signing_in">Signing In...</string>
     <string name="add_sensor_title">New Monitor Device</string>
-    <string name="add_sensor_description">Enter A Description (e.g Bed Room) \u0026 tap Use It. if the device is not yours tap Not Mine to ignore</string>
+    <string name="add_sensor_description">Enter A Description (e.g Bed Room) \u0026 tap Use It. If the device is not yours tap Not Mine to ignore.</string>
     <string name="add_sensor_instructions"><![CDATA[Enter a description (e.g. Jacket Activator) & tap \"Register\".]]></string>
     <string name="sensor_found_name">Found: Sensor LM01</string>
     <string name="sensor_found_label">Found:</string>
@@ -161,4 +161,12 @@
     <string name="rename_device">Rename</string>
     <string name="message_dialogbox_rename">Enter the new name:</string>
     <string name="tittle_dialogbox_rename">Rename</string>
+    <string name="not_connected">Not Connected</string>
+    <string name="connecting">Connecting...</string>
+    <string name="log">Logs</string>
+    <string name="send_email">Send Email</string>
+    <string name="sign_in">Sign In</string>
+    <string name="new_user">New User</string>
+    <string name="forgot_password">Forgot Password</string>
+
 </resources>

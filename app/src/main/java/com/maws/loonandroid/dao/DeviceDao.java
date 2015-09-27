@@ -35,6 +35,9 @@ public class DeviceDao {
     public static final String KEY_BATTERY_STATUS = "battery";
     public static final String KEY_TEMPERATURE = "temperature";
     public static final String KEY_SIGNAL = "rssi";
+    public static final String KEY_MANUAL_DISCONNECT = "manualDisconnect";
+    public static final String KEY_CONNECTING = "connecting";
+
 
     private Context context;
 
@@ -55,6 +58,8 @@ public class DeviceDao {
                 KEY_ACTIVE + " TINYINT," +
                 KEY_MAC_ADDRESS + " TEXT," +
                 KEY_CONNECTED + " TINYINT," +
+                KEY_CONNECTING + " TINYINT," +
+                KEY_MANUAL_DISCONNECT + " TINYINT," +
                 KEY_BATTERY_STATUS + " REAL," +
                 KEY_TEMPERATURE + " REAL," +
                 KEY_SIGNAL + " INTEGER," +
@@ -83,6 +88,8 @@ public class DeviceDao {
         values.put(KEY_MAC_ADDRESS, device.getMacAddress());
         values.put(KEY_ACTIVE, device.isActive()?1:0);
         values.put(KEY_CONNECTED, device.isConnected() ? 1 : 0);
+        values.put(KEY_CONNECTING, device.isConnecting() ? 1 : 0);
+        values.put(KEY_MANUAL_DISCONNECT, device.isManualDisconnect() ? 1 : 0);
         values.put(KEY_HARDWARE_ID, device.getHardwareId());
 
         Uri uri = context.getContentResolver().insert(DeviceContentProvider.CONTENT_URI, values);
@@ -114,7 +121,9 @@ public class DeviceDao {
                         KEY_HARDWARE_ID,
                         KEY_TEMPERATURE,
                         KEY_BATTERY_STATUS,
-                        KEY_SIGNAL
+                        KEY_SIGNAL,
+                        KEY_CONNECTING,
+                        KEY_MANUAL_DISCONNECT
                 },
                 KEY_ID + "=?",
                 new String[]{
@@ -143,6 +152,8 @@ public class DeviceDao {
         device.setTemperature(cursor.getDouble(cursor.getColumnIndex(KEY_TEMPERATURE)));
         device.setBatteryStatus(cursor.getInt(cursor.getColumnIndex(KEY_BATTERY_STATUS)));
         device.setSignalStrength(cursor.getInt(cursor.getColumnIndex(KEY_SIGNAL)));
+        device.setConnecting(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTING)) == 1);
+        device.setManualDisconnect(cursor.getInt(cursor.getColumnIndex(KEY_MANUAL_DISCONNECT)) == 1);
         cursor.close();
 
         // return object
@@ -166,7 +177,9 @@ public class DeviceDao {
                 KEY_HARDWARE_ID,
                 KEY_TEMPERATURE,
                 KEY_BATTERY_STATUS,
-                KEY_SIGNAL
+                KEY_SIGNAL,
+                KEY_CONNECTING,
+                KEY_MANUAL_DISCONNECT
             },
             KEY_MAC_ADDRESS + "=?",
                 new String[]{
@@ -195,6 +208,8 @@ public class DeviceDao {
         device.setTemperature(cursor.getDouble(cursor.getColumnIndex(KEY_TEMPERATURE)));
         device.setBatteryStatus(cursor.getInt(cursor.getColumnIndex(KEY_BATTERY_STATUS)));
         device.setSignalStrength(cursor.getInt(cursor.getColumnIndex(KEY_SIGNAL)));
+        device.setConnecting(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTING)) == 1);
+        device.setManualDisconnect(cursor.getInt(cursor.getColumnIndex(KEY_MANUAL_DISCONNECT)) == 1);
         cursor.close();
 
         // return object
@@ -220,7 +235,9 @@ public class DeviceDao {
                         KEY_HARDWARE_ID,
                         KEY_TEMPERATURE,
                         KEY_BATTERY_STATUS,
-                        KEY_SIGNAL
+                        KEY_SIGNAL,
+                        KEY_CONNECTING,
+                        KEY_MANUAL_DISCONNECT
                 },
                 null,
                 null,
@@ -245,6 +262,8 @@ public class DeviceDao {
                 device.setTemperature(cursor.getDouble(cursor.getColumnIndex(KEY_TEMPERATURE)));
                 device.setBatteryStatus(cursor.getInt(cursor.getColumnIndex(KEY_BATTERY_STATUS)));
                 device.setSignalStrength(cursor.getInt(cursor.getColumnIndex(KEY_SIGNAL)));
+                device.setConnecting(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTING)) == 1);
+                device.setManualDisconnect(cursor.getInt(cursor.getColumnIndex(KEY_MANUAL_DISCONNECT)) == 1);
                 toReturnList.add(device);
 
             } while (cursor.moveToNext());
@@ -274,7 +293,9 @@ public class DeviceDao {
                         KEY_HARDWARE_ID,
                         KEY_TEMPERATURE,
                         KEY_BATTERY_STATUS,
-                        KEY_SIGNAL
+                        KEY_SIGNAL,
+                        KEY_CONNECTING,
+                        KEY_MANUAL_DISCONNECT
                 },
                 KEY_ACTIVE + "=?",
                 new String[]{
@@ -301,6 +322,8 @@ public class DeviceDao {
                 device.setTemperature(cursor.getDouble(cursor.getColumnIndex(KEY_TEMPERATURE)));
                 device.setBatteryStatus(cursor.getInt(cursor.getColumnIndex(KEY_BATTERY_STATUS)));
                 device.setSignalStrength(cursor.getInt(cursor.getColumnIndex(KEY_SIGNAL)));
+                device.setConnecting(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTING)) == 1);
+                device.setManualDisconnect(cursor.getInt(cursor.getColumnIndex(KEY_MANUAL_DISCONNECT)) == 1);
                 toReturnList.add(device);
 
             } while (cursor.moveToNext());
@@ -330,7 +353,9 @@ public class DeviceDao {
                         KEY_HARDWARE_ID,
                         KEY_TEMPERATURE,
                         KEY_BATTERY_STATUS,
-                        KEY_SIGNAL
+                        KEY_SIGNAL,
+                        KEY_CONNECTING,
+                        KEY_MANUAL_DISCONNECT
                 },
                 KEY_ACTIVE + "=?",
                 new String[]{
@@ -357,6 +382,8 @@ public class DeviceDao {
                 device.setTemperature(cursor.getDouble(cursor.getColumnIndex(KEY_TEMPERATURE)));
                 device.setBatteryStatus(cursor.getInt(cursor.getColumnIndex(KEY_BATTERY_STATUS)));
                 device.setSignalStrength(cursor.getInt(cursor.getColumnIndex(KEY_SIGNAL)));
+                device.setConnecting(cursor.getInt(cursor.getColumnIndex(KEY_CONNECTING)) == 1);
+                device.setManualDisconnect(cursor.getInt(cursor.getColumnIndex(KEY_MANUAL_DISCONNECT)) == 1);
                 toReturnList.add(device);
 
             } while (cursor.moveToNext());
@@ -378,6 +405,8 @@ public class DeviceDao {
         values.put(KEY_MAC_ADDRESS, device.getMacAddress());
         values.put(KEY_ACTIVE, device.isActive() ? 1 : 0);
         values.put(KEY_CONNECTED, device.isConnected() ? 1 : 0);
+        values.put(KEY_CONNECTING, device.isConnecting() ? 1 : 0);
+        values.put(KEY_MANUAL_DISCONNECT, device.isManualDisconnect() ? 1 : 0);
 
         context.getContentResolver().update(DeviceContentProvider.CONTENT_URI,
                 values,
@@ -478,6 +507,7 @@ public class DeviceDao {
 
         ContentValues values = new ContentValues();
         values.put(KEY_CONNECTED, 0);
+        values.put(KEY_CONNECTING, 0);
         context.getContentResolver().update(DeviceContentProvider.CONTENT_URI,
                 values,
                 null,

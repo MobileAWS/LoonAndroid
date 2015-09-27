@@ -1,9 +1,11 @@
 package com.maws.loonandroid.adapters;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,13 +19,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.activities.MainActivity;
+import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.gatt.GattManager;
 import com.maws.loonandroid.gatt.operations.GattConnectOperation;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
+import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
+import com.maws.loonandroid.views.CustomToast;
+
 import java.util.List;
 
 /**
@@ -42,10 +49,10 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
 
     public static class DeviceViewHolder extends RecyclerView.ViewHolder {
         Button connectBtn;
-        TextView nameTV, addressTV, headerTV;
+        TextView nameTV, addressTV, headerTV, connectingTV;
         ImageView signalIV, batteryIV;
         LinearLayout alarmsLL;
-        View mainView;
+        View mainView, loadingPB;
 
         public DeviceViewHolder(View v) {
             super(v);
@@ -72,6 +79,8 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
         viewHolder.batteryIV = (ImageView) convertView.findViewById(R.id.batteryIV);
         viewHolder.alarmsLL = (LinearLayout) convertView.findViewById(R.id.alarmsLL);
         viewHolder.connectBtn = (Button) convertView.findViewById(R.id.connectBtn);
+        viewHolder.connectingTV = (TextView) convertView.findViewById(R.id.connectingTV);
+        viewHolder.loadingPB = convertView.findViewById(R.id.loadingPB);
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,20 +113,51 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
             viewHolder.headerTV.setText(context.getString(R.string.inactive_sensors));
         }
 
-        if(!thisDevice.isConnected() && !LoonAndroid.demoMode){
+        if( thisDevice.isActive() && thisDevice.isConnecting() && !LoonAndroid.demoMode ){
+            viewHolder.nameTV.setText( TextUtils.isEmpty(thisDevice.getDescription())? thisDevice.getName(): thisDevice.getDescription() );
+            viewHolder.addressTV.setText(thisDevice.getName());
+            viewHolder.connectBtn.setVisibility(View.GONE);
+            viewHolder.signalIV.setVisibility(View.GONE);
+            viewHolder.batteryIV.setVisibility(View.GONE);
+            viewHolder.loadingPB.setVisibility(View.VISIBLE);
+            viewHolder.connectingTV.setVisibility(View.VISIBLE);
+
+        }else if(!thisDevice.isConnected() && !LoonAndroid.demoMode){
             viewHolder.nameTV.setText( TextUtils.isEmpty(thisDevice.getDescription())? thisDevice.getName(): thisDevice.getDescription() );
             viewHolder.addressTV.setText(thisDevice.getName());
             viewHolder.connectBtn.setVisibility(View.VISIBLE);
             viewHolder.signalIV.setVisibility(View.GONE);
             viewHolder.batteryIV.setVisibility(View.GONE);
+            viewHolder.loadingPB.setVisibility(View.GONE);
+            viewHolder.connectingTV.setVisibility(View.GONE);
             viewHolder.connectBtn.setTag(thisDevice.getMacAddress());
             viewHolder.connectBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    /*BLEService instance = BLEService.getInstance();
+                    BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+                    // Checks if Bluetooth is supported on the device.
+                    if (mBluetoothAdapter == null) {
+                        CustomToast.showAlert(context, context.getString(R.string.ble_not_supported), CustomToast._TYPE_ERROR);
+                        return;
+                    }
+                    // Checks if Bluetooth is enabled, or asks to make it enabled.
+                    if (!mBluetoothAdapter.isEnabled()) {
+
+                        DeviceDao dDao = new DeviceDao(context);
+                        Device device = dDao.findByMacAddress(v.getTag().toString());
+                        device.setManualDisconnect(false);
+                        dDao.update(device);
+
+                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        ((Activity)context).startActivityForResult(enableBtIntent, MainActivity.REQUEST_ENABLE_BT);
+                        return;
+                    }
+
+                    BLEService instance = BLEService.getInstance();
                     if (instance != null) {
                         instance.connect(v.getTag().toString());
-                    }*/
+                    }/*
                     String address = v.getTag().toString();
                     BluetoothAdapter mBluetoothAdapter = null;
                     BluetoothManager mBluetoothManager = null;
@@ -157,7 +197,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
 
                     GattManager manager = GattManager.getInstance();
                     GattConnectOperation operation = new GattConnectOperation(device);
-                    manager.queue(operation);
+                    manager.queue(operation);*/
                 }
             });
 
@@ -167,6 +207,8 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
             viewHolder.connectBtn.setVisibility(View.GONE);
             viewHolder.signalIV.setVisibility(View.VISIBLE);
             viewHolder.batteryIV.setVisibility(View.VISIBLE);
+            viewHolder.loadingPB.setVisibility(View.GONE);
+            viewHolder.connectingTV.setVisibility(View.GONE);
             Util.setUpSignalView(context, viewHolder.signalIV, thisDevice);
             Util.setUpBatteryView(context, viewHolder.batteryIV, thisDevice);
         }else{
@@ -175,6 +217,8 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
             viewHolder.connectBtn.setVisibility(View.GONE);
             viewHolder.signalIV.setVisibility(View.GONE);
             viewHolder.batteryIV.setVisibility(View.GONE);
+            viewHolder.loadingPB.setVisibility(View.GONE);
+            viewHolder.connectingTV.setVisibility(View.GONE);
         }
 
         //i need to look for this item's active alarms and list them

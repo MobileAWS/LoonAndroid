@@ -24,6 +24,7 @@ import com.maws.loonandroid.adapters.BluetoothDeviceAdapter;
 import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.fragments.AddSensorDialogFragment;
 import com.maws.loonandroid.models.Device;
+import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomToast;
 
 /**
@@ -101,6 +102,7 @@ public class ScanDevicesActivity extends ActionBarActivity {
         if( LoonAndroid.demoMode ||!mBluetoothAdapter.isDiscovering()) {
             if(!LoonAndroid.demoMode) {
                 mBluetoothAdapter.startDiscovery();
+                Util.log(this, "Started Scan");
             }
             discovering = true;
             invalidateOptionsMenu();
@@ -120,6 +122,7 @@ public class ScanDevicesActivity extends ActionBarActivity {
     }
 
     private void stopScanning(){
+        Util.log(this, "Finished Scan");
         if(LoonAndroid.demoMode && !isFinishing()){
             discovering = false;
             scanAdapter.add(com.maws.loonandroid.models.Device.createFakeDevice());
@@ -160,11 +163,13 @@ public class ScanDevicesActivity extends ActionBarActivity {
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
             String action = intent.getAction();
+            StringBuilder devicesDisc = new StringBuilder("");
             if(BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 short defaultShort = 0;
                 short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, defaultShort);
                 String name = intent.getStringExtra(BluetoothDevice.EXTRA_NAME);
+                devicesDisc.append(name + ", ");
                 if(TextUtils.isEmpty(name) || !name.equalsIgnoreCase("Sensor CS01")){
                     return;
                 }
@@ -179,6 +184,7 @@ public class ScanDevicesActivity extends ActionBarActivity {
                 scanAdapter.add(mDevice);
                 scanAdapter.notifyDataSetChanged();
             }
+            Util.log(context, "Discovered device: " + devicesDisc.toString());
         }
     };
 

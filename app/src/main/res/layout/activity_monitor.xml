@@ -30,7 +30,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_gravity="center_vertical"
+                android:id="@+id/infoLL"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -122,6 +122,31 @@
                     />
 
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/notConnectedLL"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/nameUnconnectedTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_big"
+                    android:textStyle="bold"
+                    android:text="Sensor Name"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_big"
+                    android:textStyle="bold"
+                    android:text="@string/not_connected"
+                    android:textColor="@color/dark_orange"/>
+
+                </LinearLayout>
         </LinearLayout>
         <RelativeLayout
             android:orientation="horizontal"
@@ -129,11 +154,10 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:layout_gravity="right"
-
-            >
+        >
 
         <Button
-            style="@style/Button.dark_green"
+            style="@style/Button.dark_orange"
             android:textSize="@dimen/font_medium"
             android:layout_width="wrap_content"
             android:layout_height="45dp"
@@ -142,7 +166,6 @@
             android:layout_alignParentLeft="@+id/historyBtn"
             android:id="@+id/disconnectBtn"
             android:text="@string/disconnect"
-            android:visibility="gone"
         />
         <Button
             style="@style/Button.dark_green"
@@ -166,7 +189,7 @@
             android:layout_marginRight="1dp"
             android:text="@string/view_history"
             />
-            </RelativeLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 

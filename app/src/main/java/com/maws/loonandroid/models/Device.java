@@ -3,7 +3,6 @@ package com.maws.loonandroid.models;
 import android.bluetooth.BluetoothDevice;
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import java.util.Date;
 
 /**
@@ -27,6 +26,8 @@ public class Device implements Parcelable {
     private int batteryStatus;
     private int signalStrength;
     private double temperature;
+    private boolean connecting = false, manualDisconnect = false;
+
 
     public Device(){}
 
@@ -119,6 +120,22 @@ public class Device implements Parcelable {
         this.hardwareVersion = hardwareVersion;
     }
 
+    public boolean isManualDisconnect() {
+        return manualDisconnect;
+    }
+
+    public void setManualDisconnect(boolean manualDisconnect) {
+        this.manualDisconnect = manualDisconnect;
+    }
+
+    public boolean isConnecting() {
+        return connecting;
+    }
+
+    public void setConnecting(boolean connecting) {
+        this.connecting = connecting;
+    }
+
     //methods to handle the parcelable implementation
     @Override
     public int describeContents() {
@@ -141,6 +158,8 @@ public class Device implements Parcelable {
         pc.writeDouble(this.temperature);
         pc.writeInt(this.active ? 1 : 0);
         pc.writeInt(this.connected ? 1: 0);
+        pc.writeInt(this.connecting ? 1: 0);
+        pc.writeInt(this.manualDisconnect ? 1: 0);
     }
 
     /** Static field used to regenerate object, individually or as arrays */
@@ -171,6 +190,8 @@ public class Device implements Parcelable {
         this.temperature = pc.readDouble();
         this.active = pc.readInt() == 1;
         this.connected = pc.readInt() == 1;
+        this.connecting = pc.readInt() == 1;
+        this.manualDisconnect = pc.readInt() == 1;
     }
 
     public static Device createFakeDevice(){

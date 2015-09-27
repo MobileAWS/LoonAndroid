@@ -2,9 +2,13 @@ package com.maws.loonandroid.activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.app.LoaderManager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -14,10 +18,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.PropertyAdapter;
+import com.maws.loonandroid.contentproviders.DeviceContentProvider;
+import com.maws.loonandroid.contentproviders.DevicePropertyContentProvider;
 import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.DeviceCharacteristicDao;
 import com.maws.loonandroid.dao.DevicePropertyDao;
@@ -29,19 +33,21 @@ import com.maws.loonandroid.util.Util;
 /**
  * Created by Andrexxjc on 15/05/2015.
  */
-public class MonitorActivity extends ActionBarActivity implements  View.OnClickListener{
+public class MonitorActivity extends ActionBarActivity
+        implements  View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "MONITOR";
     public static final String MONITOR_ID = "mId";
     public static final int CODE_RESULT = 10;
 
     private long deviceId;
-    private TextView nameTV, serialTV, versionTV, temperatureTV;
+    private TextView nameTV, serialTV, versionTV, temperatureTV, nameUnconnectedTV;
     private Button viewHistory,disconnectBtn,renameDeviceBtn;
     private ImageView signalIV, batteryIV;
     private ListView propertiesLV;
     private PropertyAdapter adapter;
     private Device currentDevice;
+    private View notConnectedLL, infoLL;
 
 
 
@@ -51,6 +57,7 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
         setContentView(R.layout.activity_monitor);
         deviceId = getIntent().getLongExtra(MONITOR_ID, -1);
         nameTV = (TextView) findViewById(R.id.nameTV);
+        nameUnconnectedTV = (TextView) findViewById(R.id.nameUnconnectedTV);
         serialTV = (TextView) findViewById(R.id.serialTV);
         versionTV = (TextView) findViewById(R.id.versionTV);
         temperatureTV = (TextView) findViewById(R.id.temperatureTV);
@@ -60,10 +67,49 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
         viewHistory = (Button) findViewById(R.id.historyBtn);
         disconnectBtn = (Button) findViewById(R.id.disconnectBtn);
         renameDeviceBtn = (Button) findViewById(R.id.renameDeviceBtn);
+        notConnectedLL = findViewById(R.id.notConnectedLL);
+        infoLL = findViewById(R.id.infoLL);
+
         viewHistory.setOnClickListener(this);
         disconnectBtn.setOnClickListener(this);
         renameDeviceBtn.setOnClickListener(this);
+        //i need a loader to listen to alarm changes on the db alerts
         loadInformation();
+        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(1, null, this);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+        if(id == 0) {
+            String[] projection = {
+                    DevicePropertyDao.KEY_ID,
+                    DevicePropertyDao.KEY_CREATED_AT,
+                    DevicePropertyDao.KEY_DISMISSED_DATE
+            };
+            CursorLoader cursorLoader = new CursorLoader(this,
+                    DevicePropertyContentProvider.CONTENT_URI, projection, null, null, null);
+            return cursorLoader;
+
+        } else if(id == 1){
+            String[] projection = {
+                    DeviceDao.KEY_ID,
+                    DeviceDao.KEY_NAME,
+                    DeviceDao.KEY_CODE,
+                    DeviceDao.KEY_HARDWARE_ID,
+                    DeviceDao.KEY_FIRMWARE_VERSION,
+                    DeviceDao.KEY_HARDWARE_VERSION,
+                    DeviceDao.KEY_DESCRIPTION,
+                    DeviceDao.KEY_MAC_ADDRESS,
+                    DeviceDao.KEY_ACTIVE,
+                    DeviceDao.KEY_CONNECTED
+            };
+            CursorLoader cursorLoader = new CursorLoader(this,
+                    DeviceContentProvider.CONTENT_URI, projection, null, null, null);
+            return cursorLoader;
+        }
+        return null;
     }
 
     @Override
@@ -81,6 +127,7 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
             this.setTitle(TextUtils.isEmpty(currentDevice.getDescription()) ? currentDevice.getName() : currentDevice.getDescription());
             DeviceCharacteristicDao ssDao = new DeviceCharacteristicDao(this);
             nameTV.setText( currentDevice.getName() );
+            nameUnconnectedTV.setText(currentDevice.getName());
             serialTV.setText(String.format(getString(R.string.device_serial), currentDevice.getHardwareId()));
             versionTV.setText( String.format(getString(R.string.device_version), currentDevice.getFirmwareVersion(), currentDevice.getHardwareVersion()) );
             temperatureTV.setText( String.format(getString(R.string.device_temperature), Util.celsiusToFahrenheit( currentDevice.getTemperature() ), currentDevice.getTemperature()) );
@@ -89,6 +136,16 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
             //i need to create a device enabled and delay controls for each property
             adapter = new PropertyAdapter(this, Property.defaultProperties, currentDevice);
             propertiesLV.setAdapter(adapter);
+
+            if(currentDevice.isConnected()){
+                infoLL.setVisibility(View.VISIBLE);
+                notConnectedLL.setVisibility(View.GONE);
+                disconnectBtn.setVisibility(View.VISIBLE);
+            }else{
+                infoLL.setVisibility(View.GONE);
+                notConnectedLL.setVisibility(View.VISIBLE);
+                disconnectBtn.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -97,10 +154,8 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
         if(v == viewHistory){
             Bundle bundle = new Bundle();
             Intent intent = new Intent(MonitorActivity.this, HistorySensorActivity.class);
-
             deviceId = getIntent().getLongExtra(MONITOR_ID, -1);
             bundle.putLong(MonitorActivity.MONITOR_ID, deviceId);
-
             intent.putExtras(bundle);
             startActivityForResult(intent, CODE_RESULT);
 
@@ -185,4 +240,14 @@ public class MonitorActivity extends ActionBarActivity implements  View.OnClickL
                 });
         alertDialog.show();
     }
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        loadInformation();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        loadInformation();
+    }
+
 }

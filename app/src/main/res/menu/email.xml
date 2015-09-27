@@ -4,6 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.maws.loonandroid.activities.MainActivity">
 
-    <item android:id="@+id/action_log" android:title="@string/log"
+    <item android:id="@+id/action_email" android:title="@string/send_email"
         android:orderInCategory="900" app:showAsAction="never" />
 </menu>

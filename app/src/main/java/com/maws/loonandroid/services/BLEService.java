@@ -3,18 +3,25 @@ package com.maws.loonandroid.services;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.maws.loonandroid.activities.ScanDevicesActivity;
 import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.gatt.GattManager;
 import com.maws.loonandroid.gatt.events.GattEvent;
 import com.maws.loonandroid.gatt.operations.GattCharacteristicReadOperation;
+import com.maws.loonandroid.gatt.operations.GattCloseOperation;
 import com.maws.loonandroid.gatt.operations.GattConnectOperation;
 import com.maws.loonandroid.gatt.operations.GattDisconnectOperation;
 import com.maws.loonandroid.gatt.operations.GattSetNotificationOperation;
@@ -24,11 +31,8 @@ import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.DeviceService;
 import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.util.Util;
-
 import org.droidparts.bus.EventBus;
 import org.droidparts.bus.EventReceiver;
-
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,25 +45,56 @@ public class BLEService extends Service
     private static final String TAG = "BLEService";
     private static BLEService instance;
     public static final HashMap<String, String> switchValues = new HashMap<String, String>();
-
+    private static Handler customHandler;
     int mStartMode = START_STICKY; // indicates how to behave if the service is killed
     boolean mAllowRebind; // indicates whether onRebind should be used
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
     private GattManager manager;
-
     public static BLEService getInstance(){
         return instance;
     }
 
     @Override
     public void onCreate() {
+        Util.log(this, "BLE Service created");
         DeviceDao deviceDao = new DeviceDao(this);
         deviceDao.disconnectAllDevices();
         manager = GattManager.getInstance();
         instance = this;
-        EventBus.registerReceiver( this, GattEvent.GATT_CONECTION_STATE_CHANGED, GattEvent.GATT_SERVICES_DISCOVERED, GattEvent.GATT_CHARACTERISTIC_CHANGED, GattEvent.GATT_CHARACTERISTIC_READ, GattEvent.GATT_RSSI_READ);
+        EventBus.registerReceiver(this, GattEvent.GATT_CONECTION_STATE_CHANGED, GattEvent.GATT_SERVICES_DISCOVERED, GattEvent.GATT_CHARACTERISTIC_CHANGED, GattEvent.GATT_CHARACTERISTIC_READ, GattEvent.GATT_RSSI_READ);
+        //register receiver of devices scanned
+        registerReceiver(AdapterOnOffReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+        customHandler = new Handler() {
+
+            public void handleMessage(Message msg) {
+                String address = msg.getData().getString("address");
+                new ReconnectTask(BLEService.this, address).run();
+            }
+        };
     }
+
+    class ReconnectTask implements Runnable {
+        String address;
+        Context context;
+
+        ReconnectTask(Context context, String address) {
+            this.address = address;
+            this.context = context;
+        }
+        public void run() {
+
+            //check if the device is already connected
+            DeviceDao dDao = new DeviceDao(context);
+            Device d = dDao.findByMacAddress(this.address);
+            if(d == null || d.isConnected()){
+                return;
+            }
+            Util.log(context, "Trying to reconect to address " + this.address);
+            connect(this.address, true);
+        }
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // The service is starting, due to a call to startService()
@@ -71,6 +106,10 @@ public class BLEService extends Service
     }
 
     public void initializeMonitors(){
+        initializeMonitors(false);
+    }
+
+    public void initializeMonitors(boolean silent){
 
         //let's first try to initialize the adapter
         // For API level 18 and above, get a reference to BluetoothAdapter through
@@ -96,21 +135,28 @@ public class BLEService extends Service
 
         for(Device device : devices){
             //i need to get the mac address and try to connect to it
-            connect(device.getMacAddress());
+            if(!device.isManualDisconnect() && !device.isConnected()) {
+                connect(device.getMacAddress());
+            }
         }
+    }
+
+    public void connect(final String address) {
+        connect(address, false);
     }
 
     /**
      * Connects to the GATT server hosted on the Bluetooth LE device.
      *
      * @param address The device address of the destination device.
+     * @param silent true if you don't want to show the connecting loading spinner.
      * @return Return true if the connection is initiated successfully. The connection result
      *         is reported asynchronously through the
      *         {@code BluetoothGattCallback#onConnectionStateChange(android.bluetooth.BluetoothGatt, int, int)}
      *         callback.
      */
-    public void connect(final String address) {
-
+    public void connect(final String address, final boolean silent) {
+        Util.log(this, "A connection was issued to " + address);
         if (mBluetoothAdapter == null || address == null) {
             Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
             return;
@@ -122,20 +168,34 @@ public class BLEService extends Service
         }catch(Exception ex){
             //just don't connect to the device if the mac address is weird
         }
-
-        if (device == null) {
-            DeviceDao deviceDao = new DeviceDao(this);
-            Device currentDevice = deviceDao.findByMacAddress(address);
-            currentDevice.setConnected(false);
-            deviceDao.update(currentDevice);
+        DeviceDao deviceDao = new DeviceDao(this);
+        Device currentDevice = deviceDao.findByMacAddress(address);
+        if(currentDevice ==  null){
             return;
         }
 
-        GattConnectOperation operation = new GattConnectOperation(device);
+        if (device == null) {
+            currentDevice.setManualDisconnect(false);
+            currentDevice.setConnected(false);
+            currentDevice.setConnecting(false);
+            deviceDao.update(currentDevice);
+            return;
+        }else if(currentDevice.isConnected()){
+            currentDevice.setManualDisconnect(false);
+            currentDevice.setConnecting(false);
+            return;
+        }
+        else if(!silent){
+            currentDevice.setConnecting(true);
+            deviceDao.update(currentDevice);
+        }
+
+        GattConnectOperation operation = new GattConnectOperation(device, this);
         manager.queue(operation);
     }
 
     public void disconnect(String address){
+        Util.log(this, "A disconnect was issued to " + address);
         if (mBluetoothAdapter == null || address == null) {
             Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
             return;
@@ -152,13 +212,25 @@ public class BLEService extends Service
         Device currentDevice = deviceDao.findByMacAddress(address);
         if(currentDevice != null) {
             currentDevice.setConnected(false);
+            currentDevice.setManualDisconnect(true);
+            currentDevice.setConnecting(false);
             deviceDao.update(currentDevice);
         }
 
         if(device != null) {
             GattDisconnectOperation operation = new GattDisconnectOperation(device);
+            GattCloseOperation closeOp = new GattCloseOperation(device);
             manager.queue(operation);
+            manager.queue(closeOp);
         }
+    }
+
+    private void postReconectMessageToHandler(String address, int delay){
+        Message msg = new Message();
+        Bundle data = new Bundle();
+        data.putString("address", address);
+        msg.setData(data);
+        customHandler.sendMessageDelayed(msg, delay);
     }
 
 
@@ -168,11 +240,13 @@ public class BLEService extends Service
     }
     @Override
     public boolean onUnbind(Intent intent) {
+        Util.log(this, "Service Unbound");
         // All clients have unbound with unbindService()
         return mAllowRebind;
     }
     @Override
     public void onRebind(Intent intent) {
+        Util.log(this, "Service Bound");
         // A client is binding to the service with bindService(),
         // after onUnbind() has already been called
     }
@@ -180,12 +254,16 @@ public class BLEService extends Service
     @Override
     public void onDestroy() {
         instance = null;
+        Util.log(this, "Service Destroyed");
         manager.onDestroy();
         DeviceDao deviceDao = new DeviceDao(this);
         deviceDao.disconnectAllDevices();
+        //register receiver of devices scanned
+        unregisterReceiver(AdapterOnOffReceiver);
     }
 
     public void restart(){
+        Util.log(this, "Service Restarted");
         manager.onDestroy();
         initializeMonitors();
     }
@@ -194,17 +272,33 @@ public class BLEService extends Service
     public void onEvent(String name, GattManager.GattManagerBundle data) {
 
         try{
-
-            Log.d("BLEService", "I have connected to the following address " + data.address + " " + data.newState);
+            Util.log(this, "I have an event from " + data.address + " " + data.newState);
             DeviceDao sDao = new DeviceDao(this);
             Device device = sDao.findByMacAddress(data.address);
 
             switch (data.gattEvent){
                 case GattEvent.GATT_CONECTION_STATE_CHANGED:
+                    device.setConnecting(false);
                     if(device != null && data.newState == BluetoothProfile.STATE_CONNECTED){
                         device.setConnected(true);
+                        Util.log(this, data.address + " was connected");
                     }else{
                         device.setConnected(false);
+                        Util.log(this, data.address + " was disconnected");
+                        Util.generateNotification(this, TextUtils.isEmpty(device.getDescription())?device.getName():device.getDescription(), "The connection has been lost");
+                        if(!device.isManualDisconnect()){
+                            //retry connect right now
+                            postReconectMessageToHandler(device.getMacAddress(), 0);
+
+                            //retry in 5 minutes
+                            postReconectMessageToHandler(device.getMacAddress(), 60*5*1000);
+
+                            //retry in 10 minutes
+                            postReconectMessageToHandler(device.getMacAddress(), 60*10*1000);
+
+                            //retry in 20 minutes
+                            postReconectMessageToHandler(device.getMacAddress(), 60*20*1000);
+                        }
                     }
                     sDao.update(device);
                     break;
@@ -278,13 +372,13 @@ public class BLEService extends Service
                     manager.queue(readBattery);
 
                     //let's also read the current temperature
-                    GattCharacteristicReadOperation readTemperature = new GattCharacteristicReadOperation(
+                    /*GattCharacteristicReadOperation readTemperature = new GattCharacteristicReadOperation(
                             bluetoothDevice,
                             DeviceService.UUID_THERMOMETER_SERVICE,
                             DeviceCharacteristic._CHAR_THERMOMETER,
                             null
                     );
-                    manager.queue(readTemperature);
+                    manager.queue(readTemperature);*/
 
                     //lastly, i subscribe to the notification service
                     GattSetNotificationOperation operation = new GattSetNotificationOperation(
@@ -368,7 +462,6 @@ public class BLEService extends Service
         }
     }
 
-
     private void updateDeviceState(String address, String newState, String newState2, boolean fireNotification){
 
         if(TextUtils.isEmpty(address) || TextUtils.isEmpty(newState)) {
@@ -383,7 +476,6 @@ public class BLEService extends Service
             builder.insert(0, 0);
         }
         newState = builder.toString();
-
         builder = new StringBuilder(newState2);
         if(builder.length() > 8){
             builder.delete(0, builder.length() - 8);
@@ -394,14 +486,21 @@ public class BLEService extends Service
         newState2 = builder.toString();
 
         String newTotalState = newState + newState2;
+        Util.log(this, "State on " +address+ " changed to " + newTotalState);
+
         if(fireNotification && switchValues.containsKey(address)){
 
             DeviceDao sDao = new DeviceDao(this);
             Device device = sDao.findByMacAddress(address);
+
             if(device != null) {
 
-                String previousState = switchValues.get(address);
+                if(!device.isConnected()){
+                    device.setConnected(true);
+                    sDao.update(device);
+                }
 
+                String previousState = switchValues.get(address);
                 //i need to know which indexes changed
                 int indexChanged = -1;
                 for (int i = 0; i < previousState.length(); i++) {
@@ -425,5 +524,22 @@ public class BLEService extends Service
         }
         switchValues.put(address, newTotalState);
     }
+
+    //let's use this broadcast receiver to listen to bluetooth on and off
+    private final BroadcastReceiver AdapterOnOffReceiver = new BroadcastReceiver(){
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // TODO Auto-generated method stub
+            String action = intent.getAction();
+            if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
+
+                int newState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
+                if(newState == BluetoothAdapter.STATE_ON){
+                    initializeMonitors();
+                }
+            }
+        }
+    };
 
 }

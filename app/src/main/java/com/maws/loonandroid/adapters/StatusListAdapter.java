@@ -101,10 +101,10 @@ public class StatusListAdapter extends BaseExpandableListAdapter {
         }
         Device thisDevice = items.get(position);
         if(thisDevice.isActive()) {
-            if(!thisDevice.getName().isEmpty()) {
-                groupViewHolder.deviceNameTV.setText(thisDevice.getName());
-            }else {
+            if(!thisDevice.getDescription().isEmpty()) {
                 groupViewHolder.deviceNameTV.setText(thisDevice.getDescription());
+            }else {
+                groupViewHolder.deviceNameTV.setText(thisDevice.getName());
             }
         }else {
             groupViewHolder.deviceNameTV.setTextColor(context.getResources().getColor(R.color.light_gray));

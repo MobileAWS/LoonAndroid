@@ -54,11 +54,20 @@ public class BluetoothDeviceAdapter extends BaseAdapter {
     }
 
     public void add(Device device){
-        if(!items.contains(device)) {
+        if(!contains(device)) {
             this.items.add(device);
             this.notifyDataSetChanged();
         }
     };
+
+    private boolean contains(Device device){
+        for(Device item: items){
+            if(item.getMacAddress().equalsIgnoreCase(device.getMacAddress())){
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void remove(Device device){
         Device toRemove = null;

@@ -33,4 +33,7 @@ public abstract class GattOperation {
     public void setBundle(GattOperationBundle bundle) {
         mBundle = bundle;
     }
+
+    public void onStart(){}
+    public void onFinish(){}
 }

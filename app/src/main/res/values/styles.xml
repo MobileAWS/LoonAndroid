@@ -34,13 +34,19 @@
 
     <style name="LoginEditText">
         <item name="android:maxLines">1</item>
-
-        <item name="android:layout_marginTop">5dp</item>
-        <item name="android:layout_marginBottom">5dp</item>
-        <item name="android:textColorHint">@color/white</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColorHint">@color/hint_gray</item>
         <item name="android:textColor">@color/gray</item>
-        <item name="android:background">@drawable/border_bottom_gray</item>
+        <item name="android:background">@drawable/half_white_rounded_square</item>
         <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+
+    <style name="LoginIcon">
+        <item name="android:background">@drawable/half_blue_rounded_square</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
     </style>
 
     <style name="DrawerItemText">
@@ -49,23 +55,27 @@
     </style>
 
     <style name="Button">
-        <item name="android:textSize">17sp</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
         <item name="android:paddingLeft">20dp</item>
         <item name="android:paddingRight">20dp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/abc_text_size_button_material</item>
     </style>
     <style name="Button.orange">
         <item name="android:background">@drawable/button_gradient_orange</item>
         <item name="android:textColor">@color/white</item>
     </style>
-    <style name="Button.aquamarine">
-        <item name="android:background">@drawable/button_gradient_aquamarine</item>
+    <style name="Button.light_blue">
+        <item name="android:background">@drawable/button_light_blue</item>
         <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">false</item>
     </style>
     <style name="Button.dark_green">
         <item name="android:background">@drawable/button_dark_green</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="Button.dark_orange">
+        <item name="android:background">@drawable/button_dark_orange</item>
         <item name="android:textColor">@color/white</item>
     </style>
 

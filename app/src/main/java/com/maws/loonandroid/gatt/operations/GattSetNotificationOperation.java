@@ -33,8 +33,8 @@ public class GattSetNotificationOperation extends GattOperation {
             e.printStackTrace();
         }
         BluetoothGattDescriptor descriptor = characteristic.getDescriptor(mDescriptorUuid);
-        //descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-        descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
+        descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+        //descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
         gatt.writeDescriptor(descriptor);
     }
 

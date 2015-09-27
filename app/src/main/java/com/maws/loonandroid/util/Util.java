@@ -20,6 +20,7 @@ import android.widget.ListView;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.dao.DeviceEnabledPropertyDao;
+import com.maws.loonandroid.dao.LogDao;
 import com.maws.loonandroid.models.Customer;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceEnabledProperty;
@@ -43,6 +44,7 @@ public class Util {
     public static final SimpleDateFormat sdf = new SimpleDateFormat("EEE dd MMM, h:mm a");
     public static final SimpleDateFormat longDateFormat = new SimpleDateFormat("EEE dd MMM");
     public static final SimpleDateFormat timeOnlyFormat = new SimpleDateFormat("hh:mm:ss a");
+    public static final SimpleDateFormat logDateFormat = new SimpleDateFormat("EEE dd MMM, hh:mm:ss a");
     public static final String EMAIL_PREFERENCE = "email";
     public static final String CUSTOMER_ID_PREFERENCE = "customerId";
     public static final String SITE_ID_PREFERENCE = "siteId";
@@ -98,7 +100,7 @@ public class Util {
                         new NotificationCompat.BigTextStyle().bigText(message))
                 .setContentText(message);
         Intent mainIntent = new Intent(context, MainActivity.class);
-        PendingIntent intent = PendingIntent.getActivity(context, 0,mainIntent , 0);
+        PendingIntent intent = PendingIntent.getActivity(context, 0, mainIntent, 0);
         mBuilder.setContentIntent(intent);
         mBuilder.setAutoCancel(true);
         Notification notification = mBuilder.build();
@@ -194,6 +196,10 @@ public class Util {
         }
     }
 
+    public static void log(Context context, String message){
+        LogDao lDao = new LogDao(context);
+        lDao.create(message);
+    }
 
     public static double fahrenheitToCelsius(double value) {
         double toReturn = (value - 32) * 5/9;
@@ -217,4 +223,12 @@ public class Util {
         return propertyList;
     }
 
+    public static void setLoginInit(String email, String siteId, String customerId,Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(Util.EMAIL_PREFERENCE,email);
+        editor.putString(Util.CUSTOMER_ID_PREFERENCE,customerId);
+        editor.putString(Util.SITE_ID_PREFERENCE,siteId);
+        editor.apply();
+    }
 }

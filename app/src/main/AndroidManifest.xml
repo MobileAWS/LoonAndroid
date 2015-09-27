@@ -92,6 +92,21 @@
                 android:value=".activities.MainActivity" />
         </activity>
         <activity
+            android:name=".activities.LogActivity"
+            android:configChanges="orientation"
+            android:label="@string/log"
+            android:screenOrientation="portrait"
+            android:theme="@style/LoonActionBarTheme"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
+        </activity>
+        <activity
             android:name=".activities.HistorySensorActivity"
             android:label="@string/title_activity_history_sensor"
             android:theme="@style/LoonActionBarTheme"
@@ -100,6 +115,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.maws.loonandroid.activities.MonitorActivity" />
         </activity>
+
         <receiver android:name=".receivers.DevicePropertyReceiver" >
             <intent-filter>
                 <action android:name="com.maws.loonandroid.deviceproperty" />
@@ -136,6 +152,11 @@
         <provider
             android:name=".contentproviders.PropertyContentProvider"
             android:authorities="com.maws.loonandroid.contentproviders.PropertyContentProvider"
+            android:enabled="true"
+            android:exported="false" />
+        <provider
+            android:name=".contentproviders.LogEntryContentProvider"
+            android:authorities="com.maws.loonandroid.contentproviders.LogEntryContentProvider"
             android:enabled="true"
             android:exported="false" />
         <meta-data

@@ -105,7 +105,7 @@ public class GattManager {
         final GattOperation operation = mQueue.poll();
         L.v("Driving Gatt queue, size will now become: " + mQueue.size());
         setCurrentOperation(operation);
-
+        operation.onStart();
 
         if(mCurrentOperationTimeout != null) {
             mCurrentOperationTimeout.cancel(true);
@@ -118,19 +118,23 @@ public class GattManager {
                     wait(operation.getTimoutInMillis());
                 } catch (InterruptedException e) {
                     L.v("was interrupted out of the timeout");
+                    operation.onFinish();
                 }
                 if(isCancelled()) {
                     L.v("The timeout was cancelled, so we do nothing.");
+                    operation.onFinish();
                     return null;
                 }
                 L.v("Timeout ran to completion, time to cancel the entire operation bundle. Abort, abort!");
                 cancelCurrentOperationBundle();
+                operation.onFinish();
                 return null;
             }
 
             @Override
             protected synchronized void onCancelled() {
                 super.onCancelled();
+                operation.onFinish();
                 notify();
             }
         }.execute();
@@ -256,6 +260,7 @@ public class GattManager {
         if(operation != mCurrentOperation) {
             return;
         }
+        operation.onStart();
         operation.execute(gatt);
         if(!operation.hasAvailableCompletionCallback()) {
             setCurrentOperation(null);
