@@ -5,5 +5,6 @@
     tools:context="com.maws.loonandroid.activities.MainActivity">
 
     <item android:id="@+id/action_log" android:title="@string/log"
-        android:orderInCategory="900" app:showAsAction="never" />
+        android:orderInCategory="900" app:showAsAction="never"
+        android:visible="false"/>
 </menu>

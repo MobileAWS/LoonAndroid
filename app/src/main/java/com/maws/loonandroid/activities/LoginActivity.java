@@ -65,7 +65,6 @@ public class LoginActivity extends Activity implements OnClickListener {
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionTV = (TextView) findViewById(R.id.versionTV);
         versionTV.setText("V " + versionName);
-
         createDefaultProperties();
     }
 
@@ -169,8 +168,6 @@ public class LoginActivity extends Activity implements OnClickListener {
         userDb = uDao.get(user.getEmail(),lDao.getReadableDatabase());
         return userDb;
     }
-
-
 
     private void attemptOfflineLogin(){
 

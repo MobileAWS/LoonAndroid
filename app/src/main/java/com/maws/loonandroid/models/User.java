@@ -77,6 +77,7 @@ public class User {
             instance.setName(prefs.getString(USER_PREFS_NAME, ""));
             instance.setEmail(prefs.getString(USER_PREFS_EMAIL, ""));
             instance.setPassword(prefs.getString(USER_PREFS_PASSWORD, ""));
+            instance.setId(prefs.getLong(USER_PREFS_ID, 0));
         }
         return instance;
     }
