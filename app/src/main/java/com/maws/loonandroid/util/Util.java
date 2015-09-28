@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -230,5 +231,10 @@ public class Util {
         editor.putString(Util.CUSTOMER_ID_PREFERENCE,customerId);
         editor.putString(Util.SITE_ID_PREFERENCE,siteId);
         editor.apply();
+    }
+
+    public static int dpToPx(Context context, int dp){
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return (int)((dp * displayMetrics.density) + 0.5);
     }
 }

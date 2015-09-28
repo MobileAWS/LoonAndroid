@@ -167,7 +167,6 @@ public class MonitorActivity extends ActionBarActivity
             DeviceDao deviceDao = new DeviceDao(this);
             Device device = deviceDao.get(deviceId);
             changeNameDevice(this, device, deviceDao);
-
         }
     }
 
@@ -206,18 +205,14 @@ public class MonitorActivity extends ActionBarActivity
             oldNameDevice = device.getName();
         }
 
-        alertDialog.setTitle(getString(R.string.tittle_dialogbox_rename)+" '"+ oldNameDevice+"'");
+        alertDialog.setTitle(getString(R.string.tittle_dialogbox_rename) + " '" + oldNameDevice + "'");
         alertDialog.setMessage(getString(R.string.message_dialogbox_rename));
 
-        final EditText input = new EditText(context);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        lp.setMargins(100, 1, 1, 1);
-        input.setPadding(30, 10, 10, 20);
-        //input.setLayoutParams(lp);
-        alertDialog.setView(input);
-       //
+
+
+        LinearLayout ll = (LinearLayout) LinearLayout.inflate(context, R.layout.simple_edit_text, null);
+        final EditText input = (EditText) ll.findViewById(R.id.editNameET);
+        alertDialog.setView(ll);
 
         alertDialog.setPositiveButton("ACCEPT",
                 new DialogInterface.OnClickListener() {
