@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
@@ -52,7 +53,10 @@ public class MainActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (User.instance == null ) {
+
+        User currentUser = User.getCurrent(this);
+        Log.e("Main", currentUser.toString());
+        if ((currentUser.getToken() == null || currentUser.getToken().isEmpty()) && !currentUser.getOffline() ) {
             Intent i = new Intent(this,LoginActivity.class);
             startActivity(i);
             this.finish();
@@ -153,7 +157,10 @@ public class MainActivity extends ActionBarActivity
 
     private void logout(){
         Intent logOutIntent = new Intent(MainActivity.this, LoginActivity.class);
-        User.setCurrent(new User(),this);
+        User userLogout = User.getCurrent(this);
+        userLogout.setToken(null);
+        userLogout.setOffline(false);
+        User.setCurrent(userLogout,this);
         User.instance = null;
         startActivity(logOutIntent);
         this.finish();
