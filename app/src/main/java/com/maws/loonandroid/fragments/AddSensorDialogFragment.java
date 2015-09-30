@@ -1,5 +1,6 @@
 package com.maws.loonandroid.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -8,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.models.Device;
 
@@ -18,15 +21,19 @@ public class AddSensorDialogFragment extends DialogFragment {
 
     private TextView serialTV, nameTV;
     private EditText descriptionET;
+
     private Device device;
     private AddSensorDialogListener listener;
+    private  Context context;
 
     public interface AddSensorDialogListener{
         public void onSensorAdded(Device device);
     }
 
-    public static AddSensorDialogFragment newInstance(Device device, AddSensorDialogListener listener) {
+    public static AddSensorDialogFragment newInstance(Device device,Context context, AddSensorDialogListener listener) {
+
         AddSensorDialogFragment fm = new AddSensorDialogFragment();
+        fm.setContext(context);
         Bundle args = new Bundle();
         args.putParcelable("device", device);
         fm.setArguments(args);
@@ -36,7 +43,7 @@ public class AddSensorDialogFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
 
         if(this.getArguments() == null){
@@ -48,14 +55,20 @@ public class AddSensorDialogFragment extends DialogFragment {
         ((TextView) v.findViewById(R.id.sensorNameTV)).setText(device.getName());
         ((TextView) v.findViewById(R.id.sensorAddressTV)).setText(device.getMacAddress());
         descriptionET = (EditText) v.findViewById(R.id.sensorDescriptionET);
-
         Button okBtn = (Button)v.findViewById(R.id.okBtn);
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                device.setDescription(descriptionET.getText().toString() );
-                listener.onSensorAdded(device);
-                dismiss();
+                String deviceName = descriptionET.getText().toString();
+                if(deviceName != null && !deviceName.isEmpty()) {
+                    device.setDescription(descriptionET.getText().toString());
+                    listener.onSensorAdded(device);
+                    dismiss();
+                }else {
+                    Integer duration = 10;
+                    Toast toast = Toast.makeText(context,R.string.message_device_name_obligatory,duration);
+                    toast.show();
+                }
             }
         });
 
@@ -68,6 +81,14 @@ public class AddSensorDialogFragment extends DialogFragment {
         });
 
         return v;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     public AddSensorDialogListener getListener() {

@@ -52,6 +52,7 @@
     <string name="sensor_found_label">Found:</string>
     <string name="sensor_serial_label">S/N:</string>
     <string name="sensor_address">Address:</string>
+    <string name="sensor_found_name_hint">Write a name for this device</string>
     <string name="sensor_found_description_hint">Write a description for this device</string>
     <string name="use_it">Register</string>
     <string name="ignore">Ignore</string>
@@ -168,5 +169,6 @@
     <string name="sign_in">Sign In</string>
     <string name="new_user">New User</string>
     <string name="forgot_password">Forgot Password</string>
+    <string name="message_device_name_obligatory">You need to put a description for this device</string>
 
 </resources>

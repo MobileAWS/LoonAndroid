@@ -258,7 +258,8 @@ public class ScanDevicesActivity extends ActionBarActivity {
 
     public void showSensorDialog(Device device){
         //for now, let's create a random device and add it to the dialog
-        AddSensorDialogFragment newFragment = AddSensorDialogFragment.newInstance(device, new AddSensorDialogFragment.AddSensorDialogListener() {
+        Context context = this;
+        AddSensorDialogFragment newFragment = AddSensorDialogFragment.newInstance(device,context, new AddSensorDialogFragment.AddSensorDialogListener() {
             @Override
             public void onSensorAdded(Device sensor) {
                 addSensor(sensor);

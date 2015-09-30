@@ -62,7 +62,7 @@
             android:text="123456"
         />
     </LinearLayout>
-
+   
     <EditText
         android:id="@+id/sensorDescriptionET"
         android:layout_width="match_parent"
@@ -70,9 +70,10 @@
         android:lines="1"
         android:hint="@string/sensor_found_description_hint"
         android:textSize="18sp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="10dp"
     />
+
 
     <LinearLayout
         android:layout_width="match_parent"
