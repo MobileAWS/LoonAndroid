@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.maws.loonandroid.BuildConfig;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.CustomerDao;
+import com.maws.loonandroid.dao.LogDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
 import com.maws.loonandroid.dao.PropertyDao;
 import com.maws.loonandroid.dao.SiteDao;
@@ -126,6 +127,9 @@ public class LoginActivity extends Activity implements OnClickListener {
                 @Override
                 public void onSuccess(JSONObject jsonObject, User user, String siteId, String customerId,Context context) {
                     try {
+                        LogDao logDao = new LogDao(LoginActivity.this);
+                        logDao.deleteAll();
+
                         JSONObject response = jsonObject.getJSONObject("response");
                         if (jsonObject.getString("response").equalsIgnoreCase("done")) {
                             finish();
@@ -199,6 +203,9 @@ public class LoginActivity extends Activity implements OnClickListener {
             //if everything is good, i set the current user, site and customerId for the app
             user.setOffline(true);
             User.setCurrent(user, this);
+
+            LogDao logDao = new LogDao(this);
+            logDao.deleteAll();
 
             goToNextPage();
             this.finish();

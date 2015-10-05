@@ -95,8 +95,7 @@ public class LoonMedicalDao extends SQLiteOpenHelper {
         devicePropertyDao.deleteAll(db);
 
         LogDao lDao = new LogDao(context);
-        lDao.deleteAll(db);
-
+        lDao.deleteAll();
         db.close();
     }
 

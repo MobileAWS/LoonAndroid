@@ -283,22 +283,24 @@ public class BLEService extends Service
                         device.setConnected(true);
                         Util.log(this, data.address + " was connected");
                     }else{
-                        device.setConnected(false);
-                        Util.log(this, data.address + " was disconnected");
-                        Util.generateNotification(this, TextUtils.isEmpty(device.getDescription())?device.getName():device.getDescription(), "The connection has been lost");
-                        if(!device.isManualDisconnect()){
-                            //retry connect right now
-                            postReconectMessageToHandler(device.getMacAddress(), 0);
+                        if(device.isConnected()){
+                            Util.log(this, data.address + " was disconnected");
+                            Util.generateNotification(this, TextUtils.isEmpty(device.getDescription())?device.getName():device.getDescription(), "The connection has been lost");
+                            if(!device.isManualDisconnect()){
+                                //retry connect right now
+                                postReconectMessageToHandler(device.getMacAddress(), 0);
 
-                            //retry in 5 minutes
-                            postReconectMessageToHandler(device.getMacAddress(), 60*5*1000);
+                                //retry in 5 minutes
+                                postReconectMessageToHandler(device.getMacAddress(), 60*5*1000);
 
-                            //retry in 10 minutes
-                            postReconectMessageToHandler(device.getMacAddress(), 60*10*1000);
+                                //retry in 10 minutes
+                                postReconectMessageToHandler(device.getMacAddress(), 60*10*1000);
 
-                            //retry in 20 minutes
-                            postReconectMessageToHandler(device.getMacAddress(), 60*20*1000);
+                                //retry in 20 minutes
+                                postReconectMessageToHandler(device.getMacAddress(), 60*20*1000);
+                            }
                         }
+                        device.setConnected(false);
                     }
                     sDao.update(device);
                     break;

@@ -71,7 +71,11 @@ public class PropertyAdapter extends BaseAdapter {
             String currentValue = BLEService.switchValues.get(device.getMacAddress());
             if( currentValue.charAt( Integer.valueOf( String.valueOf(thisProperty.getId())) ) == '1'){
                 isOn = true;
+
             }
+        }
+        if(thisProperty.getName().equalsIgnoreCase("Call")){
+            isOn = !isOn;
         }
         if(device.isConnected() && isOn){
             nameTV.setTextColor( context.getResources().getColor( R.color.green ) );

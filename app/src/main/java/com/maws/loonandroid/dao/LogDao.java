@@ -88,8 +88,8 @@ public class LogDao {
         return toReturnList;
     }
 
-    public void deleteAll(SQLiteDatabase db){
-        db.delete(TABLE_NAME, null, null);
+    public void deleteAll(){
+        context.getContentResolver().delete(LogEntryContentProvider.CONTENT_URI,null,null);
     }
 
     /*return  object from cursor db */

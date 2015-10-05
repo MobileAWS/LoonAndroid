@@ -141,6 +141,9 @@ public class StatusListAdapter extends BaseExpandableListAdapter {
                     isOn = true;
                 }
             }
+            if(property.getName().equalsIgnoreCase("Call")){
+                isOn = !isOn;
+            }
             if (isOn) {
                 viewHolder.sensorTv.setTextColor(context.getResources().getColor(R.color.green));
                 viewHolder.sensorTv.setText(context.getString(property.getDisplayId()));

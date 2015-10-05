@@ -64,7 +64,7 @@
         <activity
             android:name=".activities.MonitorActivity"
             android:configChanges="orientation"
-            android:label="@string/app_name"
+            android:label="@string/monitor_info"
             android:screenOrientation="portrait"
             android:theme="@style/LoonActionBarTheme"
             android:windowSoftInputMode="adjustPan|stateHidden" >

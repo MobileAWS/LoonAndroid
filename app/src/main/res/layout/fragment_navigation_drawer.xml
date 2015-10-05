@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:choiceMode="singleChoice"
         android:dividerHeight="0px"
-        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
     />
 

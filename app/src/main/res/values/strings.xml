@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Care Sentinel</string>
+    <string name="app_name">CareSentinel</string>
     <string name="prompt_client_number">Client Number</string>
     <string name="prompt_site_id">Site ID</string>
     <string name="prompt_email">Email</string>
@@ -170,5 +170,6 @@
     <string name="new_user">New User</string>
     <string name="forgot_password">Forgot Password</string>
     <string name="message_device_name_obligatory">You need to put a description for this device</string>
+    <string name="monitor_info">Monitor Information</string>
 
 </resources>

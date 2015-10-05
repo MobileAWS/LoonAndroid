@@ -124,9 +124,9 @@ public class MonitorActivity extends ActionBarActivity
         currentDevice = sDao.get(deviceId);
 
         if(currentDevice != null) {
-            this.setTitle(TextUtils.isEmpty(currentDevice.getDescription()) ? currentDevice.getName() : currentDevice.getDescription());
+            //this.setTitle( TextUtils.isEmpty(currentDevice.getDescription()) ? currentDevice.getName() : currentDevice.getDescription() );
             DeviceCharacteristicDao ssDao = new DeviceCharacteristicDao(this);
-            nameTV.setText( currentDevice.getName() );
+            nameTV.setText( TextUtils.isEmpty(currentDevice.getDescription()) ? currentDevice.getName() : currentDevice.getDescription() );
             nameUnconnectedTV.setText(currentDevice.getName());
             serialTV.setText(String.format(getString(R.string.device_serial), currentDevice.getHardwareId()));
             versionTV.setText( String.format(getString(R.string.device_version), currentDevice.getFirmwareVersion(), currentDevice.getHardwareVersion()) );
@@ -158,10 +158,12 @@ public class MonitorActivity extends ActionBarActivity
             bundle.putLong(MonitorActivity.MONITOR_ID, deviceId);
             intent.putExtras(bundle);
             startActivityForResult(intent, CODE_RESULT);
-
         }
         if(v == disconnectBtn && currentDevice != null){
-            BLEService.getInstance().disconnect(currentDevice.getMacAddress());
+            BLEService service = BLEService.getInstance();
+            if(service != null) {
+                service.disconnect(currentDevice.getMacAddress());
+            }
         }
         if(v == renameDeviceBtn) {
             DeviceDao deviceDao = new DeviceDao(this);
