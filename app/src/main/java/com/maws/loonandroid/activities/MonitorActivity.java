@@ -126,8 +126,8 @@ public class MonitorActivity extends ActionBarActivity
         if(currentDevice != null) {
             //this.setTitle( TextUtils.isEmpty(currentDevice.getDescription()) ? currentDevice.getName() : currentDevice.getDescription() );
             DeviceCharacteristicDao ssDao = new DeviceCharacteristicDao(this);
-            nameTV.setText( TextUtils.isEmpty(currentDevice.getDescription()) ? currentDevice.getName() : currentDevice.getDescription() );
-            nameUnconnectedTV.setText(currentDevice.getName());
+            nameTV.setText(currentDevice.getDescription());
+            nameUnconnectedTV.setText(currentDevice.getDescription());
             serialTV.setText(String.format(getString(R.string.device_serial), currentDevice.getHardwareId()));
             versionTV.setText( String.format(getString(R.string.device_version), currentDevice.getFirmwareVersion(), currentDevice.getHardwareVersion()) );
             temperatureTV.setText( String.format(getString(R.string.device_temperature), Util.celsiusToFahrenheit( currentDevice.getTemperature() ), currentDevice.getTemperature()) );
