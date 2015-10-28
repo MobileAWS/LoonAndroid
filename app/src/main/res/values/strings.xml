@@ -143,8 +143,8 @@
     <string name="property_incontinence_off"></string>
 
     <string name="property_call">Call</string>
-    <string name="property_call_on">Call Button Service Requested</string>
-    <string name="property_call_off"></string>
+    <string name="property_call_on"></string>
+    <string name="property_call_off">Call Button Service Requested</string>
 
     <string name="property_pri">Portal</string>
     <string name="property_pri_on">Doorway Motion Detected</string>

@@ -90,7 +90,7 @@ public class UpLoadRequestHandler {
 
         devicePropertiesJson.put(KEY_TOKEN, token);
         JSONObject propertyJson = new JSONObject();
-        propertyJson.put(KEY_DEVICE_ID, device.getMacAddress());
+        propertyJson.put(KEY_DEVICE_ID, device.getHardwareId());
         propertyJson.put(KEY_DEVICE_NAME, TextUtils.isEmpty(device.getDescription())?device.getName():device.getDescription());
         devicePropertiesJson.put(KEY_DEVICE, propertyJson);
         JSONArray jsonArray = new JSONArray();

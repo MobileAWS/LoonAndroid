@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import com.maws.loonandroid.gatt.GattManager;
-import org.droidparts.Injector;
 import java.util.UUID;
 
 public class GattSetNotificationOperation extends GattOperation {
