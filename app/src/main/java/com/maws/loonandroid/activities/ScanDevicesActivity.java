@@ -1,5 +1,6 @@
 package com.maws.loonandroid.activities;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -188,6 +189,7 @@ public class ScanDevicesActivity extends ActionBarActivity {
         }
     };
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onResume() {
         super.onPause();

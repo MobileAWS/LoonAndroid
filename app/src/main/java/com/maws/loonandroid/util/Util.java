@@ -67,12 +67,9 @@ public class Util {
     public static void generateAlarm(Context context, DeviceProperty dProperty){
 
         //before generating an alarm, i need to make sure the property is not disabled
-        User user = User.getCurrent(context);
-        if(user == null) {
-            return;
-        }
+
         DeviceEnabledPropertyDao depDao = new DeviceEnabledPropertyDao(context);
-        DeviceEnabledProperty deviceEnabledProperty =  depDao.findByDevicePropertyUser(dProperty.getDeviceId(), dProperty.getPropertyId(), user.getId());
+        DeviceEnabledProperty deviceEnabledProperty =  depDao.findByDevicePropertyUser(dProperty.getDeviceId());
         boolean isEnabled = deviceEnabledProperty == null?true:deviceEnabledProperty.isEnabled();
 
         if(isEnabled) {
@@ -137,10 +134,11 @@ public class Util {
         return timeString;
     }
     public static  boolean isLoginOnline(Context context){
-        User user =User.getCurrent(context);
-        if(user != null && user.getToken()!= null && !user.getToken().isEmpty()){
-            return  true;
-        }
+        //TODO implemetation if is online
+        //User user =User.getCurrent(context);
+        //if(user != null && user.getToken()!= null && !user.getToken().isEmpty()){
+          //  return  true;
+        //}
         return false;
     }
 
@@ -162,7 +160,7 @@ public class Util {
     public static long getSiteId(Context context){
         return Site.getCurrent(context).getId();
     }
-    public static long getUserId(Context context) { return  User.getCurrent(context).getId(); }
+    public static long getUserId(Context context) { return 0; }//User.getCurrent(context).getId(); }
 
     public static void setUpSignalView(Context context, ImageView signalIV, Device device){int signal = device.getSignalStrength();
         if(signal <= -90){

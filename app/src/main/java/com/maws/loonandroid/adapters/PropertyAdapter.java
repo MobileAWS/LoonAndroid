@@ -61,9 +61,8 @@ public class PropertyAdapter extends BaseAdapter {
         nameTV.setText( context.getString( thisProperty.getDisplayId() ) );
 
         //i need to get the status of each property
-        final User user = User.getCurrent(context);
         final DeviceEnabledPropertyDao depDao = new DeviceEnabledPropertyDao(context);
-        final DeviceEnabledProperty deviceEProp = depDao.findByDevicePropertyUser( device.getId(), thisProperty.getId(), user.getId() );
+        final DeviceEnabledProperty deviceEProp = depDao.findByDevicePropertyUser( device.getId());
 
         //is this property ON?
         boolean isOn = false;
@@ -94,7 +93,7 @@ public class PropertyAdapter extends BaseAdapter {
         enabledTB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                updateDeviceEnabledProperty(device.getId() ,user.getId(), thisProperty.getId(), delayET,enabledTB );
+                updateDeviceEnabledProperty(device.getId() , thisProperty.getId(), delayET,enabledTB );
             }
         });
         /*delayET.setOnKeyListener(new View.OnKeyListener() {
@@ -107,16 +106,15 @@ public class PropertyAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private void updateDeviceEnabledProperty( long deviceId,long userId,long propertyId, EditText delayET, ToggleButton enabledTB ){
+    private void updateDeviceEnabledProperty( long deviceId,long propertyId, EditText delayET, ToggleButton enabledTB ){
         int delay = TextUtils.isEmpty( delayET.getText().toString() )?0:Integer.valueOf(delayET.getText().toString());
         DeviceEnabledPropertyDao depDao = new DeviceEnabledPropertyDao(context);
-        DeviceEnabledProperty thisDEP = depDao.findByDevicePropertyUser( deviceId, propertyId, userId );
+        DeviceEnabledProperty thisDEP = depDao.findByDevicePropertyUser(deviceId);
         boolean shouldCreate = false;
         if(thisDEP == null){
             thisDEP = new DeviceEnabledProperty();
             thisDEP.setDeviceId(deviceId);
             thisDEP.setPropertyId(propertyId);
-            thisDEP.setUserId(userId);
             shouldCreate = true;
         }
         thisDEP.setDelay(delay);

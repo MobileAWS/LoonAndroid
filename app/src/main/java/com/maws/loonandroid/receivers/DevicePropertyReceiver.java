@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
+
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.contentproviders.DevicePropertyContentProvider;
 import com.maws.loonandroid.dao.DevicePropertyDao;
@@ -55,11 +57,9 @@ public class DevicePropertyReceiver extends BroadcastReceiver {
             DeviceProperty dProperty = new DeviceProperty();
             dProperty.setDeviceId(deviceId);
             dProperty.setPropertyId(propertyId);
-            dProperty.setUserId(User.getCurrent(context).getId());
+
             dProperty.setValue(value);
             dProperty.setCreatedAt(new Date(alarmDateMillis));
-            dProperty.setCostumerId(Customer.getCurrent(context).getId());
-            dProperty.setSiteId(Site.getCurrent(context).getId());
 
             DevicePropertyDao aDao = new DevicePropertyDao(context);
             aDao.create(dProperty);

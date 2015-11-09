@@ -122,6 +122,7 @@
                 android:text="@string/action_sign_in_no_cloud"
                 android:layout_marginLeft="5dp"
                 android:textAllCaps="false"
+                android:visibility="gone"
             />
         </LinearLayout>
 

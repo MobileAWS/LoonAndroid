@@ -25,9 +25,6 @@ public class DevicePropertyDao {
     // Contacts Table Columns names
     public static final String KEY_ID = "_id";
     public static final String KEY_DEVICE_ID = "deviceID";
-    public static final String KEY_CUSTOMER_ID = "customerID";
-    public static final String KEY_USER_ID = "userID";
-    public static final String KEY_SITE_ID = "siteID";
     public static final String KEY_PROPERTY_ID = "devicePropertyID";
     public static final String KEY_CREATED_AT = "createdAt";
     public static final String KEY_VALUE = "value";
@@ -48,13 +45,10 @@ public class DevicePropertyDao {
                 KEY_ID + " INTEGER PRIMARY KEY," +
                 KEY_DEVICE_ID + " INT," +
                 KEY_PROPERTY_ID + " INT," +
-                KEY_USER_ID + " INT," +
                 KEY_CREATED_AT + " INT," +
                 KEY_VALUE + " TEXT," +
                 KEY_DISMISSED_DATE + " INT," +
-                KEY_TOTAL_TIME_ALARM + " INT," +
-                KEY_CUSTOMER_ID + " INT," +
-                KEY_SITE_ID + " INT" + ")";
+                KEY_TOTAL_TIME_ALARM + " INT"+")";
 
         db.execSQL(CREATE_TABLE);
     }
@@ -74,9 +68,6 @@ public class DevicePropertyDao {
         ContentValues values = new ContentValues();
         values.put(KEY_DEVICE_ID, deviceProperty.getDeviceId());
         values.put(KEY_PROPERTY_ID, deviceProperty.getPropertyId());
-        values.put(KEY_CUSTOMER_ID, deviceProperty.getCostumerId());
-        values.put(KEY_USER_ID,deviceProperty.getUserId());
-        values.put(KEY_SITE_ID, deviceProperty.getSiteId());
         values.put(KEY_CREATED_AT, deviceProperty.getCreatedAt() == null ? null : deviceProperty.getCreatedAt().getTime());
         values.put(KEY_VALUE, deviceProperty.getValue());
         context.getContentResolver().insert(DevicePropertyContentProvider.CONTENT_URI, values);
@@ -90,13 +81,10 @@ public class DevicePropertyDao {
                     KEY_ID,
                     KEY_DEVICE_ID,
                     KEY_PROPERTY_ID,
-                    KEY_USER_ID,
                     KEY_CREATED_AT,
                     KEY_VALUE,
                     KEY_DISMISSED_DATE,
-                    KEY_TOTAL_TIME_ALARM,
-                    KEY_CUSTOMER_ID,
-                    KEY_SITE_ID
+                    KEY_TOTAL_TIME_ALARM
                 },
                 KEY_ID + "=?",
                 new String[]{
@@ -125,12 +113,9 @@ public class DevicePropertyDao {
                         KEY_DEVICE_ID,
                         KEY_PROPERTY_ID,
                         KEY_CREATED_AT,
-                        KEY_USER_ID,
                         KEY_VALUE,
                         KEY_DISMISSED_DATE,
                         KEY_TOTAL_TIME_ALARM,
-                        KEY_CUSTOMER_ID,
-                        KEY_SITE_ID
                 },
                 KEY_DEVICE_ID + "=?",
                 new String[]{
@@ -162,13 +147,10 @@ public class DevicePropertyDao {
                         KEY_ID,
                         KEY_DEVICE_ID,
                         KEY_PROPERTY_ID,
-                        KEY_USER_ID,
                         KEY_CREATED_AT,
                         KEY_VALUE,
                         KEY_DISMISSED_DATE,
-                        KEY_TOTAL_TIME_ALARM,
-                        KEY_CUSTOMER_ID,
-                        KEY_SITE_ID
+                        KEY_TOTAL_TIME_ALARM
                 },
                 KEY_DEVICE_ID + "=?",
                 new String[]{
@@ -192,7 +174,7 @@ public class DevicePropertyDao {
         // return list object
         return listDeviceProperties;
     }
-    public List<DeviceProperty> getAllByIndex(long deviceId, long customerId, long siteId, long userId){
+    public List<DeviceProperty> getAllByIndex(long deviceId){
         List<DeviceProperty> listDeviceProperties = new ArrayList<>();
         Cursor cursor = context.getContentResolver().query(DevicePropertyContentProvider.CONTENT_URI,
                 new String[]{
@@ -200,19 +182,14 @@ public class DevicePropertyDao {
                         KEY_DEVICE_ID,
                         KEY_PROPERTY_ID,
                         KEY_CREATED_AT,
-                        KEY_USER_ID,
                         KEY_VALUE,
                         KEY_DISMISSED_DATE,
-                        KEY_TOTAL_TIME_ALARM,
-                        KEY_CUSTOMER_ID,
-                        KEY_SITE_ID
+                        KEY_TOTAL_TIME_ALARM
                 },
-                KEY_DEVICE_ID + "=? AND " +KEY_CUSTOMER_ID+ "=? AND "+KEY_SITE_ID+ "=? AND "+KEY_USER_ID+ "=?" ,
+                KEY_DEVICE_ID + "=?" ,
                 new String[]{
-                        String.valueOf(deviceId),
-                        String.valueOf(customerId),
-                        String.valueOf(siteId),
-                        String.valueOf(userId)
+                        String.valueOf(deviceId)
+
                 },
                 KEY_ID + " DESC"
         );
@@ -240,13 +217,10 @@ public class DevicePropertyDao {
                         KEY_ID,
                         KEY_DEVICE_ID,
                         KEY_PROPERTY_ID,
-                        KEY_USER_ID,
                         KEY_CREATED_AT,
                         KEY_VALUE,
                         KEY_DISMISSED_DATE,
-                        KEY_TOTAL_TIME_ALARM,
-                        KEY_CUSTOMER_ID,
-                        KEY_SITE_ID
+                        KEY_TOTAL_TIME_ALARM
                 },
                 null,
                 null,
@@ -304,27 +278,21 @@ public class DevicePropertyDao {
         db.delete(TABLE_NAME, null, null);
     }
 
-    public DeviceProperty getLastAlertForDevice(long deviceId, long customerId, long siteId, long userId){
+    public DeviceProperty getLastAlertForDevice(long deviceId){
 
         Cursor cursor = context.getContentResolver().query(DevicePropertyContentProvider.CONTENT_URI,
                 new String[]{
                         KEY_ID,
                         KEY_DEVICE_ID,
                         KEY_PROPERTY_ID,
-                        KEY_USER_ID,
                         KEY_CREATED_AT,
                         KEY_VALUE,
                         KEY_DISMISSED_DATE,
-                        KEY_TOTAL_TIME_ALARM,
-                        KEY_CUSTOMER_ID,
-                        KEY_SITE_ID
+                        KEY_TOTAL_TIME_ALARM
                 },
-                KEY_DEVICE_ID + "=? AND " +KEY_CUSTOMER_ID+ "=? AND "+KEY_SITE_ID+ "=? AND "+KEY_USER_ID+ "=?" ,
+                KEY_DEVICE_ID + "=? " ,
                 new String[]{
-                        String.valueOf(deviceId),
-                        String.valueOf(customerId),
-                        String.valueOf(siteId),
-                        String.valueOf(userId)
+                        String.valueOf(deviceId)
                 },
                  KEY_ID + " DESC"
         );
@@ -348,13 +316,10 @@ public class DevicePropertyDao {
        deviceProperty.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
        deviceProperty.setDeviceId(cursor.getLong(cursor.getColumnIndex(KEY_DEVICE_ID)));
        deviceProperty.setPropertyId(cursor.getLong(cursor.getColumnIndex(KEY_PROPERTY_ID)));
-       deviceProperty.setUserId(cursor.getLong(cursor.getColumnIndex(KEY_USER_ID)));
        deviceProperty.setCreatedAt(new Date(cursor.getLong(cursor.getColumnIndex(KEY_CREATED_AT))));
        deviceProperty.setValue(cursor.getString(cursor.getColumnIndex(KEY_VALUE)));
        deviceProperty.setDismissedAt(cursor.isNull(cursor.getColumnIndex(KEY_DISMISSED_DATE)) ? null : new Date(cursor.getLong(cursor.getColumnIndex(KEY_DISMISSED_DATE))));
        deviceProperty.setTotalTimeAlarm(cursor.getLong(cursor.getColumnIndex(KEY_TOTAL_TIME_ALARM)));
-       deviceProperty.setCostumerId(cursor.getLong(cursor.getColumnIndex(KEY_CUSTOMER_ID)));
-       deviceProperty.setSiteId(cursor.getLong(cursor.getColumnIndex(KEY_SITE_ID)));
        return deviceProperty;
    }
 }

@@ -1,6 +1,7 @@
 package com.maws.loonandroid.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,16 +16,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.activities.LoginActivity;
+import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.adapters.UploadSensorListAdapter;
 import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.DevicePropertyDao;
-import com.maws.loonandroid.models.Customer;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
-import com.maws.loonandroid.models.Site;
 import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.requests.UpLoadRequestHandler;
-import com.maws.loonandroid.requests.UserRequestHandler;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomToast;
 
@@ -93,44 +93,12 @@ public class UploadToCloudFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_start_scan:
                 if(!Util.isLoginOnline(this.getView().getContext())) {
-                    User user = User.getCurrent(getView().getContext());
-                    Customer customer = Customer.getCurrent(getView().getContext());
-                    Site site = Site.getCurrent(getView().getContext());
-                    UserRequestHandler.login(getView().getContext(),new UserRequestHandler.LoginListener() {
-                        @Override
-                        public void onSuccess(JSONObject response, User user, String siteId, String customerId, Context context) {
-
-                            try {
-                                if(!response.isNull("response")) {
-                                    JSONObject responsoOk = (JSONObject) response.get("response");
-                                    setTokenUser(responsoOk, user, context);
-                                }else {
-                                    setTokenUser(response, user, context);
-                                }
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(String error) {
-                            try {
-                                if (error != null && !error.isEmpty()) {
-                                    CustomToast.showAlert(getView().getContext(), error, CustomToast._TYPE_ERROR);
-                                }
-                                else{
-                                    CustomToast.showAlert(getView().getContext(), getString(R.string.loginError), CustomToast._TYPE_ERROR);
-                                }
-                            } catch (Exception ex) {
-                                CustomToast.showAlert(getView().getContext(), getString(R.string.upload_login_error), CustomToast._TYPE_ERROR);
-                            }
-                        }
-
-                    }, user, site.getCode(), customer.getCode());
+                    Intent LoginIntent= null;
+                    LoginIntent = new Intent(this.getActivity().getApplicationContext(),LoginActivity.class);
+                    getActivity().startActivityForResult(LoginIntent, MainActivity.RESQUET_LOGIN_ACTIVITY);
                 }
                 else{
-                    uploadInfoToServer(adapter);
+                    this.uploadInfoToServer(adapter);
                 }
                 return true;
             default:
@@ -139,7 +107,7 @@ public class UploadToCloudFragment extends Fragment {
     }
 
 
-    private void uploadInfoToServer(UploadSensorListAdapter adapter){
+    public void uploadInfoToServer(UploadSensorListAdapter adapter){
 
         final List<Device> listDevices = adapter.getSelectedItems();
         Context context= this.getActivity();
@@ -151,15 +119,13 @@ public class UploadToCloudFragment extends Fragment {
         for(List<DeviceProperty> devicePropertyList:listToUpload ){
             View itemView = Util.getViewByPosition(countDevices,sensorsLV);
             UpLoadRequestHandler uploadRequestHandler = new UpLoadRequestHandler();
-            User user =User.getCurrent(this.getView().getContext());
+            User user =  User.getCurrent(this.getView().getContext());
             uploadRequestHandler.sendDevicePropertiesToServer(this.getView().getContext(), new UpLoadRequestHandler.UploadListener() {
                 @Override
                 public void onFailure(String error,Context context, View progressBarView) {
                     try {
                         JSONObject object = new JSONObject(error);
                         setUpMessageUpload(progressBarView, Color.RED, "Fail");
-
-
                         CustomToast.showAlert(context, getString(R.string.upload_server_error), CustomToast._TYPE_ERROR);
                     } catch (Exception ex) {
                         CustomToast.showAlert(context, getString(R.string.default_request_error_message), CustomToast._TYPE_ERROR);
@@ -196,7 +162,7 @@ public class UploadToCloudFragment extends Fragment {
         List<Device> devicesActives = sDao.getAllActive();
         for(Device device:devicesActives){
             DevicePropertyDao dPDao= new DevicePropertyDao(this.getActivity());
-            List<DeviceProperty> devicePropertiesList = dPDao.getAllByIndex(device.getId(), Util.getCustomerId(context),Util.getSiteId(context),Util.getUserId(context));;
+            List<DeviceProperty> devicePropertiesList = dPDao.getAllByIndex(device.getId());
             if(devicePropertiesList != null && devicePropertiesList.size() > 0){
                 resultDevices.add(device);
             }
@@ -237,7 +203,7 @@ public class UploadToCloudFragment extends Fragment {
     private ArrayList<List<DeviceProperty>> selectDevicesWithAlarm(DevicePropertyDao devicePropertyDao, Context context , List<Device> listDevices){
         ArrayList<List<DeviceProperty>> listToUpload = new ArrayList<>();
         for(Device device:listDevices){
-            List<DeviceProperty> devicePropertyList = devicePropertyDao.getAllByIndex(device.getId(), Util.getCustomerId(context),Util.getSiteId(context),Util.getUserId(context));
+            List<DeviceProperty> devicePropertyList = devicePropertyDao.getAllByIndex(device.getId());
             if (devicePropertyList != null && !devicePropertyList.isEmpty()) {
                 listToUpload.add(devicePropertyList);
             }
@@ -251,5 +217,8 @@ public class UploadToCloudFragment extends Fragment {
         }else {
             emptyLayoutUpload.setVisibility(View.VISIBLE);
         }
+    }
+    public UploadSensorListAdapter getAdapter(){
+        return this.adapter;
     }
 }

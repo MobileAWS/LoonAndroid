@@ -224,7 +224,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
         //i need to look for this item's active alarms and list them
         DevicePropertyDao aDao = new DevicePropertyDao(context);
         //viewHolder.alarmsLL.removeAllViews();
-        DeviceProperty dProperty = aDao.getLastAlertForDevice(thisDevice.getId(),Util.getCustomerId(context),Util.getSiteId(context),Util.getUserId(context));
+        DeviceProperty dProperty = aDao.getLastAlertForDevice(thisDevice.getId());
         viewHolder.alarmsLL.removeAllViews();
         if (dProperty != null && dProperty.getDismissedAt() == null) {
 

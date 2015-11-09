@@ -9,9 +9,6 @@ public class DeviceProperty {
 
     private long id;
     private long deviceId;
-    private long costumerId;
-    private long siteId;
-    private long userId;
     private long propertyId;
     private Date createdAt;
     private Date dismissedAt;
@@ -32,22 +29,6 @@ public class DeviceProperty {
 
     public void setDeviceId(long deviceId) {
         this.deviceId = deviceId;
-    }
-
-    public long getCostumerId() {
-        return costumerId;
-    }
-
-    public void setCostumerId(long costumerId) {
-        this.costumerId = costumerId;
-    }
-
-    public long getSiteId() {
-        return siteId;
-    }
-
-    public void setSiteId(long siteId) {
-        this.siteId = siteId;
     }
 
     public long getPropertyId() {
@@ -90,7 +71,4 @@ public class DeviceProperty {
         this.value = value;
     }
 
-    public long getUserId() { return userId; }
-
-    public void setUserId(long userId) { this.userId = userId; }
 }

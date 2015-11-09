@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
+import android.widget.Toast;
+
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.enums.FragmentType;
@@ -25,11 +27,15 @@ import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomProgressSpinner;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     public static final int REQUEST_ENABLE_BT = 30921;
-    public final static int _REQUEST_MONITOR_ACTIVITY = 1034;
+    public final static int REQUEST_MONITOR_ACTIVITY = 1034;
+    public final static int REQUEST_SCAN_ACTIVITY = 132074;
+    public final static int RESQUET_LOGIN_ACTIVITY=2040;
     public final static int REQUEST_SCAN = 1002;
     public static final String TAG_MONITOR ="ss";
     public static final String TAG_SENSOR = "ss1";
@@ -54,13 +60,13 @@ public class MainActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        User currentUser = User.getCurrent(this);
-        Log.e("Main", currentUser.toString());
-        if ((currentUser.getToken() == null || currentUser.getToken().isEmpty()) && !currentUser.getOffline() ) {
-            Intent i = new Intent(this,LoginActivity.class);
-            startActivity(i);
-            this.finish();
-        }
+        User.instance =null;
+        //Log.e("Main", currentUser.toString());
+        //if ((currentUser.getToken() == null || currentUser.getToken().isEmpty()) && !currentUser.getOffline() ) {
+        //    Intent i = new Intent(this,LoginActivity.class);
+        //    startActivity(i);
+        //    this.finish();
+        //}
         initMonitors = getIntent().getBooleanExtra("initMonitors", false);
 
         if(!Util.isMyServiceRunning(this, BLEService.class) && !LoonAndroid.demoMode){
@@ -156,23 +162,38 @@ public class MainActivity extends ActionBarActivity
     }
 
     private void logout(){
-        Intent logOutIntent = new Intent(MainActivity.this, LoginActivity.class);
-        User userLogout = User.getCurrent(this);
+        //TODO implemetation logout.
+        User userLogout = new User();
         userLogout.setToken(null);
         userLogout.setOffline(false);
-        User.setCurrent(userLogout,this);
+        User.setCurrent(userLogout, this);
         User.instance = null;
-        startActivity(logOutIntent);
-        this.finish();
+        User.setCurrent(userLogout, this);
+        Toast.makeText(this, this.getText(R.string.Logout_message), LENGTH_SHORT).show();
+        //this.finish();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
 
         //for now, let's just refresh the monitors fragment if it's visible
-        Fragment f = getSupportFragmentManager().findFragmentByTag(TAG_SENSOR);
-        if(f != null && f instanceof DeviceFragment && f.isVisible()){
-            ((DeviceFragment)f).loadSensors();
+        Log.e("request code: ",String.valueOf(requestCode));
+        if(requestCode == this.REQUEST_SCAN_ACTIVITY){
+            Fragment f = getSupportFragmentManager().findFragmentByTag(TAG_SENSOR);
+            if(f != null && f instanceof DeviceFragment && f.isVisible()){
+                ((DeviceFragment)f).loadSensors();
+            }
+        }
+        if(requestCode == this.RESQUET_LOGIN_ACTIVITY) {
+            Fragment f = getSupportFragmentManager().findFragmentByTag(TAG_UPLOAD);
+            String tag = TAG_UPLOAD;
+            if(f != null && f instanceof UploadToCloudFragment && f.isVisible()){
+               // FragmentManager fragmentManager = getSupportFragmentManager();
+                //fragmentManager.beginTransaction()
+                //        .replace(R.id.container, f, tag)
+                //        .commit();
+                ((UploadToCloudFragment)f).uploadInfoToServer(((UploadToCloudFragment) f).getAdapter());
+            }
         }
 
     }

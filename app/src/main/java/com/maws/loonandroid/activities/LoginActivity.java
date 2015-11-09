@@ -262,10 +262,11 @@ public class LoginActivity extends Activity implements OnClickListener {
         }else {
             Site.setCurrent(site, this);
         }
-        Util.setLoginInit(User.getCurrent(this).getEmail(), siteId, customerId, this);
         Intent newUserIntent = new Intent(LoginActivity.this, MainActivity.class);
         newUserIntent.putExtra("initMonitors", true);
-        startActivity(newUserIntent);
+        setResult(Activity.RESULT_OK, newUserIntent);
+        finish();
+        //startActivityForResult(newUserIntent, MainActivity.REQUEST_LOGIN_ACTIVITY_RESULT);
     }
 
     private  void getLoginInit() {

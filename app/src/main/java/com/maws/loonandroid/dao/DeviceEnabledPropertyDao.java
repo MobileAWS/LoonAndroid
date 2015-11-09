@@ -18,7 +18,6 @@ public class DeviceEnabledPropertyDao {
 
     // Contacts Table Columns names
     public static final String KEY_ID = "_id";
-    public static final String KEY_USER_ID = "userId";
     public static final String KEY_DEVICE_ID = "deviceId";
     public static final String KEY_PROPERTY_ID = "propertyId";
     public static final String KEY_ENABLED = "enabled";
@@ -35,7 +34,6 @@ public class DeviceEnabledPropertyDao {
 
         String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
                 KEY_ID + " INTEGER PRIMARY KEY," +
-                KEY_USER_ID + " INTEGER," +
                 KEY_DEVICE_ID + " INTEGER," +
                 KEY_PROPERTY_ID + " INTEGER," +
                 KEY_ENABLED + " TINYINT," +
@@ -56,7 +54,6 @@ public class DeviceEnabledPropertyDao {
     public void create(DeviceEnabledProperty dp) {
 
         ContentValues values = new ContentValues();
-        values.put(KEY_USER_ID, dp.getUserId());
         values.put(KEY_DEVICE_ID, dp.getDeviceId());
         values.put(KEY_PROPERTY_ID, dp.getPropertyId());
         values.put(KEY_ENABLED, dp.isEnabled()?1:0);
@@ -71,7 +68,6 @@ public class DeviceEnabledPropertyDao {
     public long update(DeviceEnabledProperty dp) {
 
         ContentValues values = new ContentValues();
-        values.put(KEY_USER_ID, dp.getUserId());
         values.put(KEY_DEVICE_ID, dp.getDeviceId());
         values.put(KEY_PROPERTY_ID, dp.getPropertyId());
         values.put(KEY_ENABLED, dp.isEnabled()?1:0);
@@ -88,22 +84,19 @@ public class DeviceEnabledPropertyDao {
     }
 
     // Getting single object
-    public DeviceEnabledProperty findByDevicePropertyUser(long deviceId, long propertyId, long userId) {
+    public DeviceEnabledProperty findByDevicePropertyUser(long deviceId) {
 
         Cursor cursor = context.getContentResolver().query(DeviceEnabledPropertyContentProvider.CONTENT_URI,
                 new String[]{
                         KEY_ID,
-                        KEY_USER_ID,
                         KEY_DEVICE_ID,
                         KEY_PROPERTY_ID,
                         KEY_ENABLED,
                         KEY_DELAY
                 },
-                KEY_DEVICE_ID + "=? AND " + KEY_USER_ID + "=? AND "  + KEY_PROPERTY_ID + "=?",
+                KEY_DEVICE_ID + "=? ",
                 new String[]{
-                        String.valueOf(deviceId),
-                        String.valueOf(userId),
-                        String.valueOf(propertyId)
+                        String.valueOf(deviceId)
                 },
                 null
         );
@@ -118,8 +111,6 @@ public class DeviceEnabledPropertyDao {
         dp.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
         dp.setIsEnabled(cursor.getInt(cursor.getColumnIndex(KEY_ENABLED)) == 1);
         dp.setDelay(cursor.getInt(cursor.getColumnIndex(KEY_DELAY)));
-        dp.setDeviceId(cursor.getLong(cursor.getColumnIndex(KEY_DEVICE_ID)));
-        dp.setUserId(cursor.getLong(cursor.getColumnIndex(KEY_USER_ID)));
         dp.setPropertyId(cursor.getLong(cursor.getColumnIndex(KEY_PROPERTY_ID)));
         cursor.close();
 

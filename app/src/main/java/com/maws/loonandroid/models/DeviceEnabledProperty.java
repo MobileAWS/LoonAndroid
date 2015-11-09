@@ -8,7 +8,8 @@ public class DeviceEnabledProperty {
     long id;
     long propertyId;
     long deviceId;
-    long userId;
+    //TODO delete this part of model
+    //long userId;
     boolean isEnabled = true;
     int delay = 0;
 
@@ -43,14 +44,14 @@ public class DeviceEnabledProperty {
     public void setDelay(int delay) {
         this.delay = delay;
     }
-
-    public long getUserId() {
+    //TODO delete this part of model
+    /* public long getUserId() {
         return userId;
     }
 
     public void setUserId(long userId) {
         this.userId = userId;
-    }
+    }*/
 
     public long getId() {
         return id;

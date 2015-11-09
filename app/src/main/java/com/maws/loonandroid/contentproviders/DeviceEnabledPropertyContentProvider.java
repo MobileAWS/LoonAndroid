@@ -179,7 +179,6 @@ public class DeviceEnabledPropertyContentProvider extends ContentProvider {
     private void checkColumns(String[] projection) {
         String[] available = {
                 DeviceEnabledPropertyDao.KEY_ID,
-                DeviceEnabledPropertyDao.KEY_USER_ID,
                 DeviceEnabledPropertyDao.KEY_DELAY,
                 DeviceEnabledPropertyDao.KEY_DEVICE_ID,
                 DeviceEnabledPropertyDao.KEY_ENABLED,

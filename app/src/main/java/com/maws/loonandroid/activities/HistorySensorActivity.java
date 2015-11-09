@@ -59,7 +59,7 @@ public class HistorySensorActivity extends ActionBarActivity {
 
     private DevicePropertyHistoryListAdapter loadInformation (long deviceId) {
         DevicePropertyDao devicePropertyDao = new DevicePropertyDao(this);
-        List<DeviceProperty> listDeviceProperty = devicePropertyDao.getAllByIndex(deviceId, Util.getCustomerId(this),Util.getSiteId(this),Util.getUserId(this));
+        List<DeviceProperty> listDeviceProperty = devicePropertyDao.getAllByIndex(deviceId);
         if (listDeviceProperty != null && listDeviceProperty.size() > 0 ) {
             adapter= new DevicePropertyHistoryListAdapter(listDeviceProperty,this);
         }
