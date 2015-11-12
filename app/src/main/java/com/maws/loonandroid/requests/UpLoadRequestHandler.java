@@ -16,6 +16,7 @@ import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
 
+import com.maws.loonandroid.views.CustomToast;
 import com.maws.loonandroid.volley.VolleySingleton;
 
 import org.json.JSONArray;
@@ -74,7 +75,11 @@ public class UpLoadRequestHandler {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        listener.onFailure( VolleySingleton.getResponseData(error.networkResponse),context ,progressBarView );
+                        try {
+                            listener.onFailure(VolleySingleton.getResponseData(error.networkResponse), context, progressBarView);
+                        } catch (Exception e){
+                            CustomToast.showAlert(context,context.getString(R.string.error_upload_message));
+                        }
                         error.printStackTrace();
                     }
                 });

@@ -135,10 +135,10 @@ public class Util {
     }
     public static  boolean isLoginOnline(Context context){
         //TODO implemetation if is online
-        //User user =User.getCurrent(context);
-        //if(user != null && user.getToken()!= null && !user.getToken().isEmpty()){
-          //  return  true;
-        //}
+        User user =User.getCurrent(context);
+        if(user != null && user.getToken()!= null && !user.getToken().isEmpty()){
+            return  true;
+        }
         return false;
     }
 
