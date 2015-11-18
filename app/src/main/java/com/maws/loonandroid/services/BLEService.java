@@ -290,6 +290,15 @@ public class BLEService extends Service
                                 //retry connect right now
                                 postReconectMessageToHandler(device.getMacAddress(), 0);
 
+                                //retry connect in 1 minute
+                                postReconectMessageToHandler(device.getMacAddress(), 60*1*1000);
+
+                                //retry connect in 2 minutes
+                                postReconectMessageToHandler(device.getMacAddress(), 60*2*1000);
+
+                                //retry connect in 3 minutes
+                                postReconectMessageToHandler(device.getMacAddress(), 60*3*1000);
+
                                 //retry in 5 minutes
                                 postReconectMessageToHandler(device.getMacAddress(), 60*5*1000);
 
@@ -298,6 +307,18 @@ public class BLEService extends Service
 
                                 //retry in 20 minutes
                                 postReconectMessageToHandler(device.getMacAddress(), 60*20*1000);
+
+                                //retry in 30 minutes
+                                postReconectMessageToHandler(device.getMacAddress(), 60*30*1000);
+
+                                //retry in 45 minutes
+                                postReconectMessageToHandler(device.getMacAddress(), 60*45*1000);
+
+                                //retry in 60 minutes
+                                postReconectMessageToHandler(device.getMacAddress(), 60*60*1000);
+
+                                //retry in 120 minutes
+                                postReconectMessageToHandler(device.getMacAddress(), 60*120*1000);
                             }
                         }
                         device.setConnected(false);
