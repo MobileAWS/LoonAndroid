@@ -24,6 +24,7 @@ import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.DrawerListAdapter;
 import com.maws.loonandroid.enums.FragmentType;
 import com.maws.loonandroid.models.IconTextOption;
+import com.maws.loonandroid.util.Util;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -270,15 +271,25 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     private IconTextOption[] getMenuOptions(){
-        if( menuOptions == null ) {
-            menuOptions = new IconTextOption[5];
-            menuOptions[0] = new IconTextOption( getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor, FragmentType.MONITOR );
-            menuOptions[1] = new IconTextOption("Status",R.drawable.ic_action_status, FragmentType.SENSOR);
-            //menuOptions[1] = new IconTextOption( getString(R.string.navigation_push_notification), R.drawable.ic_launcher, FragmentType.PUSH_NOTIFICATION );
-            menuOptions[2] = new IconTextOption( getString(R.string.navigation_upload_to_cloud), R.drawable.ic_action_upload_to_cloud, FragmentType.UPLOAD );
-            menuOptions[3] = new IconTextOption(getString(R.string.support_option),R.drawable.ic_suport, FragmentType.SUPPORT);
-            menuOptions[4] = new IconTextOption( getString(R.string.navigation_log_out), R.drawable.ic_action_logout, FragmentType.LOGOUT );
-        }
+
+
+            if(Util.isLoginOnline(this.getActivity())) {
+                menuOptions = new IconTextOption[5];
+                menuOptions[0] = new IconTextOption(getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor, FragmentType.MONITOR);
+                menuOptions[1] = new IconTextOption("Status", R.drawable.ic_action_status, FragmentType.SENSOR);
+                //menuOptions[1] = new IconTextOption( getString(R.string.navigation_push_notification), R.drawable.ic_launcher, FragmentType.PUSH_NOTIFICATION );
+                menuOptions[2] = new IconTextOption(getString(R.string.navigation_upload_to_cloud), R.drawable.ic_action_upload_to_cloud, FragmentType.UPLOAD);
+                menuOptions[3] = new IconTextOption(getString(R.string.support_option), R.drawable.ic_suport, FragmentType.SUPPORT);
+                menuOptions[4] = new IconTextOption(getString(R.string.navigation_log_out), R.drawable.ic_action_logout, FragmentType.LOGOUT);
+            }else {
+                menuOptions = new IconTextOption[4];
+                menuOptions[0] = new IconTextOption(getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor, FragmentType.MONITOR);
+                menuOptions[1] = new IconTextOption("Status", R.drawable.ic_action_status, FragmentType.SENSOR);
+                //menuOptions[1] = new IconTextOption( getString(R.string.navigation_push_notification), R.drawable.ic_launcher, FragmentType.PUSH_NOTIFICATION );
+                menuOptions[2] = new IconTextOption(getString(R.string.navigation_upload_to_cloud), R.drawable.ic_action_upload_to_cloud, FragmentType.UPLOAD);
+                menuOptions[3] = new IconTextOption(getString(R.string.support_option), R.drawable.ic_suport, FragmentType.SUPPORT);
+            }
+
         return menuOptions;
     }
 
@@ -290,5 +301,10 @@ public class NavigationDrawerFragment extends Fragment {
          * Called when an item in the navigation drawer is selected.
          */
         void onNavigationDrawerItemSelected(FragmentType fragmentType);
+    }
+
+    public void notifyAdapter(){
+        adapter = new DrawerListAdapter(this.getActivity(), R.layout.drawer_item, this.getMenuOptions() );
+        mDrawerListView.setAdapter(adapter);
     }
 }

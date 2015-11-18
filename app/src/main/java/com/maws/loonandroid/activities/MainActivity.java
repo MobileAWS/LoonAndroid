@@ -170,6 +170,8 @@ public class MainActivity extends ActionBarActivity
         User.instance = null;
         User.setCurrent(userLogout, this);
         Toast.makeText(this, this.getText(R.string.Logout_message), LENGTH_SHORT).show();
+        if(mNavigationDrawerFragment != null)
+            mNavigationDrawerFragment.notifyAdapter();
         //this.finish();
     }
 
@@ -194,6 +196,8 @@ public class MainActivity extends ActionBarActivity
                 //        .commit();
                 ((UploadToCloudFragment)f).uploadInfoToServer(((UploadToCloudFragment) f).getAdapter());
             }
+            if(mNavigationDrawerFragment != null)
+                mNavigationDrawerFragment.notifyAdapter();
         }
 
     }
