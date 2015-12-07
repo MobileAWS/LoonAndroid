@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="colorPrimary">#7BA9FD</color>
+    <color name="colorPrimaryDark">#5197FF</color>
+    <color name="colorAccent">#5197FF</color>
+    <color name="textColorPrimary">#BB000000</color>
+    <color name="windowBackground">#FFFFFF</color>
     <color name="lighten_50">#33FFFFFF</color>
     <color name="lighten_75">#AAFFFFFF</color>
     <color name="dark_blue">#4a557c</color>
@@ -24,6 +29,6 @@
     <color name="toast_error_border">#f5aca6</color>
     <color name="toast_error">#ffecec</color>
 
-    <color name="light_blue">#4b97d3</color>
+    <color name="light_blue">#5197FF</color>
     <color name="text_color">#266297</color>
 </resources>

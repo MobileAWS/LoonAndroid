@@ -6,7 +6,7 @@
     <item android:id="@+id/action_scan"
         android:title="@string/scan_again"
         android:orderInCategory="100"
-        app:showAsAction="always"
+        app:showAsAction="never"
         android:visible="false"
     />
 

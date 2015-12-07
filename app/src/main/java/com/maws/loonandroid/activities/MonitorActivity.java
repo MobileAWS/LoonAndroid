@@ -1,16 +1,17 @@
 package com.maws.loonandroid.activities;
 
 import android.app.AlertDialog;
+import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.app.LoaderManager;
 import android.support.v7.app.ActionBarActivity;
-import android.text.TextUtils;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,12 +19,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.PropertyAdapter;
 import com.maws.loonandroid.contentproviders.DeviceContentProvider;
 import com.maws.loonandroid.contentproviders.DevicePropertyContentProvider;
-import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.DeviceCharacteristicDao;
+import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.Property;
@@ -77,6 +79,18 @@ public class MonitorActivity extends ActionBarActivity
         loadInformation();
         getLoaderManager().initLoader(0, null, this);
         getLoaderManager().initLoader(1, null, this);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setLogo(R.mipmap.ic_launcher);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        /*FloatingActionButton myFab = (FloatingActionButton) this.findViewById(R.id.fab);
+        myFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+            }
+        });*/
     }
 
     @Override

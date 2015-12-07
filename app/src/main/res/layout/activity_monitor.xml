@@ -1,212 +1,236 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinator"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
-
-    <LinearLayout
-        android:padding="15dp"
+    android:background="@color/white"
+    >
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <LinearLayout
+        >
+        <android.support.v7.widget.Toolbar
+            android:transitionName="@string/transition_toolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/light_blue"
+            android:titleTextColor="@color/white"
+            android:title="@string/app_name"
+            android:logo="@drawable/logo"
+            />
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical" android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
 
             <LinearLayout
-                android:background="@drawable/greenbox"
-                android:padding="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-            <ImageView
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/device_picture"
-                android:layout_width="100dp"
-                android:layout_height="100dp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/infoLL"
-                android:layout_width="0dp"
+                android:padding="15dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="10dp"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/nameTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_big"
-                    android:textStyle="bold"
-                    android:text="Sensor Name"/>
-
-                <TextView
-                    android:id="@+id/serialTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Serial #: ##"
-                    android:textSize="@dimen/font_medium"
-                />
-
-                <TextView
-                    android:id="@+id/versionTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Version: 0.0/0.0"
-                    android:textSize="@dimen/font_medium"
-                />
-
                 <LinearLayout
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    >
 
-                    <TextView
-                        android:layout_gravity="center_vertical"
-                        android:id="@+id/batteryTV"
+                    <LinearLayout
+                        android:background="@drawable/greenbox"
+                        android:padding="5dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/device_battery"
-                        android:textSize="@dimen/font_medium"
-                    />
+                        android:layout_height="wrap_content">
 
                     <ImageView
-                        android:id="@+id/batteryIV"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/battery4"
-                        android:tint="@color/light_aquamarine"
-                        android:layout_marginLeft="10dp"
                         android:layout_gravity="center_vertical"
-                    />
+                        android:src="@drawable/device_picture"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp" />
 
-                </LinearLayout>
+                    </LinearLayout>
 
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_gravity="center_vertical"
-                        android:id="@+id/signalTV"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/infoLL"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Signal:"
-                        android:textSize="@dimen/font_medium"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="10dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/nameTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_big"
+                            android:textStyle="bold"
+                            android:text="Sensor Name"/>
+
+                        <TextView
+                            android:id="@+id/serialTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Serial #: ##"
+                            android:textSize="@dimen/font_medium"
                         />
 
-                    <ImageView
-                        android:id="@+id/signalIV"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/wifi3"
-                        android:tint="@color/light_aquamarine"
-                        android:layout_marginRight="5dp"
-                        android:layout_gravity="center_vertical"
-                    />
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/versionTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Version: 0.0/0.0"
+                            android:textSize="@dimen/font_medium"
+                        />
 
-                <TextView
-                    android:id="@+id/temperatureTV"
-                    android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:layout_gravity="center_vertical"
+                                android:id="@+id/batteryTV"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/device_battery"
+                                android:textSize="@dimen/font_medium"
+                            />
+
+                            <ImageView
+                                android:id="@+id/batteryIV"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/battery4"
+                                android:tint="@color/light_aquamarine"
+                                android:layout_marginLeft="10dp"
+                                android:layout_gravity="center_vertical"
+                            />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:layout_gravity="center_vertical"
+                                android:id="@+id/signalTV"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Signal:"
+                                android:textSize="@dimen/font_medium"
+                                />
+
+                            <ImageView
+                                android:id="@+id/signalIV"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/wifi3"
+                                android:tint="@color/light_aquamarine"
+                                android:layout_marginRight="5dp"
+                                android:layout_gravity="center_vertical"
+                            />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/temperatureTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Temp: 81 F/27.0 C"
+                            android:textSize="@dimen/font_medium"
+                            android:visibility="gone"
+                            />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/notConnectedLL"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="10dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+                        <TextView
+                            android:id="@+id/nameUnconnectedTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_big"
+                            android:textStyle="bold"
+                            android:text="Sensor Name"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_big"
+                            android:textStyle="bold"
+                            android:text="@string/not_connected"
+                            android:textColor="@color/dark_orange"/>
+
+                        </LinearLayout>
+                </LinearLayout>
+                <RelativeLayout
+                    android:orientation="horizontal"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Temp: 81 F/27.0 C"
+                    android:paddingTop="10dp"
+                    android:layout_gravity="right"
+                >
+
+                <Button
+                    style="@style/Button.dark_orange"
                     android:textSize="@dimen/font_medium"
-                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_alignParentLeft="@+id/historyBtn"
+                    android:id="@+id/disconnectBtn"
+                    android:text="@string/disconnect"
+                />
+                <Button
+                    style="@style/Button.dark_green"
+                    android:textSize="@dimen/font_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/renameDeviceBtn"
+                    android:text="@string/rename_device"
+                    android:visibility="visible"
                     />
+                <Button
+                    style="@style/Button.dark_green"
+                    android:id="@+id/historyBtn"
+                    android:textSize="@dimen/font_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="1dp"
+                    android:text="@string/view_history"
+                    />
+                </RelativeLayout>
 
             </LinearLayout>
-            <LinearLayout
-                android:id="@+id/notConnectedLL"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+
+            <TextView
+                style="@style/DarkHeader"
+                android:id="@+id/activeSensorHeaderTV"
+                android:text="@string/sensors"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ListView
+                android:id="@+id/propertiesLV"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_marginLeft="10dp"
-                android:orientation="vertical"
-                android:visibility="gone">
-                <TextView
-                    android:id="@+id/nameUnconnectedTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_big"
-                    android:textStyle="bold"
-                    android:text="Sensor Name"/>
+            >
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_big"
-                    android:textStyle="bold"
-                    android:text="@string/not_connected"
-                    android:textColor="@color/dark_orange"/>
+            </ListView>
 
-                </LinearLayout>
         </LinearLayout>
-        <RelativeLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:layout_gravity="right"
-        >
-
-        <Button
-            style="@style/Button.dark_orange"
-            android:textSize="@dimen/font_medium"
-            android:layout_width="wrap_content"
-            android:layout_height="45dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_alignParentLeft="@+id/historyBtn"
-            android:id="@+id/disconnectBtn"
-            android:text="@string/disconnect"
-        />
-        <Button
-            style="@style/Button.dark_green"
-            android:textSize="@dimen/font_medium"
-            android:layout_width="wrap_content"
-            android:layout_height="45dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="15dp"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/renameDeviceBtn"
-            android:text="@string/rename_device"
-            android:visibility="visible"
-            />
-        <Button
-            style="@style/Button.dark_green"
-            android:id="@+id/historyBtn"
-            android:textSize="@dimen/font_medium"
-            android:layout_width="wrap_content"
-            android:layout_height="45dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="1dp"
-            android:text="@string/view_history"
-            />
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <TextView
-        style="@style/DarkHeader"
-        android:id="@+id/activeSensorHeaderTV"
-        android:text="@string/sensors"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <ListView
-        android:id="@+id/propertiesLV"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-    >
-
-    </ListView>
-
-</LinearLayout>
+        </android.support.design.widget.AppBarLayout>
+    </android.support.design.widget.CoordinatorLayout>

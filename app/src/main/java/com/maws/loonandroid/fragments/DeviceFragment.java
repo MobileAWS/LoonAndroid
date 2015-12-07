@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -19,22 +20,24 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.activities.MonitorActivity;
 import com.maws.loonandroid.activities.ScanDevicesActivity;
 import com.maws.loonandroid.adapters.DeviceListAdapter;
-import com.maws.loonandroid.contentproviders.DevicePropertyContentProvider;
 import com.maws.loonandroid.contentproviders.DeviceContentProvider;
+import com.maws.loonandroid.contentproviders.DevicePropertyContentProvider;
+import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.dao.LoonMedicalDao;
-import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
+
 import java.util.List;
 import java.util.Random;
 
@@ -134,6 +137,14 @@ public class DeviceFragment extends Fragment implements
         layoutManager.scrollToPosition(0);
         sensorsLV.setLayoutManager(layoutManager);
         emptyLayout = rootView.findViewById(R.id.emptyLayout);
+        FloatingActionButton myFab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        myFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent scanIntent = new Intent(context, ScanDevicesActivity.class);
+                startActivityForResult(scanIntent, MainActivity.REQUEST_SCAN);
+
+            }
+        });
 
         //i need a loader to listen to alarm changes on the db alerts
         getLoaderManager().initLoader(0, null, this);
@@ -171,7 +182,7 @@ public class DeviceFragment extends Fragment implements
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if(!LoonAndroid.demoMode) {
-            inflater.inflate(R.menu.sensors, menu);
+            inflater.inflate(R.menu.sensors1, menu);
         }else{
             inflater.inflate(R.menu.sensors_demo, menu);
         }
@@ -220,7 +231,7 @@ public class DeviceFragment extends Fragment implements
             return;
         }
 
-        //let's count active sensors
+        //let's count active sensors1
         int activeCount = 0;
         for(int i = 0; i < adapter.getItemCount(); i++){
             if(adapter.getItem(i).isActive()){
@@ -230,7 +241,7 @@ public class DeviceFragment extends Fragment implements
             }
         }
 
-        //let's pick one of the sensors at random
+        //let's pick one of the sensors1 at random
         if(activeCount > 0){
 
             Random ran = new Random();

@@ -1,23 +1,26 @@
 package com.maws.loonandroid.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.support.v4.widget.DrawerLayout;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
-import com.maws.loonandroid.enums.FragmentType;
-import com.maws.loonandroid.fragments.NavigationDrawerFragment;
+import com.maws.loonandroid.adapters.ViewPagerAdapter;
 import com.maws.loonandroid.fragments.DeviceFragment;
 import com.maws.loonandroid.fragments.SensorsFragment;
 import com.maws.loonandroid.fragments.SupportFragment;
@@ -29,8 +32,8 @@ import com.maws.loonandroid.views.CustomProgressSpinner;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
-public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class MainActivity extends AppCompatActivity
+        {
 
     public static final int REQUEST_ENABLE_BT = 30921;
     public final static int REQUEST_MONITOR_ACTIVITY = 1034;
@@ -43,16 +46,11 @@ public class MainActivity extends ActionBarActivity
     public static final String TAG_SUPPORT = "sp";
     public static final String TAG_UPLOAD = "up";
     private boolean initMonitors = false;
+    private ViewPagerAdapter adapterViewPager;
 
 
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-     */
-    private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
+
     private CharSequence mTitle;
 
     @Override
@@ -61,12 +59,6 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
 
         User.instance =null;
-        //Log.e("Main", currentUser.toString());
-        //if ((currentUser.getToken() == null || currentUser.getToken().isEmpty()) && !currentUser.getOffline() ) {
-        //    Intent i = new Intent(this,LoginActivity.class);
-        //    startActivity(i);
-        //    this.finish();
-        //}
         initMonitors = getIntent().getBooleanExtra("initMonitors", false);
 
         if(!Util.isMyServiceRunning(this, BLEService.class) && !LoonAndroid.demoMode){
@@ -80,74 +72,49 @@ public class MainActivity extends ActionBarActivity
                 initMonitors = false;
             }
         }
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setLogo(R.mipmap.ic_launcher);
+        setSupportActionBar(toolbar);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.tabanim_viewpager);
+        setupViewPager(viewPager);
+        tabLayout.setupWithViewPager(viewPager);
+        setupTabLayout(tabLayout);
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
+            }
 
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
+
     }
 
-    @Override
-    public void onNavigationDrawerItemSelected(FragmentType type) {
 
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment toReplace = null;
-        String tag = "";
-        switch (type){
-            case MONITOR:
-                toReplace = DeviceFragment.newInstance();
-                tag = TAG_SENSOR;
-                break;
-            case SENSOR:
-                toReplace= SensorsFragment.newInstance();
-                tag = TAG_SENSOR;
-                break;
-            case UPLOAD:
-                toReplace = UploadToCloudFragment.newInstance();
-                tag = TAG_UPLOAD;
-                break;
-            case SUPPORT:
-                toReplace = SupportFragment.newInstance();
-                tag = TAG_SUPPORT;
-                break;
-            case LOGOUT:
-                logout();
-                break;
-        }
-
-        if(toReplace != null) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, toReplace, tag)
-                    .commit();
-        }
-    }
-
-    public void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
-    }
-
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+       /* if (!mNavigationDrawerFragment.isDrawerOpen()) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
             getMenuInflater().inflate(R.menu.main, menu);
             restoreActionBar();
             return true;
-        }
+        }*/ /*
         return super.onCreateOptionsMenu(menu);
-    }
+    }*/
 
-    @Override
+   /* @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -159,7 +126,7 @@ public class MainActivity extends ActionBarActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     private void logout(){
         //TODO implemetation logout.
@@ -170,8 +137,8 @@ public class MainActivity extends ActionBarActivity
         User.instance = null;
         User.setCurrent(userLogout, this);
         Toast.makeText(this, this.getText(R.string.Logout_message), LENGTH_SHORT).show();
-        if(mNavigationDrawerFragment != null)
-            mNavigationDrawerFragment.notifyAdapter();
+        /*if(mNavigationDrawerFragment != null)
+            mNavigationDrawerFragment.notifyAdapter();*/
         //this.finish();
     }
 
@@ -179,7 +146,7 @@ public class MainActivity extends ActionBarActivity
     public void onActivityResult(int requestCode, int resultCode, Intent data){
 
         //for now, let's just refresh the monitors fragment if it's visible
-        Log.e("request code: ",String.valueOf(requestCode));
+        Log.e("request code: ", String.valueOf(requestCode));
         if(requestCode == this.REQUEST_SCAN_ACTIVITY){
             Fragment f = getSupportFragmentManager().findFragmentByTag(TAG_SENSOR);
             if(f != null && f instanceof DeviceFragment && f.isVisible()){
@@ -196,8 +163,8 @@ public class MainActivity extends ActionBarActivity
                 //        .commit();
                 ((UploadToCloudFragment)f).uploadInfoToServer(((UploadToCloudFragment) f).getAdapter());
             }
-            if(mNavigationDrawerFragment != null)
-                mNavigationDrawerFragment.notifyAdapter();
+            /*if(mNavigationDrawerFragment != null)
+                mNavigationDrawerFragment.notifyAdapter();*/
         }
 
     }
@@ -234,6 +201,40 @@ public class MainActivity extends ActionBarActivity
             startActivity(intent);
             spinner.dismiss();
         }
+    }
+    private void setupTabLayout(TabLayout tabLayout) {
+        LinearLayout tab0 = getTab(R.drawable.ic_action_heart_monitor_white,R.string.navigation_sensors);
+        tabLayout.getTabAt(0).setCustomView(tab0);
+        LinearLayout tab1 = getTab(R.drawable.ic_action_monitors_white, R.string.navigation_status);
+        tabLayout.getTabAt(1).setCustomView(tab1);
+        LinearLayout tab2 = getTab(R.drawable.ic_action_upload_to_cloud_white,R.string.navigation_upload_to_cloud);
+        tabLayout.getTabAt(2).setCustomView(tab2);
+        LinearLayout tab3 = getTab(R.drawable.ic_support,R.string.support_option);
+        tabLayout.getTabAt(3).setCustomView(tab3);
+        tabLayout.setTabTextColors(Color.WHITE, Color.rgb(241,241,241));
+    }
+    private void setupViewPager(ViewPager viewPager) {
+        adapterViewPager = new ViewPagerAdapter(getSupportFragmentManager());
+        adapterViewPager.addFrag(DeviceFragment.newInstance(), getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor);
+        adapterViewPager.addFrag(SensorsFragment.newInstance(), "Status", R.drawable.ic_action_status);
+        adapterViewPager.addFrag(UploadToCloudFragment.newInstance(), getString(R.string.navigation_upload_to_cloud), R.drawable.ic_action_upload_to_cloud);
+        adapterViewPager.addFrag(SupportFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_support);
+        viewPager.setAdapter(adapterViewPager);
+        viewPager.setCurrentItem(0);
+    }
+    private LinearLayout  getNewlayout(Context context) {
+        LayoutInflater inflater;
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        return (LinearLayout) inflater.from(this).inflate(R.layout.custom_tab_layout, null);
+    }
+
+    private LinearLayout getTab(int idIcon, int idText){
+        LinearLayout tab0 = getNewlayout(this);
+        ImageView icon0 = (ImageView)tab0.findViewById(R.id.icon);
+        icon0.setImageDrawable(this.getDrawable(idIcon));
+        TextView titlel0 = (TextView) tab0.findViewById(R.id.text1);
+        titlel0.setText(this.getString(idText));
+        return tab0;
     }
 
 }

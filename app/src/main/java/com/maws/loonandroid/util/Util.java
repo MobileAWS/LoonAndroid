@@ -7,14 +7,14 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -234,5 +234,10 @@ public class Util {
     public static int dpToPx(Context context, int dp){
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         return (int)((dp * displayMetrics.density) + 0.5);
+    }
+    public static Drawable scaleIcons(Context context,Drawable dr){
+        Bitmap bitmap = ((BitmapDrawable) dr).getBitmap();
+        Drawable d = new BitmapDrawable(context.getResources(), Bitmap.createScaledBitmap(bitmap, 100, 100, false));
+        return d;
     }
 }
