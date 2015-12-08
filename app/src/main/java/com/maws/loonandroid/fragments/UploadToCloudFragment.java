@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -60,6 +61,7 @@ public class UploadToCloudFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_upload, container, false);
         sensorsLV = (ListView) rootView.findViewById(R.id.sensorsLV);
         final Context context = this.getActivity();
@@ -77,13 +79,22 @@ public class UploadToCloudFragment extends Fragment {
             }
         });
         adapter.selectAll();
+        FloatingActionButton fabUploadButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        fabUploadButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                validationUpload();
+            }
+        });
         return rootView;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.upload, menu);
+       inflater.inflate(R.menu.upload, menu);
+
         super.onCreateOptionsMenu(menu, inflater);
+
+
     }
 
 
@@ -92,14 +103,7 @@ public class UploadToCloudFragment extends Fragment {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_start_scan:
-                if(!Util.isLoginOnline(this.getView().getContext())) {
-                    Intent LoginIntent= null;
-                    LoginIntent = new Intent(this.getActivity().getApplicationContext(),LoginActivity.class);
-                    getActivity().startActivityForResult(LoginIntent, MainActivity.RESQUET_LOGIN_ACTIVITY);
-                }
-                else{
-                    this.uploadInfoToServer(adapter);
-                }
+                validationUpload();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -220,5 +224,15 @@ public class UploadToCloudFragment extends Fragment {
     }
     public UploadSensorListAdapter getAdapter(){
         return this.adapter;
+    }
+    private void validationUpload(){
+        if(!Util.isLoginOnline(this.getView().getContext())) {
+            Intent LoginIntent= null;
+            LoginIntent = new Intent(this.getActivity().getApplicationContext(),LoginActivity.class);
+            getActivity().startActivityForResult(LoginIntent, MainActivity.RESQUET_LOGIN_ACTIVITY);
+        }
+        else{
+            this.uploadInfoToServer(adapter);
+        }
     }
 }

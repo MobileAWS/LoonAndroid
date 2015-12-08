@@ -12,11 +12,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
@@ -29,8 +30,6 @@ import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomProgressSpinner;
-
-import static android.widget.Toast.LENGTH_SHORT;
 
 public class MainActivity extends AppCompatActivity
         {
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity
     public static final String TAG_UPLOAD = "up";
     private boolean initMonitors = false;
     private ViewPagerAdapter adapterViewPager;
-
+            private Menu mOptionsMenu;
 
 
 
@@ -99,48 +98,33 @@ public class MainActivity extends AppCompatActivity
         });
 
     }
-
-
-   /* @Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-       /* if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.main, menu);
-            restoreActionBar();
-            return true;
-        }*/ /*
-        return super.onCreateOptionsMenu(menu);
-    }*/
+        mOptionsMenu = menu;
+        getMenuInflater().inflate(R.menu.main, menu);
+        validateLogout(menu);
+        return true;
+    }
 
-   /* @Override
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+        validateLogout( menu);
+        return true;
+    }
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
-            case R.id.action_log:
-                Intent i = new Intent(this, LogActivity.class);
-                startActivity(i);
+            case R.id.action_Log_out:
+                Util.logout(this);
+                item.setVisible(false);
+                return true;
+            case android.R.id.home:
+                finish();
                 return true;
         }
-        return super.onOptionsItemSelected(item);
-    }*/
-
-    private void logout(){
-        //TODO implemetation logout.
-        User userLogout = new User();
-        userLogout.setToken(null);
-        userLogout.setOffline(false);
-        User.setCurrent(userLogout, this);
-        User.instance = null;
-        User.setCurrent(userLogout, this);
-        Toast.makeText(this, this.getText(R.string.Logout_message), LENGTH_SHORT).show();
-        /*if(mNavigationDrawerFragment != null)
-            mNavigationDrawerFragment.notifyAdapter();*/
-        //this.finish();
+        return true;
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -157,14 +141,10 @@ public class MainActivity extends AppCompatActivity
             Fragment f = getSupportFragmentManager().findFragmentByTag(TAG_UPLOAD);
             String tag = TAG_UPLOAD;
             if(f != null && f instanceof UploadToCloudFragment && f.isVisible()){
-               // FragmentManager fragmentManager = getSupportFragmentManager();
-                //fragmentManager.beginTransaction()
-                //        .replace(R.id.container, f, tag)
-                //        .commit();
                 ((UploadToCloudFragment)f).uploadInfoToServer(((UploadToCloudFragment) f).getAdapter());
             }
-            /*if(mNavigationDrawerFragment != null)
-                mNavigationDrawerFragment.notifyAdapter();*/
+            if(mOptionsMenu != null)
+            validateLogout(mOptionsMenu);
         }
 
     }
@@ -236,5 +216,12 @@ public class MainActivity extends AppCompatActivity
         titlel0.setText(this.getString(idText));
         return tab0;
     }
-
+    private void validateLogout(Menu menu){
+        if(Util.isLoginOnline(this)){
+            menu.findItem(R.id.action_Log_out).setVisible(true);
+        }
+        else {
+            menu.findItem(R.id.action_Log_out).setVisible(false);
+        }
+    }
 }

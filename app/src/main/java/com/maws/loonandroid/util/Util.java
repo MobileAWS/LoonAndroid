@@ -17,6 +17,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.activities.MainActivity;
@@ -36,6 +37,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 /**
  * Created by Andrexxjc on 04/05/2015.
@@ -239,5 +242,15 @@ public class Util {
         Bitmap bitmap = ((BitmapDrawable) dr).getBitmap();
         Drawable d = new BitmapDrawable(context.getResources(), Bitmap.createScaledBitmap(bitmap, 100, 100, false));
         return d;
+    }
+    public static void logout(Context context){
+        //TODO implemetation logout.
+        User userLogout = new User();
+        userLogout.setToken(null);
+        userLogout.setOffline(false);
+        User.setCurrent(userLogout, context);
+        User.instance = null;
+        User.setCurrent(userLogout, context);
+        Toast.makeText(context, context.getText(R.string.Logout_message), LENGTH_SHORT).show();
     }
 }

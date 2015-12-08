@@ -1,8 +1,11 @@
 package com.maws.loonandroid.activities;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -12,7 +15,6 @@ import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.DevicePropertyHistoryListAdapter;
 import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.models.DeviceProperty;
-import com.maws.loonandroid.util.Util;
 
 import java.util.List;
 
@@ -39,6 +41,14 @@ public class HistorySensorActivity extends ActionBarActivity {
             listView.setVisibility(View.GONE);
             emptyMessage.setVisibility(View.VISIBLE);
         }
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setLogo(R.mipmap.ic_launcher);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.ic_action_back_arrow);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
     }
 

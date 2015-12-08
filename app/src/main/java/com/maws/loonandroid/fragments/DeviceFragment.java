@@ -137,8 +137,8 @@ public class DeviceFragment extends Fragment implements
         layoutManager.scrollToPosition(0);
         sensorsLV.setLayoutManager(layoutManager);
         emptyLayout = rootView.findViewById(R.id.emptyLayout);
-        FloatingActionButton myFab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        myFab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabScanButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        fabScanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent scanIntent = new Intent(context, ScanDevicesActivity.class);
                 startActivityForResult(scanIntent, MainActivity.REQUEST_SCAN);

@@ -7,13 +7,13 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.LoonMedicalDao;
 import com.maws.loonandroid.dao.UserDao;
 import com.maws.loonandroid.listener.StandardRequestListener;
 import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.requests.UserRequestHandler;
-import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomToast;
 
 import org.json.JSONException;
@@ -41,6 +41,7 @@ public class NewUserActivity extends Activity implements View.OnClickListener {
         confirmPasswordET = (EditText) findViewById(R.id.confirmPasswordET);
         createUserBtn = (Button) findViewById(R.id.createUserBtn);
         createUserBtn.setOnClickListener(this);
+
     }
 
     private void attemptUserCreation(){

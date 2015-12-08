@@ -66,6 +66,6 @@
         android:layout_margin="16dp"
         android:clickable="true"
         android:src="@drawable/ic_action_scan_again"
-        app:layout_anchor="@id/containerLY"
+        app:layout_anchor="@id/coordinator"
         app:layout_anchorGravity="bottom|right"/>
     </android.support.design.widget.CoordinatorLayout>

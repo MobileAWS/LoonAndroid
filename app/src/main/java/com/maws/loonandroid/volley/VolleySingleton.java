@@ -12,10 +12,10 @@ import com.android.volley.toolbox.Volley;
 import com.maws.loonandroid.LoonAndroid;
 
 public class VolleySingleton {
-    public  static  final  String SERVER_URL = "http://caresentinel-maws-pdn.herokuapp.com/";
-    //public static final String SERVER_URL = "https://caresentinel-maws.herokuapp.com/"; //dll url
+   // public  static  final  String SERVER_URL = "http://caresentinel-maws-pdn.herokuapp.com/";
+    public static final String SERVER_URL = "http://caresentinel-maws.herokuapp.com/"; //dll url
 
-    public static final String ENVIRONMENT = "production"; //"development";
+    public static final String ENVIRONMENT = "development"; //"development";
 
 
     /*public static final String SERVER_URL = "http://mike.caresentinel.ngrok.io/";

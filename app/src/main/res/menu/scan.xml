@@ -9,5 +9,11 @@
         app:showAsAction="never"
         android:visible="false"
     />
+    <item android:id="@+id/action_logOut"
+        android:title="@string/scan_again"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:visible="false"
+        />
 
 </menu>

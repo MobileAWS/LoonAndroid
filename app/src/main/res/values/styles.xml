@@ -4,12 +4,20 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:homeAsUpIndicator">@drawable/</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_action_back_arrow</item>
+        <item name="homeAsUpIndicator">@drawable/ic_action_back_arrow</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
+        <item name="actionMenuTextColor">@color/white</item>
+
     </style>
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_action_back_arrow</item>
+        <item name="homeAsUpIndicator">@drawable/ic_action_back_arrow</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
+        <item name="actionMenuTextColor">@color/white</item>
     </style>
 
     <style name="LoonActionBarTheme"

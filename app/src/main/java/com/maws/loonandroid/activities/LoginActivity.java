@@ -3,11 +3,10 @@ package com.maws.loonandroid.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,7 +35,7 @@ import org.json.JSONObject;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends Activity implements OnClickListener {
+public class LoginActivity extends AppCompatActivity implements OnClickListener {
 
     // UI references.
     private static final String TAG = "LOGIN";
@@ -70,6 +69,7 @@ public class LoginActivity extends Activity implements OnClickListener {
         TextView versionTV = (TextView) findViewById(R.id.versionTV);
         versionTV.setText("V " + versionName);
         createDefaultProperties();
+
     }
 
     private StringBuilder validateFields(){

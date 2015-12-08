@@ -7,4 +7,10 @@
     <item android:id="@+id/action_log" android:title="@string/log"
         android:orderInCategory="900" app:showAsAction="never"
         android:visible="true" />
+    <item android:id="@+id/action_Log_out"
+        android:title="@string/navigation_log_out"
+        android:orderInCategory="100"
+        android:visible="true"
+        app:showAsAction="always"
+        />
 </menu>

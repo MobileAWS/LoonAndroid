@@ -2,7 +2,6 @@ package com.maws.loonandroid.requests;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import com.android.volley.Request;
@@ -10,12 +9,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
-
 import com.maws.loonandroid.views.CustomToast;
 import com.maws.loonandroid.volley.VolleySingleton;
 
@@ -79,10 +76,12 @@ public class UpLoadRequestHandler {
                             listener.onFailure(VolleySingleton.getResponseData(error.networkResponse), context, progressBarView);
                         } catch (Exception e){
                             CustomToast.showAlert(context,context.getString(R.string.error_upload_message));
+                            progressBarView.findViewById(R.id.progressBarUploadIV).setVisibility(View.GONE);
                         }
                         error.printStackTrace();
                     }
                 });
+        jsObjRequest.setRetryPolicy( VolleySingleton.getRetryPolicy() );
         queue.add(jsObjRequest);
     }
     public interface UploadListener{
