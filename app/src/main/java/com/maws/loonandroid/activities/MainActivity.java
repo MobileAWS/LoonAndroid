@@ -1,10 +1,13 @@
 package com.maws.loonandroid.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -24,6 +27,7 @@ import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.ViewPagerAdapter;
 import com.maws.loonandroid.fragments.DeviceFragment;
 import com.maws.loonandroid.fragments.SensorsFragment;
+import com.maws.loonandroid.fragments.SmsFragment;
 import com.maws.loonandroid.fragments.SupportFragment;
 import com.maws.loonandroid.fragments.UploadToCloudFragment;
 import com.maws.loonandroid.models.User;
@@ -38,12 +42,15 @@ public class MainActivity extends AppCompatActivity
     public final static int REQUEST_MONITOR_ACTIVITY = 1034;
     public final static int REQUEST_SCAN_ACTIVITY = 132074;
     public final static int RESQUET_LOGIN_ACTIVITY=2040;
+    public final static int REQUEST_CONTACT_ACTIVITY=197611;
     public final static int REQUEST_SCAN = 1002;
+    public final static int PICK_CONTACT = 1003;
     public static final String TAG_MONITOR ="ss";
     public static final String TAG_SENSOR = "ss1";
     public static final String TAG_PUSH_NOTIFICATION = "pn";
     public static final String TAG_SUPPORT = "sp";
     public static final String TAG_UPLOAD = "up";
+    public static final String TAG_CONTACT = "contact";
     private boolean initMonitors = false;
     private ViewPagerAdapter adapterViewPager;
             private Menu mOptionsMenu;
@@ -146,6 +153,20 @@ public class MainActivity extends AppCompatActivity
             if(mOptionsMenu != null)
             validateLogout(mOptionsMenu);
         }
+        if(requestCode == REQUEST_CONTACT_ACTIVITY) {
+            Fragment f = getSupportFragmentManager().findFragmentByTag(TAG_CONTACT);
+            if(f != null && f instanceof SmsFragment && f.isVisible()){
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri contactData = data.getData();
+                    Cursor c =  getContentResolver().query(contactData, null, null, null, null);
+                    if (c.moveToFirst()) {
+                        String name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                        // TODO Whatever you want to do with the selected contact name.
+                    }
+                }
+                ((SmsFragment)f).refreshAdapter();
+            }
+        }
 
     }
     public void onResourcesContact(View v){
@@ -191,7 +212,9 @@ public class MainActivity extends AppCompatActivity
         tabLayout.getTabAt(2).setCustomView(tab2);
         LinearLayout tab3 = getTab(R.drawable.ic_support,R.string.support_option);
         tabLayout.getTabAt(3).setCustomView(tab3);
-        tabLayout.setTabTextColors(Color.WHITE, Color.rgb(241,241,241));
+        LinearLayout tab4 = getTab(R.drawable.ic_action_contact,R.string.sms_option);
+        tabLayout.getTabAt(4).setCustomView(tab4);
+        //tabLayout.setTabTextColors(Color.WHITE, Color.rgb(241,241,241));
     }
     private void setupViewPager(ViewPager viewPager) {
         adapterViewPager = new ViewPagerAdapter(getSupportFragmentManager());
@@ -199,6 +222,7 @@ public class MainActivity extends AppCompatActivity
         adapterViewPager.addFrag(SensorsFragment.newInstance(), "Status", R.drawable.ic_action_status);
         adapterViewPager.addFrag(UploadToCloudFragment.newInstance(), getString(R.string.navigation_upload_to_cloud), R.drawable.ic_action_upload_to_cloud);
         adapterViewPager.addFrag(SupportFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_support);
+        adapterViewPager.addFrag(SmsFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_action_contact);
         viewPager.setAdapter(adapterViewPager);
         viewPager.setCurrentItem(0);
     }

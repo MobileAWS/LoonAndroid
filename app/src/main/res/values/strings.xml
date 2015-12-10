@@ -24,6 +24,7 @@
     <string name="action_change_background">Change Background</string>
     <string name="navigation_upload_to_cloud">Upload</string>
     <string name="support_option">Contact</string>
+    <string name="sms_option">SMS</string>
     <string name="upload">Upload</string>
     <string name="upload_action">Uploading</string>
     <string name="action_scan">Scan for Devices</string>
@@ -112,7 +113,9 @@
     <string name="empty_history_layout">There are no alerts to show‏</string>
     <string name="empty_alarm_history">No Alerts Found</string>
     <string name="empty_sensor_fragment">There are no Sensors to show‏</string>
+    <string name="empty_sms_fragment">There are no Contatcs to show‏</string>
     <string name="empty_sensor">No Sensors Found</string>
+    <string name="empty_sms">No Contacts Found</string>
     <string name="owner_text">CareSentinel</string>
     <string name="owner_text2">A Loon Medical, Inc. suite product</string>
     <string name="owner_subtext">Tolland, CT</string>
@@ -176,4 +179,7 @@
     <string name="Logout_message">Logout has been successful </string>
     <string name="error_upload_message">Error to upload the data to the cloud, please try again </string>
     <string name="transition_toolbar">transition_TOOLBAR</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

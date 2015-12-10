@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class LoonMedicalDao extends SQLiteOpenHelper {
 
     public static final String _DATABASE_NAME = "loonmedical";
-    public static final int _DATABASE_VERSION = 26;
+    public static final int _DATABASE_VERSION = 27;
     private Context context;
 
     public LoonMedicalDao( Context context ) {
@@ -41,6 +41,9 @@ public class LoonMedicalDao extends SQLiteOpenHelper {
 
         DeviceEnabledPropertyDao deviceEnabledPropertyDao = new DeviceEnabledPropertyDao(context);
         deviceEnabledPropertyDao.onCreate(db);
+
+        ContactDao contactDao = new ContactDao(context);
+        contactDao.onCreate(db);
 
         LogDao lDao = new LogDao(context);
         lDao.onCreate(db);
@@ -79,6 +82,9 @@ public class LoonMedicalDao extends SQLiteOpenHelper {
 
         LogDao lDao = new LogDao(context);
         lDao.onUpgrade(db, oldVersion, newVersion);
+
+        ContactDao contactDao = new ContactDao(context);
+        contactDao.onUpgrade(db, oldVersion, newVersion);
     }
 
     public void clearData(){
@@ -93,6 +99,7 @@ public class LoonMedicalDao extends SQLiteOpenHelper {
 
         DevicePropertyDao devicePropertyDao = new DevicePropertyDao(context);
         devicePropertyDao.deleteAll(db);
+
 
         LogDao lDao = new LogDao(context);
         lDao.deleteAll();
