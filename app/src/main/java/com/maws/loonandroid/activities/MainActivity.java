@@ -1,6 +1,5 @@
 package com.maws.loonandroid.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -146,7 +145,6 @@ public class MainActivity extends AppCompatActivity
         }
         if(requestCode == this.RESQUET_LOGIN_ACTIVITY) {
             Fragment f = getSupportFragmentManager().findFragmentByTag(TAG_UPLOAD);
-            String tag = TAG_UPLOAD;
             if(f != null && f instanceof UploadToCloudFragment && f.isVisible()){
                 ((UploadToCloudFragment)f).uploadInfoToServer(((UploadToCloudFragment) f).getAdapter());
             }
@@ -156,15 +154,19 @@ public class MainActivity extends AppCompatActivity
         if(requestCode == REQUEST_CONTACT_ACTIVITY) {
             Fragment f = getSupportFragmentManager().findFragmentByTag(TAG_CONTACT);
             if(f != null && f instanceof SmsFragment && f.isVisible()){
-                if (resultCode == Activity.RESULT_OK) {
-                    Uri contactData = data.getData();
-                    Cursor c =  getContentResolver().query(contactData, null, null, null, null);
-                    if (c.moveToFirst()) {
-                        String name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                        // TODO Whatever you want to do with the selected contact name.
-                    }
-                }
-                ((SmsFragment)f).refreshAdapter();
+
+                    Uri contactUri = data.getData();
+                    String[] projection = {ContactsContract.CommonDataKinds.Phone.NUMBER};
+
+                    Cursor cursor = getContentResolver()
+                            .query(contactUri, projection, null, null, null);
+                    cursor.moveToFirst();
+
+                    int column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                    String number = cursor.getString(column);
+
+
+                //((SmsFragment)f).refreshAdapter();
             }
         }
 

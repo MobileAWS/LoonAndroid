@@ -3,6 +3,7 @@ package com.maws.loonandroid.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
@@ -50,8 +51,9 @@ public class SmsFragment extends Fragment {
         FloatingActionButton fabScanButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fabScanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-                startActivityForResult(intent, MainActivity.PICK_CONTACT);
+                Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
+                pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
+                startActivityForResult(pickContactIntent, MainActivity.PICK_CONTACT);
             }
         });
         return rootView;

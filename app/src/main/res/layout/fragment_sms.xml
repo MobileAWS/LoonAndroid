@@ -7,6 +7,12 @@
     android:background="@color/white"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.maws.loonandroid.fragments.SmsFragment">
+    <FrameLayout
+        android:tag="contact"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        />
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
