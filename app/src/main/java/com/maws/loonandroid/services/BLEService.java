@@ -15,8 +15,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
-
-import com.maws.loonandroid.activities.ScanDevicesActivity;
 import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.gatt.GattManager;
 import com.maws.loonandroid.gatt.events.GattEvent;
@@ -272,7 +270,7 @@ public class BLEService extends Service
     public void onEvent(String name, GattManager.GattManagerBundle data) {
 
         try{
-            Util.log(this, "I have an event from " + data.address + " " + data.newState);
+            Util.log(this, "I have an event (" + data.gattEvent + ") from " + data.address + " " + data.newState);
             DeviceDao sDao = new DeviceDao(this);
             Device device = sDao.findByMacAddress(data.address);
 
@@ -411,6 +409,16 @@ public class BLEService extends Service
                             DeviceCharacteristic._DESCRIPTOR_CARE_SENTINEL_NOTIFICATIONS
                     );
                     manager.queue(operation);
+
+                    //and to the indication service
+                    GattSetNotificationOperation ioperation = new GattSetNotificationOperation(
+                            bluetoothDevice,
+                            DeviceService.UUID_CARE_SENTINEL_SERVICE,
+                            DeviceCharacteristic._CHAR_CARE_SENTINEL,
+                            DeviceCharacteristic._DESCRIPTOR_CARE_SENTINEL_NOTIFICATIONS
+                    );
+
+                    manager.queue(ioperation);
                     break;
 
                 case GattEvent.GATT_CHARACTERISTIC_CHANGED:

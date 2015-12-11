@@ -13,7 +13,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.maws.loonandroid.BuildConfig;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.CustomerDao;
@@ -29,7 +28,6 @@ import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.requests.UserRequestHandler;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomToast;
-
 import org.json.JSONObject;
 
 /**
@@ -61,9 +59,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
         newUserTV.setOnClickListener(this);
         loginBtn.setOnClickListener(this);
         loginNoCloudBtn.setOnClickListener(this);
-
         getLoginInit();
-
 
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionTV = (TextView) findViewById(R.id.versionTV);
@@ -119,6 +115,10 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
         user.setName("");
         user.setEmail(email);
         user.setPassword(password);
+
+        //save the current login information in the preferences
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.edit().putString(Util.EMAIL_PREFERENCE, email).putString(Util.CUSTOMER_ID_PREFERENCE, customerId).putString(Util.SITE_ID_PREFERENCE, siteId).apply();
 
         if(errors.length() > 0){
             CustomToast.showAlert(this, errors.toString(), CustomToast._TYPE_ERROR);

@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.ViewPagerAdapter;
@@ -34,8 +33,7 @@ import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomProgressSpinner;
 
-public class MainActivity extends AppCompatActivity
-        {
+public class MainActivity extends AppCompatActivity{
 
     public static final int REQUEST_ENABLE_BT = 30921;
     public final static int REQUEST_MONITOR_ACTIVITY = 1034;
@@ -52,7 +50,7 @@ public class MainActivity extends AppCompatActivity
     public static final String TAG_CONTACT = "contact";
     private boolean initMonitors = false;
     private ViewPagerAdapter adapterViewPager;
-            private Menu mOptionsMenu;
+    private Menu mOptionsMenu;
 
 
 
