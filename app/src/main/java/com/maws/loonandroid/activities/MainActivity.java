@@ -52,7 +52,8 @@ public class MainActivity extends AppCompatActivity
     public static final String TAG_CONTACT = "contact";
     private boolean initMonitors = false;
     private ViewPagerAdapter adapterViewPager;
-            private Menu mOptionsMenu;
+    private Menu mOptionsMenu;
+    private  TabLayout tabLayout;
 
 
 
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.setLogo(R.mipmap.ic_launcher);
         setSupportActionBar(toolbar);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
+        tabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
         final ViewPager viewPager = (ViewPager) findViewById(R.id.tabanim_viewpager);
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
@@ -152,22 +153,30 @@ public class MainActivity extends AppCompatActivity
             validateLogout(mOptionsMenu);
         }
         if(requestCode == REQUEST_CONTACT_ACTIVITY) {
-            Fragment f = getSupportFragmentManager().findFragmentByTag(TAG_CONTACT);
-            if(f != null && f instanceof SmsFragment && f.isVisible()){
 
-                    Uri contactUri = data.getData();
-                    String[] projection = {ContactsContract.CommonDataKinds.Phone.NUMBER};
+            if(data != null) {
+                Uri contactUri = data.getData();
+                String[] projection = new String[]{ContactsContract.Contacts._ID,
+                        ContactsContract.Contacts.DISPLAY_NAME,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER
+                };
 
-                    Cursor cursor = getContentResolver()
-                            .query(contactUri, projection, null, null, null);
-                    cursor.moveToFirst();
+                Cursor cursor = getContentResolver()
+                        .query(contactUri, projection, null, null, null);
+                cursor.moveToFirst();
 
-                    int column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-                    String number = cursor.getString(column);
+                int column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                int column2 = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
 
-
-                //((SmsFragment)f).refreshAdapter();
+                String number = cursor.getString(column);
+                String name = cursor.getString(column2);
+                if (adapterViewPager != null && number != null && name != null) {
+                    SmsFragment smsFragment = (SmsFragment) adapterViewPager.getItem(4);
+                    smsFragment.addContact(number, name);
+                }
             }
+
+
         }
 
     }

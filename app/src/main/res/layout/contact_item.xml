@@ -4,7 +4,8 @@
     android:layout_height="match_parent">
 
     <LinearLayout android:layout_height="match_parent"
-        android:layout_width="match_parent" android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:orientation="horizontal">
         <ImageView android:layout_height="50dp"
             android:layout_width="50dp"
             android:layout_marginTop="7dp"
@@ -12,7 +13,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_weight="1">
         <TextView android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/nameTV"
@@ -27,6 +29,12 @@
             android:layout_marginTop="5dp"
             android:text="+1 908 4166712"/>
         </LinearLayout>
+        <ImageView android:layout_height="40dp"
+            android:id="@+id/deleteButtonIV"
+            android:layout_width="40dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_stat_cancel"
+            android:tint="@color/light_blue"/>
     </LinearLayout>
 
 </LinearLayout>

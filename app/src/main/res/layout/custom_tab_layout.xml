@@ -6,7 +6,7 @@
     android:background="@color/light_blue">
     <ImageView android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_marginTop="-3dp"
+        android:layout_marginTop="10dp"
         android:id="@+id/icon"
         android:src="@drawable/ic_action_heart_monitor_white"
         android:layout_gravity="center"/>
@@ -16,5 +16,6 @@
         android:textColor="@color/white"
         android:text="text"
         android:id="@+id/text1"
+        android:visibility="gone"
         android:layout_gravity="center"/>
 </LinearLayout>

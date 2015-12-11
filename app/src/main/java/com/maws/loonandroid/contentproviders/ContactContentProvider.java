@@ -28,14 +28,14 @@ public class ContactContentProvider extends ContentProvider  {
     private static final int CONTACT = 10;
     private static final int CONTACT_ID = 20;
 
-    private static final String AUTHORITY = "com.maws.loonandroid.contentproviders.CustomerContentProvider";
-    private static final String BASE_PATH = "customers";
+    private static final String AUTHORITY = "com.maws.loonandroid.contentproviders.ContactContentProvider";
+    private static final String BASE_PATH = "contacts";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
 
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
-            + "/customers";
+            + "/contacts";
     public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-            + "/customer";
+            + "/contact";
 
     private static final UriMatcher sURIMatcher = buildUriMatcher();
 

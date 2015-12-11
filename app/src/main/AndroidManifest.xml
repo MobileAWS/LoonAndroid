@@ -162,6 +162,11 @@
             android:authorities="com.maws.loonandroid.contentproviders.LogEntryContentProvider"
             android:enabled="true"
             android:exported="false" />
+        <provider
+            android:name=".contentproviders.ContactContentProvider"
+            android:authorities="com.maws.loonandroid.contentproviders.ContactContentProvider"
+            android:enabled="true"
+            android:exported="false" />
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="e690ff966aed71fce389bb7a08e54f3978fa5b17" />

@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.maws.loonandroid.contentproviders.CustomerContentProvider;
+import com.maws.loonandroid.contentproviders.ContactContentProvider;
 import com.maws.loonandroid.models.Contact;
 
 import java.util.ArrayList;
@@ -55,14 +55,14 @@ public class ContactDao {
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, contact.getName());
         values.put(KEY_NUMBER, contact.getNumber());
-        context.getContentResolver().insert(CustomerContentProvider.CONTENT_URI, values);
+        context.getContentResolver().insert(ContactContentProvider.CONTENT_URI, values);
     }
 
     // Getting single object
     public Contact get(long id) {
 
         Cursor cursor = context.getContentResolver().query(
-                CustomerContentProvider.CONTENT_URI,
+                ContactContentProvider.CONTENT_URI,
                 new String[]{
                         KEY_ID,
                         KEY_NAME,
@@ -91,7 +91,7 @@ public class ContactDao {
     public Contact get(String code) {
 
         Cursor cursor = context.getContentResolver().query(
-                CustomerContentProvider.CONTENT_URI,
+                ContactContentProvider.CONTENT_URI,
                 new String[]{
                         KEY_ID,
                         KEY_NAME,
@@ -118,11 +118,11 @@ public class ContactDao {
     }
 
     // Getting All objects
-    public List<Contact> getAll(SQLiteDatabase db) {
+    public List<Contact> getAll() {
 
         List<Contact> toReturnList = new ArrayList<Contact>();
         Cursor cursor = context.getContentResolver().query(
-                CustomerContentProvider.CONTENT_URI,
+                ContactContentProvider.CONTENT_URI,
                 new String[]{
                         KEY_ID,
                         KEY_NAME,
@@ -138,7 +138,7 @@ public class ContactDao {
                 Contact contact = new Contact();
                 contact.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
                 contact.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
-                contact.setNumber(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+                contact.setNumber(cursor.getString(cursor.getColumnIndex(KEY_NUMBER)));
                 toReturnList.add(contact);
 
             } while (cursor.moveToNext());
@@ -157,7 +157,7 @@ public class ContactDao {
         values.put(KEY_NUMBER, contact.getNumber());
 
         long id = context.getContentResolver().update(
-                CustomerContentProvider.CONTENT_URI,
+                ContactContentProvider.CONTENT_URI,
                 values,
                 KEY_ID + "=?",
                 new String[]{
@@ -169,7 +169,7 @@ public class ContactDao {
     // Deleting single object
     public void delete(Contact contact) {
         context.getContentResolver().delete(
-                CustomerContentProvider.CONTENT_URI,
+                ContactContentProvider.CONTENT_URI,
                 KEY_ID + " = ?",
                 new String[] {
                         String.valueOf(contact.getId())
