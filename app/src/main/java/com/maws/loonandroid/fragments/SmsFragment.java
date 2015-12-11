@@ -85,7 +85,7 @@ public class SmsFragment extends Fragment {
         FloatingActionButton fabScanButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fabScanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                  contactList = contactDao.getAll();
+                 // contactList = contactDao.getAll();
                 if(contactList.size() < 5) {
                     Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
                     pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
