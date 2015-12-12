@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.ViewPagerAdapter;
@@ -33,7 +35,8 @@ import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomProgressSpinner;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity
+        {
 
     public static final int REQUEST_ENABLE_BT = 30921;
     public final static int REQUEST_MONITOR_ACTIVITY = 1034;
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity{
     private boolean initMonitors = false;
     private ViewPagerAdapter adapterViewPager;
     private Menu mOptionsMenu;
+    private  TabLayout tabLayout;
 
 
 
@@ -80,7 +84,7 @@ public class MainActivity extends AppCompatActivity{
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.setLogo(R.mipmap.ic_launcher);
         setSupportActionBar(toolbar);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
+        tabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
         final ViewPager viewPager = (ViewPager) findViewById(R.id.tabanim_viewpager);
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
@@ -126,7 +130,7 @@ public class MainActivity extends AppCompatActivity{
                 finish();
                 return true;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -150,22 +154,30 @@ public class MainActivity extends AppCompatActivity{
             validateLogout(mOptionsMenu);
         }
         if(requestCode == REQUEST_CONTACT_ACTIVITY) {
-            Fragment f = getSupportFragmentManager().findFragmentByTag(TAG_CONTACT);
-            if(f != null && f instanceof SmsFragment && f.isVisible()){
 
-                    Uri contactUri = data.getData();
-                    String[] projection = {ContactsContract.CommonDataKinds.Phone.NUMBER};
+            if(data != null) {
+                Uri contactUri = data.getData();
+                String[] projection = new String[]{ContactsContract.Contacts._ID,
+                        ContactsContract.Contacts.DISPLAY_NAME,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER
+                };
 
-                    Cursor cursor = getContentResolver()
-                            .query(contactUri, projection, null, null, null);
-                    cursor.moveToFirst();
+                Cursor cursor = getContentResolver()
+                        .query(contactUri, projection, null, null, null);
+                cursor.moveToFirst();
 
-                    int column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-                    String number = cursor.getString(column);
+                int column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                int column2 = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
 
-
-                //((SmsFragment)f).refreshAdapter();
+                String number = cursor.getString(column);
+                String name = cursor.getString(column2);
+                if (adapterViewPager != null && number != null && name != null) {
+                    SmsFragment smsFragment = (SmsFragment) adapterViewPager.getItem(4);
+                    smsFragment.addContact(number, name);
+                }
             }
+
+
         }
 
     }
@@ -235,7 +247,7 @@ public class MainActivity extends AppCompatActivity{
     private LinearLayout getTab(int idIcon, int idText){
         LinearLayout tab0 = getNewlayout(this);
         ImageView icon0 = (ImageView)tab0.findViewById(R.id.icon);
-        icon0.setImageDrawable(this.getDrawable(idIcon));
+        icon0.setImageDrawable( ContextCompat.getDrawable(this,idIcon) );
         TextView titlel0 = (TextView) tab0.findViewById(R.id.text1);
         titlel0.setText(this.getString(idText));
         return tab0;

@@ -2,18 +2,14 @@ package com.maws.loonandroid.adapters;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,15 +18,12 @@ import com.maws.loonandroid.R;
 import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.DevicePropertyDao;
-import com.maws.loonandroid.gatt.GattManager;
-import com.maws.loonandroid.gatt.operations.GattConnectOperation;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomToast;
-
 import java.util.List;
 
 /**
@@ -48,11 +41,11 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
     }
 
     public static class DeviceViewHolder extends RecyclerView.ViewHolder {
-        Button connectBtn;
-        TextView nameTV, addressTV, headerTV, connectingTV;
+        AppCompatButton connectBtn, activateBtn;
+        TextView nameTV, connectingTV, alertTV;
         ImageView signalIV, batteryIV;
-        LinearLayout alarmsLL;
-        View mainView, loadingPB;
+        LinearLayout cardLL;
+        View mainView, loadingPB, divider1, divider2, sensorsLL1, sensorsLL2, statusV;
 
         public DeviceViewHolder(View v) {
             super(v);
@@ -72,15 +65,21 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
 
         View convertView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.sensor_item, viewGroup, false);
         DeviceViewHolder viewHolder = new DeviceViewHolder(convertView);
-        viewHolder.headerTV = (TextView) convertView.findViewById(R.id.headerTV);
+        viewHolder.cardLL = (LinearLayout) convertView.findViewById(R.id.cardLL);
         viewHolder.nameTV = (TextView) convertView.findViewById(R.id.nameTV);
-        viewHolder.addressTV = (TextView) convertView.findViewById(R.id.addressTV);
         viewHolder.signalIV = (ImageView) convertView.findViewById(R.id.signalIV);
         viewHolder.batteryIV = (ImageView) convertView.findViewById(R.id.batteryIV);
-        viewHolder.alarmsLL = (LinearLayout) convertView.findViewById(R.id.alarmsLL);
-        viewHolder.connectBtn = (Button) convertView.findViewById(R.id.connectBtn);
+        viewHolder.alertTV = (TextView) convertView.findViewById(R.id.alertTV);
+        viewHolder.connectBtn = (AppCompatButton) convertView.findViewById(R.id.connectBtn);
+        viewHolder.activateBtn = (AppCompatButton) convertView.findViewById(R.id.activateBtn);
         viewHolder.connectingTV = (TextView) convertView.findViewById(R.id.connectingTV);
         viewHolder.loadingPB = convertView.findViewById(R.id.loadingPB);
+        viewHolder.divider1 = convertView.findViewById(R.id.divider1);
+        viewHolder.divider2 = convertView.findViewById(R.id.divider2);
+        viewHolder.sensorsLL1 = convertView.findViewById(R.id.sensorsLL1);
+        viewHolder.sensorsLL2 = convertView.findViewById(R.id.sensorsLL2);
+        viewHolder.statusV = convertView.findViewById(R.id.statusV);
+
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,134 +97,86 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
     @Override
     public void onBindViewHolder(DeviceViewHolder viewHolder, int position) {
 
-        boolean showHeader = position == 0 || items.get(position).isActive() != items.get(position - 1).isActive();
-
         Device thisDevice = items.get(position);
         viewHolder.mainView.setTag(position);
-        if(showHeader){
-            viewHolder.headerTV.setVisibility(View.VISIBLE);
-        }else{
-            viewHolder.headerTV.setVisibility(View.GONE);
-        }
-        if(thisDevice.isActive()){
-            viewHolder.headerTV.setText(context.getString(R.string.active_sensors));
-        }else{
-            viewHolder.headerTV.setText(context.getString(R.string.inactive_sensors));
-        }
+        int paintMode = getPaintMode(thisDevice);
+        viewHolder.nameTV.setText(TextUtils.isEmpty(thisDevice.getDescription()) ? thisDevice.getName() : thisDevice.getDescription());
+        viewHolder.cardLL.setBackgroundResource(R.drawable.white_card);
+        viewHolder.divider1.setVisibility(View.VISIBLE);
+        viewHolder.divider2.setVisibility(View.VISIBLE);
+        viewHolder.sensorsLL1.setVisibility(View.VISIBLE);
+        viewHolder.sensorsLL2.setVisibility(View.VISIBLE);
+        viewHolder.activateBtn.setVisibility(View.GONE);
+        viewHolder.connectBtn.setVisibility(View.GONE);
+        viewHolder.signalIV.setVisibility(View.GONE);
+        viewHolder.batteryIV.setVisibility(View.GONE);
+        viewHolder.loadingPB.setVisibility(View.GONE);
+        viewHolder.connectingTV.setVisibility(View.GONE);
+        viewHolder.statusV.setVisibility(View.VISIBLE);
+        viewHolder.alertTV.setVisibility(View.GONE);
 
-        if( thisDevice.isActive() && thisDevice.isConnecting() && !LoonAndroid.demoMode ){
-            viewHolder.nameTV.setText( TextUtils.isEmpty(thisDevice.getDescription())? thisDevice.getName(): thisDevice.getDescription() );
-            viewHolder.addressTV.setText(thisDevice.getName());
-            viewHolder.connectBtn.setVisibility(View.GONE);
-            viewHolder.signalIV.setVisibility(View.GONE);
-            viewHolder.batteryIV.setVisibility(View.GONE);
-            viewHolder.loadingPB.setVisibility(View.VISIBLE);
-            viewHolder.connectingTV.setVisibility(View.VISIBLE);
+        switch (paintMode){
+            case _MODE_IGNORED:
+                viewHolder.cardLL.setBackgroundResource(R.drawable.red_card);
+                viewHolder.connectBtn.setVisibility(View.GONE);
+                viewHolder.divider1.setVisibility(View.GONE);
+                viewHolder.sensorsLL1.setVisibility(View.GONE);
+                viewHolder.sensorsLL2.setVisibility(View.GONE);
+                viewHolder.activateBtn.setVisibility(View.VISIBLE);
+                viewHolder.statusV.setVisibility(View.GONE);
+                break;
+            case _MODE_CONNECTED:
+                Util.setUpSignalView(context, viewHolder.signalIV, thisDevice);
+                Util.setUpBatteryView(context, viewHolder.batteryIV, thisDevice);
+                viewHolder.signalIV.setVisibility(View.VISIBLE);
+                viewHolder.batteryIV.setVisibility(View.VISIBLE);
+                viewHolder.statusV.setBackgroundResource(R.drawable.circle_green);
+                break;
+            case _MODE_CONNECTING:
+                viewHolder.loadingPB.setVisibility(View.VISIBLE);
+                viewHolder.connectingTV.setVisibility(View.VISIBLE);
+                viewHolder.statusV.setBackgroundResource(R.drawable.circle_orange);
+                break;
+            case _MODE_NOT_CONNECTED:
+                viewHolder.connectBtn.setVisibility(View.VISIBLE);
+                viewHolder.statusV.setBackgroundResource(R.drawable.circle_gray);
+                viewHolder.connectBtn.setTag(thisDevice.getMacAddress());
+                viewHolder.connectBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        }else if(!thisDevice.isConnected() && !LoonAndroid.demoMode){
-            viewHolder.nameTV.setText( TextUtils.isEmpty(thisDevice.getDescription())? thisDevice.getName(): thisDevice.getDescription() );
-            viewHolder.addressTV.setText(thisDevice.getName());
-            viewHolder.connectBtn.setVisibility(View.VISIBLE);
-            viewHolder.signalIV.setVisibility(View.GONE);
-            viewHolder.batteryIV.setVisibility(View.GONE);
-            viewHolder.loadingPB.setVisibility(View.GONE);
-            viewHolder.connectingTV.setVisibility(View.GONE);
-            viewHolder.connectBtn.setTag(thisDevice.getMacAddress());
-            viewHolder.connectBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-                    // Checks if Bluetooth is supported on the device.
-                    if (mBluetoothAdapter == null) {
-                        CustomToast.showAlert(context, context.getString(R.string.ble_not_supported), CustomToast._TYPE_ERROR);
-                        return;
-                    }
-                    // Checks if Bluetooth is enabled, or asks to make it enabled.
-                    if (!mBluetoothAdapter.isEnabled()) {
-
-                        DeviceDao dDao = new DeviceDao(context);
-                        Device device = dDao.findByMacAddress(v.getTag().toString());
-                        device.setManualDisconnect(false);
-                        dDao.update(device);
-
-                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                        ((Activity)context).startActivityForResult(enableBtIntent, MainActivity.REQUEST_ENABLE_BT);
-                        return;
-                    }
-
-                    BLEService instance = BLEService.getInstance();
-                    if (instance != null) {
-                        instance.connect(v.getTag().toString());
-                    }/*
-                    String address = v.getTag().toString();
-                    BluetoothAdapter mBluetoothAdapter = null;
-                    BluetoothManager mBluetoothManager = null;
-                    //let's first try to initialize the adapter
-                    // For API level 18 and above, get a reference to BluetoothAdapter through
-                    // BluetoothManager.
-                    if (mBluetoothManager == null) {
-                        mBluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
-                        if (mBluetoothManager == null) {
-                            Log.e(TAG, "Unable to initialize BluetoothManager.");
+                        // Checks if Bluetooth is supported on the device.
+                        if (mBluetoothAdapter == null) {
+                            CustomToast.showAlert(context, context.getString(R.string.ble_not_supported), CustomToast._TYPE_ERROR);
                             return;
                         }
+                        // Checks if Bluetooth is enabled, or asks to make it enabled.
+                        if (!mBluetoothAdapter.isEnabled()) {
+
+                            DeviceDao dDao = new DeviceDao(context);
+                            Device device = dDao.findByMacAddress(v.getTag().toString());
+                            device.setManualDisconnect(false);
+                            dDao.update(device);
+
+                            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                            ((Activity)context).startActivityForResult(enableBtIntent, MainActivity.REQUEST_ENABLE_BT);
+                            return;
+                        }
+
+                        BLEService instance = BLEService.getInstance();
+                        if (instance != null) {
+                            instance.connect(v.getTag().toString());
+                        }
                     }
-
-                    mBluetoothAdapter = mBluetoothManager.getAdapter();
-                    if (mBluetoothAdapter == null) {
-                        Log.e(TAG, "Unable to obtain a BluetoothAdapter.");
-                        return;
-                    }
-
-                    if (mBluetoothAdapter == null || address == null) {
-                        Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
-                        return;
-                    }
-
-                    BluetoothDevice device = null;
-                    try {
-                        device = mBluetoothAdapter.getRemoteDevice(address);
-                    } catch (Exception ex) {
-                        //just don't connect to the device if the mac address is weird
-                    }
-
-                    if (device == null) {
-                        Log.w(TAG, "Device not found.  Unable to connect.");
-                        return;
-                    }
-
-                    GattManager manager = GattManager.getInstance();
-                    GattConnectOperation operation = new GattConnectOperation(device);
-                    manager.queue(operation);*/
-                }
-            });
-
-        }else if( (thisDevice.isActive() && thisDevice.isConnected()) || LoonAndroid.demoMode ){
-            viewHolder.nameTV.setText( TextUtils.isEmpty(thisDevice.getDescription())? thisDevice.getName(): thisDevice.getDescription() );
-            viewHolder.addressTV.setText(thisDevice.getName());
-            viewHolder.connectBtn.setVisibility(View.GONE);
-            viewHolder.signalIV.setVisibility(View.VISIBLE);
-            viewHolder.batteryIV.setVisibility(View.VISIBLE);
-            viewHolder.loadingPB.setVisibility(View.GONE);
-            viewHolder.connectingTV.setVisibility(View.GONE);
-            Util.setUpSignalView(context, viewHolder.signalIV, thisDevice);
-            Util.setUpBatteryView(context, viewHolder.batteryIV, thisDevice);
-        }else{
-            viewHolder.nameTV.setText( thisDevice.getName() );
-            viewHolder.addressTV.setText(thisDevice.getMacAddress());
-            viewHolder.connectBtn.setVisibility(View.GONE);
-            viewHolder.signalIV.setVisibility(View.GONE);
-            viewHolder.batteryIV.setVisibility(View.GONE);
-            viewHolder.loadingPB.setVisibility(View.GONE);
-            viewHolder.connectingTV.setVisibility(View.GONE);
+                });
+                break;
         }
 
-        //i need to look for this item's active alarms and list them
+        //i need to look for this item's last alert
         DevicePropertyDao aDao = new DevicePropertyDao(context);
-        //viewHolder.alarmsLL.removeAllViews();
         DeviceProperty dProperty = aDao.getLastAlertForDevice(thisDevice.getId());
-        viewHolder.alarmsLL.removeAllViews();
+
         if (dProperty != null && dProperty.getDismissedAt() == null) {
 
             Property alertProperty = Property.getDefaultProperty(dProperty.getPropertyId());
@@ -233,12 +184,10 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
                     context.getString(alertProperty.getOnTextId()):
                     context.getString(alertProperty.getOffTextId());
 
-            View alertView = LinearLayout.inflate(context, R.layout.alert_item, null);
-            ((TextView) alertView.findViewById(R.id.alertDateTV)).setText(Util.sdf.format(dProperty.getCreatedAt()));
-            ((TextView) alertView.findViewById(R.id.serviceTV)).setText(propertyMessage);
-            alertView.setTag(dProperty.getId());
-
-            alertView.setOnClickListener(new View.OnClickListener() {
+            viewHolder.alertTV.setText(Util.sdf.format(dProperty.getCreatedAt()) + " " + propertyMessage + " >>");
+            viewHolder.alertTV.setVisibility(View.VISIBLE);
+            viewHolder.alertTV.setTag(dProperty.getId());
+            viewHolder.alertTV.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     long id = Long.valueOf(v.getTag().toString());
@@ -252,7 +201,6 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
                     v.setVisibility(View.GONE);
                 }
             });
-            viewHolder.alarmsLL.addView(alertView);
         }
     }
 
@@ -273,5 +221,23 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
     public void remove(int position){
         items.remove(position);
         this.notifyDataSetChanged();
+    }
+
+    private final static int _MODE_IGNORED = 0;
+    private final static int _MODE_CONNECTED = 1;
+    private final static int _MODE_CONNECTING = 2;
+    private final static int _MODE_NOT_CONNECTED = 3;
+
+    public int getPaintMode(Device device){
+        if(!device.isActive()){
+            return _MODE_IGNORED;
+        }
+        if((device.isActive() && device.isConnected()) || LoonAndroid.demoMode){
+            return _MODE_CONNECTED;
+        }
+        if(device.isActive() && device.isConnecting()){
+            return _MODE_CONNECTING;
+        }
+        return _MODE_NOT_CONNECTED;
     }
 }

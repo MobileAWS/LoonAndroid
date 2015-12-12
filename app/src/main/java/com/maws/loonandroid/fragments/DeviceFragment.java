@@ -20,7 +20,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.activities.MainActivity;
@@ -37,7 +36,6 @@ import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
-
 import java.util.List;
 import java.util.Random;
 
@@ -62,6 +60,7 @@ public class DeviceFragment extends Fragment implements
     }
 
     public DeviceFragment() {
+
     }
 
     @Override
