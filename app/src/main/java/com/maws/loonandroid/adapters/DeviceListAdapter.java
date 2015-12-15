@@ -18,6 +18,7 @@ import com.maws.loonandroid.R;
 import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.DevicePropertyDao;
+import com.maws.loonandroid.fragments.ActivationDialogFragment;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
@@ -32,7 +33,7 @@ import java.util.List;
 public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.DeviceViewHolder> {
 
     private static final String TAG = "DeviceListAdapter";
-    private final Context context;
+    private  Context context;
     private final List<Device> items;
     private DeviceViewHolderClickListener listener;
 
@@ -97,7 +98,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
     @Override
     public void onBindViewHolder(DeviceViewHolder viewHolder, int position) {
 
-        Device thisDevice = items.get(position);
+        final Device thisDevice = items.get(position);
         viewHolder.mainView.setTag(position);
         int paintMode = getPaintMode(thisDevice);
         viewHolder.nameTV.setText(TextUtils.isEmpty(thisDevice.getDescription()) ? thisDevice.getName() : thisDevice.getDescription());
@@ -114,6 +115,20 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
         viewHolder.connectingTV.setVisibility(View.GONE);
         viewHolder.statusV.setVisibility(View.VISIBLE);
         viewHolder.alertTV.setVisibility(View.GONE);
+        viewHolder.activateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ActivationDialogFragment newFragment = ActivationDialogFragment.newInstance(thisDevice, context, new ActivationDialogFragment.ActivationDialogFragmentListener() {
+                    @Override
+                    public void onSensorAdded(Device device) {
+                        device.setActive(true);
+                        DeviceDao sDao = new DeviceDao(context);
+                        sDao.update(device);
+                    }
+                });
+                newFragment.show(((Activity) context).getFragmentManager(), "dialog");
+            }
+        });
 
         switch (paintMode){
             case _MODE_IGNORED:
@@ -124,6 +139,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
                 viewHolder.sensorsLL2.setVisibility(View.GONE);
                 viewHolder.activateBtn.setVisibility(View.VISIBLE);
                 viewHolder.statusV.setVisibility(View.GONE);
+
                 break;
             case _MODE_CONNECTED:
                 Util.setUpSignalView(context, viewHolder.signalIV, thisDevice);

@@ -13,4 +13,10 @@
         android:visible="true"
         app:showAsAction="always"
         />
+    <item android:id="@+id/action_Login"
+        android:title="@string/navigation_log_in"
+        android:orderInCategory="100"
+        android:visible="false"
+        app:showAsAction="always"
+        />
 </menu>

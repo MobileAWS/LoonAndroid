@@ -1,7 +1,6 @@
 package com.maws.loonandroid.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,12 +12,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.maws.loonandroid.R;
-import com.maws.loonandroid.activities.LoginActivity;
-import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.adapters.UploadSensorListAdapter;
 import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.DevicePropertyDao;
@@ -41,7 +39,7 @@ import java.util.List;
 public class UploadToCloudFragment extends Fragment {
 
     private ListView sensorsLV;
-    private View emptyLayoutUpload;
+    private View emptyLayoutUpload,containerLY;
     private UploadSensorListAdapter adapter;
 
 
@@ -63,6 +61,7 @@ public class UploadToCloudFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_upload, container, false);
+        containerLY = (LinearLayout) rootView.findViewById(R.id.containerLY);
         sensorsLV = (ListView) rootView.findViewById(R.id.sensorsLV);
         final Context context = this.getActivity();
         List<Device> devicesWithAlarm = verificationDevicesWithProperties(context);
@@ -102,9 +101,7 @@ public class UploadToCloudFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.action_start_scan:
-                validationUpload();
-                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -218,18 +215,21 @@ public class UploadToCloudFragment extends Fragment {
     private  void loadEmptyPage(List<Device> devicesWithAlarm){
         if(devicesWithAlarm != null && devicesWithAlarm.size() > 0){
             emptyLayoutUpload.setVisibility(View.GONE);
+            sensorsLV.setVisibility(View.VISIBLE);
+
         }else {
             emptyLayoutUpload.setVisibility(View.VISIBLE);
+            sensorsLV.setVisibility(View.GONE);
+
         }
     }
     public UploadSensorListAdapter getAdapter(){
         return this.adapter;
     }
     private void validationUpload(){
-        if(!Util.isLoginOnline(this.getView().getContext())) {
-            Intent LoginIntent= null;
-            LoginIntent = new Intent(this.getActivity().getApplicationContext(),LoginActivity.class);
-            getActivity().startActivityForResult(LoginIntent, MainActivity.RESQUET_LOGIN_ACTIVITY);
+        Context context = getActivity();
+        if(!Util.isLoginOnline(context)) {
+            CustomToast.showAlert(context,context.getString(R.string.notification_upload_warn),CustomToast._TYPE_WARNING);
         }
         else{
             this.uploadInfoToServer(adapter);

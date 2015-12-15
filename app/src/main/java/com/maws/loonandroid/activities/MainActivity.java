@@ -25,17 +25,22 @@ import android.widget.TextView;
 import com.maws.loonandroid.LoonAndroid;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.ViewPagerAdapter;
+import com.maws.loonandroid.dao.ContactDao;
 import com.maws.loonandroid.fragments.DeviceFragment;
 import com.maws.loonandroid.fragments.SensorsFragment;
 import com.maws.loonandroid.fragments.SmsFragment;
 import com.maws.loonandroid.fragments.SupportFragment;
 import com.maws.loonandroid.fragments.UploadToCloudFragment;
+import com.maws.loonandroid.models.Contact;
 import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomProgressSpinner;
 
-public class MainActivity extends AppCompatActivity
+import org.droidparts.bus.EventBus;
+import org.droidparts.bus.EventReceiver;
+
+public class MainActivity extends AppCompatActivity implements EventReceiver
         {
 
     public static final int REQUEST_ENABLE_BT = 30921;
@@ -44,7 +49,7 @@ public class MainActivity extends AppCompatActivity
     public final static int RESQUET_LOGIN_ACTIVITY=2040;
     public final static int REQUEST_CONTACT_ACTIVITY=197611;
     public final static int REQUEST_SCAN = 1002;
-    public final static int PICK_CONTACT = 1003;
+    public final static int PICK_CONTACT_REQUEST = 013;
     public static final String TAG_MONITOR ="ss";
     public static final String TAG_SENSOR = "ss1";
     public static final String TAG_PUSH_NOTIFICATION = "pn";
@@ -52,10 +57,15 @@ public class MainActivity extends AppCompatActivity
     public static final String TAG_UPLOAD = "up";
     public static final String TAG_CONTACT = "contact";
     private boolean initMonitors = false;
+    private ViewPager viewPager;
     private ViewPagerAdapter adapterViewPager;
     private Menu mOptionsMenu;
+    private Toolbar toolbar;
     private  TabLayout tabLayout;
-
+    private DeviceFragment deviceFragment;
+    private SensorsFragment sensorsFragment;
+    private UploadToCloudFragment uploadToCloudFragment;
+    private SmsFragment smsFragment;
 
 
     private CharSequence mTitle;
@@ -79,32 +89,7 @@ public class MainActivity extends AppCompatActivity
                 initMonitors = false;
             }
         }
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setTitleTextColor(Color.WHITE);
-        toolbar.setLogo(R.mipmap.ic_launcher);
-        setSupportActionBar(toolbar);
-        tabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.tabanim_viewpager);
-        setupViewPager(viewPager);
-        tabLayout.setupWithViewPager(viewPager);
-        setupTabLayout(tabLayout);
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
-
+        setUpToolBar();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -116,7 +101,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){
-        validateLogout( menu);
+        validateLogout(menu);
         return true;
     }
     @Override
@@ -124,10 +109,25 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.action_Log_out:
                 Util.logout(this);
+                setUpToolBar();
                 item.setVisible(false);
+
+                return true;
+            case R.id.action_Login:
+                item.setVisible(false);
+                Intent LoginIntent= null;
+                LoginIntent = new Intent(this.getApplicationContext(),LoginActivity.class);
+                startActivityForResult(LoginIntent, MainActivity.RESQUET_LOGIN_ACTIVITY);
+
                 return true;
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.action_generate_random_alert:
+                deviceFragment.generateRandomAlert();
+                return true;
+            case R.id.action_remove_sensors:
+                deviceFragment.removeSensors();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -152,8 +152,9 @@ public class MainActivity extends AppCompatActivity
             }
             if(mOptionsMenu != null)
             validateLogout(mOptionsMenu);
+            setUpToolBar();
         }
-        if(requestCode == REQUEST_CONTACT_ACTIVITY) {
+        if(requestCode == PICK_CONTACT_REQUEST ) {
 
             if(data != null) {
                 Uri contactUri = data.getData();
@@ -171,15 +172,12 @@ public class MainActivity extends AppCompatActivity
 
                 String number = cursor.getString(column);
                 String name = cursor.getString(column2);
-                if (adapterViewPager != null && number != null && name != null) {
-                    SmsFragment smsFragment = (SmsFragment) adapterViewPager.getItem(4);
-                    smsFragment.addContact(number, name);
-                }
+                Contact contactTest = new Contact(name,number);
+                ContactDao contactDao = new ContactDao(this);
+                contactDao.create(contactTest);
+                EventBus.postEvent(Util.EVENT_CONTACT_CREATED);
             }
-
-
         }
-
     }
     public void onResourcesContact(View v){
         final CustomProgressSpinner spinner = new CustomProgressSpinner(this, this.getString(R.string.support_spinner));
@@ -216,27 +214,44 @@ public class MainActivity extends AppCompatActivity
         }
     }
     private void setupTabLayout(TabLayout tabLayout) {
-        LinearLayout tab0 = getTab(R.drawable.ic_action_heart_monitor_white,R.string.navigation_sensors);
-        tabLayout.getTabAt(0).setCustomView(tab0);
-        LinearLayout tab1 = getTab(R.drawable.ic_action_monitors_white, R.string.navigation_status);
-        tabLayout.getTabAt(1).setCustomView(tab1);
-        LinearLayout tab2 = getTab(R.drawable.ic_action_upload_to_cloud_white,R.string.navigation_upload_to_cloud);
-        tabLayout.getTabAt(2).setCustomView(tab2);
-        LinearLayout tab3 = getTab(R.drawable.ic_support,R.string.support_option);
-        tabLayout.getTabAt(3).setCustomView(tab3);
-        LinearLayout tab4 = getTab(R.drawable.ic_action_contact,R.string.sms_option);
-        tabLayout.getTabAt(4).setCustomView(tab4);
-        //tabLayout.setTabTextColors(Color.WHITE, Color.rgb(241,241,241));
+        if(Util.isLoginOnline(this)) {
+            LinearLayout tab0 = getTab(R.drawable.ic_action_heart_monitor_white, R.string.navigation_sensors);
+            tabLayout.getTabAt(0).setCustomView(tab0);
+            LinearLayout tab1 = getTab(R.drawable.ic_action_monitors_white, R.string.navigation_status);
+            tabLayout.getTabAt(1).setCustomView(tab1);
+            LinearLayout tab2 = getTab(R.drawable.ic_action_upload_to_cloud_white, R.string.navigation_upload_to_cloud);
+            tabLayout.getTabAt(2).setCustomView(tab2);
+            LinearLayout tab3 = getTab(R.drawable.ic_support, R.string.support_option);
+            tabLayout.getTabAt(3).setCustomView(tab3);
+            LinearLayout tab4 = getTab(R.drawable.ic_action_contact, R.string.sms_option);
+            tabLayout.getTabAt(4).setCustomView(tab4);
+        }
+        else {
+            LinearLayout tab0 = getTab(R.drawable.ic_action_heart_monitor_white, R.string.navigation_sensors);
+            tabLayout.getTabAt(0).setCustomView(tab0);
+            LinearLayout tab1 = getTab(R.drawable.ic_action_monitors_white, R.string.navigation_status);
+            tabLayout.getTabAt(1).setCustomView(tab1);
+            LinearLayout tab2 = getTab(R.drawable.ic_support, R.string.support_option);
+            tabLayout.getTabAt(2).setCustomView(tab2);
+
+        }
     }
     private void setupViewPager(ViewPager viewPager) {
         adapterViewPager = new ViewPagerAdapter(getSupportFragmentManager());
-        adapterViewPager.addFrag(DeviceFragment.newInstance(), getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor);
-        adapterViewPager.addFrag(SensorsFragment.newInstance(), "Status", R.drawable.ic_action_status);
-        adapterViewPager.addFrag(UploadToCloudFragment.newInstance(), getString(R.string.navigation_upload_to_cloud), R.drawable.ic_action_upload_to_cloud);
-        adapterViewPager.addFrag(SupportFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_support);
-        adapterViewPager.addFrag(SmsFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_action_contact);
-        viewPager.setAdapter(adapterViewPager);
-        viewPager.setCurrentItem(0);
+        if(Util.isLoginOnline(this)) {
+            adapterViewPager.addFrag(DeviceFragment.newInstance(), getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor);
+            adapterViewPager.addFrag(SensorsFragment.newInstance(), "Status", R.drawable.ic_action_status);
+            adapterViewPager.addFrag(UploadToCloudFragment.newInstance(), getString(R.string.navigation_upload_to_cloud), R.drawable.ic_action_upload_to_cloud);
+            adapterViewPager.addFrag(SupportFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_support);
+            adapterViewPager.addFrag(SmsFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_action_contact);
+
+        }else {
+            adapterViewPager.addFrag(DeviceFragment.newInstance(), getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor);
+            adapterViewPager.addFrag(SensorsFragment.newInstance(), "Status", R.drawable.ic_action_status);
+            adapterViewPager.addFrag(SupportFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_support);
+        }
+            viewPager.setAdapter(adapterViewPager);
+            viewPager.setCurrentItem(0);
     }
     private LinearLayout  getNewlayout(Context context) {
         LayoutInflater inflater;
@@ -247,7 +262,7 @@ public class MainActivity extends AppCompatActivity
     private LinearLayout getTab(int idIcon, int idText){
         LinearLayout tab0 = getNewlayout(this);
         ImageView icon0 = (ImageView)tab0.findViewById(R.id.icon);
-        icon0.setImageDrawable( ContextCompat.getDrawable(this,idIcon) );
+        icon0.setImageDrawable(ContextCompat.getDrawable(this, idIcon));
         TextView titlel0 = (TextView) tab0.findViewById(R.id.text1);
         titlel0.setText(this.getString(idText));
         return tab0;
@@ -255,9 +270,78 @@ public class MainActivity extends AppCompatActivity
     private void validateLogout(Menu menu){
         if(Util.isLoginOnline(this)){
             menu.findItem(R.id.action_Log_out).setVisible(true);
+            menu.findItem(R.id.action_Login).setVisible(false);
         }
         else {
             menu.findItem(R.id.action_Log_out).setVisible(false);
+            menu.findItem(R.id.action_Login).setVisible(true);
+        }
+    }
+    private void setUpToolBar(){
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setLogo(R.mipmap.ic_launcher);
+        setSupportActionBar(toolbar);
+        tabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
+        viewPager = (ViewPager) findViewById(R.id.tabanim_viewpager);
+        setupViewPager(viewPager);
+        getAllFragments();
+        tabLayout.setupWithViewPager(viewPager);
+        setupTabLayout(tabLayout);
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        EventBus.registerReceiver(this, Util.CONTACT_INTEND);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        EventBus.unregisterReceiver(this);
+
+    }
+    private  void getAllFragments(){
+        if(Util.isLoginOnline(this)) {
+            deviceFragment = (DeviceFragment) adapterViewPager.getItem(0);
+            sensorsFragment = (SensorsFragment) adapterViewPager.getItem(1);
+            uploadToCloudFragment = (UploadToCloudFragment) adapterViewPager.getItem(2);
+            smsFragment = (SmsFragment) adapterViewPager.getItem(4);
+        }else {
+            deviceFragment = (DeviceFragment) adapterViewPager.getItem(0);
+            sensorsFragment = (SensorsFragment) adapterViewPager.getItem(1);
+        }
+    }
+
+
+    @Override
+    public void onEvent(String name, Object data) {
+        switch (name){
+            case Util.CONTACT_INTEND:
+                Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
+                pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
+                startActivityForResult(pickContactIntent, this.PICK_CONTACT_REQUEST);
+                break;
+            default:
+                break;
         }
     }
 }

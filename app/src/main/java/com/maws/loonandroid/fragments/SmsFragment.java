@@ -2,10 +2,7 @@ package com.maws.loonandroid.fragments;
 
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,16 +14,19 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.maws.loonandroid.R;
-import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.adapters.ContactListAdapter;
 import com.maws.loonandroid.dao.ContactDao;
 import com.maws.loonandroid.models.Contact;
+import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomToast;
+
+import org.droidparts.bus.EventBus;
+import org.droidparts.bus.EventReceiver;
 
 import java.util.List;
 
 
-public class SmsFragment extends Fragment {
+public class SmsFragment extends Fragment implements EventReceiver<Object> {
 
     private ContactListAdapter adapter;
     private  RecyclerView contactRv;
@@ -47,8 +47,18 @@ public class SmsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        EventBus.registerReceiver(this, Util.EVENT_CONTACT_CREATED);
+    }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        EventBus.unregisterReceiver(this);
     }
 
     @Override
@@ -65,8 +75,6 @@ public class SmsFragment extends Fragment {
         contactRv.setLayoutManager(layoutManager);
         contactDao = new ContactDao(this.getActivity());
         final List<Contact> contactList = contactDao.getAll();
-
-
         if(contactList.size() > 0){
             adapter = new ContactListAdapter(this.getActivity(), contactList, new ContactListAdapter.ContactViewHolderClickListener() {
                 @Override
@@ -85,11 +93,9 @@ public class SmsFragment extends Fragment {
         FloatingActionButton fabScanButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fabScanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                 // contactList = contactDao.getAll();
-                if(contactList.size() < 5) {
-                    Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
-                    pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
-                    startActivityForResult(pickContactIntent, MainActivity.PICK_CONTACT);
+                 List<Contact> contactlistFb = contactDao.getAll();
+                if(contactlistFb.size() < 5) {
+                    EventBus.postEvent(Util.CONTACT_INTEND);
                 }else {
                     CustomToast.showAlert(context,"Only 5 contact are possible to add. ",CustomToast._TYPE_WARNING);
                 }
@@ -97,11 +103,9 @@ public class SmsFragment extends Fragment {
         });
         return rootView;
     }
-    public void addContact(String number,String name){
-        contactDao.create(new Contact(name,number));
-        refreshAdapter(contactDao.getAll());
-    }
-    private void refreshAdapter(List<Contact> contactList){
+
+    private void refreshAdapter(){
+        List<Contact> contactList = contactDao.getAll();
         adapter  = new ContactListAdapter(this.getActivity(), contactList, new ContactListAdapter.ContactViewHolderClickListener() {
             @Override
             public void onClick(Contact contact) {
@@ -113,6 +117,18 @@ public class SmsFragment extends Fragment {
         contactRv.setVisibility(View.VISIBLE);
         if(adapter != null){
             adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onEvent(String name, Object data) {
+        switch (name){
+            case Util.EVENT_CONTACT_CREATED:
+                refreshAdapter();
+                adapter.notifyDataSetChanged();
+                break;
+            default:
+                break;
         }
     }
 }

@@ -19,6 +19,7 @@
     <string name="navigation_status">Status</string>
     <string name="navigation_push_notification">Push Notification</string>
     <string name="navigation_log_out">Logout</string>
+    <string name="navigation_log_in">Login</string>
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
     <string name="action_change_background">Change Background</string>
@@ -30,6 +31,8 @@
     <string name="action_scan">Scan for Devices</string>
     <string name="action_send_notification">Send Notification</string>
     <string name="action_upload">Upload</string>
+    <string name="notification_upload_warn">you must be  login to upload</string>
+    <string name="change_ignore_activate">New Device Name:</string>
     <string name="forgot_password_explanation">Enter your email and press \'Reset Password\'. You should get instructions to recover your password on your email.</string>
     <string name="prompt_confirm_email">Confirm Email</string>
     <string name="email_confirmation_must_match">Email confirmation must match. </string>
@@ -159,7 +162,7 @@
     <string name="device_removed">Device succesfully removed</string>
     <string name="disconnect">Disconnect</string>
     <string name="title_delete_swipe">Delete Device</string>
-    <string name="contact_deleted">the contact on loon was deleted successful</string>
+    <string name="contact_deleted">The contact was deleted successful</string>
     <string name="title_delete_activate_swipe">Activate or Delete Device</string>
     <string name="button_activate_device">Activate</string>
     <string name="button_delete_device">Delete</string>

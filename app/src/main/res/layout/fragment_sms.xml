@@ -60,7 +60,6 @@
                     android:gravity="center"
                     android:layout_gravity="center_horizontal"
                     />
-
             </LinearLayout>
 
         </LinearLayout>
@@ -77,7 +76,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
-        android:src="@drawable/ic_action_more_white"
+        android:src="@drawable/ic_action_new"
         app:layout_anchor="@id/coordinator"
         app:layout_anchorGravity="bottom|right"/>
     </android.support.design.widget.CoordinatorLayout>

@@ -36,6 +36,9 @@ import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
+
+import org.droidparts.bus.EventReceiver;
+
 import java.util.List;
 import java.util.Random;
 
@@ -43,7 +46,7 @@ import java.util.Random;
  * Created by Andrexxjc on 12/04/2015.
  */
 public class DeviceFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>, EventReceiver<Object> {
 
     private View emptyLayout;
     private RecyclerView sensorsLV;
@@ -112,15 +115,6 @@ public class DeviceFragment extends Fragment implements
                                 dDao.delete(currentDevice);
                             }
                         });
-
-                    if(!device.isActive()){
-                        builder.setPositiveButton(R.string.button_activate_device,new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        device.setActive(true);
-                                        adapter.notifyDataSetChanged();
-                                    }
-                        });
-                    }
                     builder.create().show();
                 }catch (Exception e) {
 
@@ -218,14 +212,14 @@ public class DeviceFragment extends Fragment implements
         }
     }
 
-    private void removeSensors(){
+    public void removeSensors(){
         LoonMedicalDao loonDao = new LoonMedicalDao(this.getActivity());
         DeviceDao sDao = new DeviceDao(this.getActivity());
         sDao.deleteAll(loonDao.getWritableDatabase());
         loadSensors();
     }
 
-    private void generateRandomAlert(){
+    public void generateRandomAlert(){
         if(adapter == null){
             return;
         }
@@ -301,4 +295,15 @@ public class DeviceFragment extends Fragment implements
         loadSensors();
     }
 
+    @Override
+    public void onEvent(String name, Object data) {
+        switch (name){
+            case Util.REFRESH_ADAPTER_DEVICE_FRAGMENT:
+                loadSensors();
+                adapter.notifyDataSetChanged();
+                break;
+            default:
+                break;
+        }
+    }
 }

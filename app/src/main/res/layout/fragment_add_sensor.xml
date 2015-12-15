@@ -6,6 +6,7 @@
     android:padding="10dp">
     <TextView
         android:layout_width="match_parent"
+        android:id="@+id/titleTV"
         android:layout_height="wrap_content"
         android:text="@string/add_sensor_title"
         android:textStyle="bold"
