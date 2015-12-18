@@ -92,18 +92,21 @@
             android:layout_gravity="center_horizontal">
 
             <TextView
+                android:id="@+id/sensorToiletTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/property_toilet"
                 android:layout_margin="5dp"/>
 
             <TextView
+                android:id="@+id/sensorIncontinenceTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/property_incontinence"
                 android:layout_margin="5dp"/>
 
             <TextView
+                android:id="@+id/sensorChairTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/property_chair"
@@ -118,18 +121,21 @@
             android:layout_gravity="center_horizontal">
 
             <TextView
+                android:id="@+id/sensorBedTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/property_bed"
                 android:layout_margin="5dp"/>
 
             <TextView
+                android:id="@+id/sensorCallTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/property_call"
                 android:layout_margin="5dp"/>
 
             <TextView
+                android:id="@+id/sensorPriTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/property_pri"
@@ -138,14 +144,15 @@
 
         <TextView
             android:id="@+id/alertTV"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/font_big"
-            android:textStyle="bold|italic"
             android:padding="10dp"
-            android:textColor="@color/dark_orange"
+            android:textColor="@color/white"
+            android:background="@color/toast_error_border"
             android:layout_gravity="right"
-            android:text="X (2015-12-15) - Alert >>"
+            android:text="X (2015-12-15) - Alert"
+            android:gravity="center"
          />
 
         <View

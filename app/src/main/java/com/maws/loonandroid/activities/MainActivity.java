@@ -205,20 +205,20 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
             spinner.dismiss();
         }
         if(v.getId() == R.id.phoneSupportTv){
-            String posted_by = "1-855-282-0004";
+            /*String posted_by = "1-855-282-0004";
             String uri = "tel:" + posted_by.trim() ;
             Intent intent = new Intent(Intent.ACTION_CALL);
             intent.setData(Uri.parse(uri));
             startActivity(intent);
-            spinner.dismiss();
+            spinner.dismiss();*/
         }
     }
     private void setupTabLayout(TabLayout tabLayout) {
         if(Util.isLoginOnline(this)) {
             LinearLayout tab0 = getTab(R.drawable.ic_action_heart_monitor_white, R.string.navigation_sensors);
             tabLayout.getTabAt(0).setCustomView(tab0);
-            LinearLayout tab1 = getTab(R.drawable.ic_action_monitors_white, R.string.navigation_status);
-            tabLayout.getTabAt(1).setCustomView(tab1);
+            //LinearLayout tab1 = getTab(R.drawable.ic_action_monitors_white, R.string.navigation_status);
+            //tabLayout.getTabAt(1).setCustomView(tab1);
             LinearLayout tab2 = getTab(R.drawable.ic_action_upload_to_cloud_white, R.string.navigation_upload_to_cloud);
             tabLayout.getTabAt(2).setCustomView(tab2);
             LinearLayout tab3 = getTab(R.drawable.ic_support, R.string.support_option);
@@ -229,10 +229,10 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
         else {
             LinearLayout tab0 = getTab(R.drawable.ic_action_heart_monitor_white, R.string.navigation_sensors);
             tabLayout.getTabAt(0).setCustomView(tab0);
-            LinearLayout tab1 = getTab(R.drawable.ic_action_monitors_white, R.string.navigation_status);
-            tabLayout.getTabAt(1).setCustomView(tab1);
+            //LinearLayout tab1 = getTab(R.drawable.ic_action_monitors_white, R.string.navigation_status);
+            //tabLayout.getTabAt(1).setCustomView(tab1);
             LinearLayout tab2 = getTab(R.drawable.ic_support, R.string.support_option);
-            tabLayout.getTabAt(2).setCustomView(tab2);
+            tabLayout.getTabAt(1).setCustomView(tab2);
 
         }
     }
@@ -240,14 +240,14 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
         adapterViewPager = new ViewPagerAdapter(getSupportFragmentManager());
         if(Util.isLoginOnline(this)) {
             adapterViewPager.addFrag(DeviceFragment.newInstance(), getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor);
-            adapterViewPager.addFrag(SensorsFragment.newInstance(), "Status", R.drawable.ic_action_status);
+            //adapterViewPager.addFrag(SensorsFragment.newInstance(), "Status", R.drawable.ic_action_status);
             adapterViewPager.addFrag(UploadToCloudFragment.newInstance(), getString(R.string.navigation_upload_to_cloud), R.drawable.ic_action_upload_to_cloud);
             adapterViewPager.addFrag(SupportFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_support);
             adapterViewPager.addFrag(SmsFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_action_contact);
 
         }else {
             adapterViewPager.addFrag(DeviceFragment.newInstance(), getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor);
-            adapterViewPager.addFrag(SensorsFragment.newInstance(), "Status", R.drawable.ic_action_status);
+            //adapterViewPager.addFrag(SensorsFragment.newInstance(), "Status", R.drawable.ic_action_status);
             adapterViewPager.addFrag(SupportFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_support);
         }
             viewPager.setAdapter(adapterViewPager);
@@ -322,12 +322,12 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
     private  void getAllFragments(){
         if(Util.isLoginOnline(this)) {
             deviceFragment = (DeviceFragment) adapterViewPager.getItem(0);
-            sensorsFragment = (SensorsFragment) adapterViewPager.getItem(1);
-            uploadToCloudFragment = (UploadToCloudFragment) adapterViewPager.getItem(2);
-            smsFragment = (SmsFragment) adapterViewPager.getItem(4);
+            //sensorsFragment = (SensorsFragment) adapterViewPager.getItem(1);
+            uploadToCloudFragment = (UploadToCloudFragment) adapterViewPager.getItem(1);
+            smsFragment = (SmsFragment) adapterViewPager.getItem(3);
         }else {
             deviceFragment = (DeviceFragment) adapterViewPager.getItem(0);
-            sensorsFragment = (SensorsFragment) adapterViewPager.getItem(1);
+            //sensorsFragment = (SensorsFragment) adapterViewPager.getItem(1);
         }
     }
 

@@ -241,7 +241,7 @@ public class DeviceDao {
                 },
                 null,
                 null,
-                KEY_ACTIVE + " DESC, " + KEY_ID + " DESC"
+                KEY_CONNECTED + " DESC, " +  KEY_ACTIVE + " DESC, " + KEY_ID + " DESC"
         );
 
         // looping through all rows and adding to list

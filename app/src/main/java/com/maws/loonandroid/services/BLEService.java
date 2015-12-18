@@ -22,6 +22,7 @@ import com.maws.loonandroid.gatt.operations.GattCharacteristicReadOperation;
 import com.maws.loonandroid.gatt.operations.GattCloseOperation;
 import com.maws.loonandroid.gatt.operations.GattConnectOperation;
 import com.maws.loonandroid.gatt.operations.GattDisconnectOperation;
+import com.maws.loonandroid.gatt.operations.GattSetIndicationOperation;
 import com.maws.loonandroid.gatt.operations.GattSetNotificationOperation;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceCharacteristic;
@@ -411,14 +412,14 @@ public class BLEService extends Service
                     manager.queue(operation);
 
                     //and to the indication service
-                    GattSetNotificationOperation ioperation = new GattSetNotificationOperation(
+                    /*GattSetIndicationOperation ioperation = new GattSetIndicationOperation(
                             bluetoothDevice,
                             DeviceService.UUID_CARE_SENTINEL_SERVICE,
                             DeviceCharacteristic._CHAR_CARE_SENTINEL,
                             DeviceCharacteristic._DESCRIPTOR_CARE_SENTINEL_NOTIFICATIONS
                     );
 
-                    manager.queue(ioperation);
+                    manager.queue(ioperation);*/
                     break;
 
                 case GattEvent.GATT_CHARACTERISTIC_CHANGED:
