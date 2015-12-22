@@ -36,9 +36,12 @@ import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.services.BLEService;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomProgressSpinner;
+import com.maws.loonandroid.views.CustomToast;
 
 import org.droidparts.bus.EventBus;
 import org.droidparts.bus.EventReceiver;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements EventReceiver
         {
@@ -174,8 +177,14 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
                 String name = cursor.getString(column2);
                 Contact contactTest = new Contact(name,number);
                 ContactDao contactDao = new ContactDao(this);
-                contactDao.create(contactTest);
-                EventBus.postEvent(Util.EVENT_CONTACT_CREATED);
+                List<Contact> contactlistFb = contactDao.getAll();
+                if(!Util.searchNameAndName(contactlistFb,contactTest)) {
+                    contactDao.create(contactTest);
+                    EventBus.postEvent(Util.EVENT_CONTACT_CREATED);
+                }else {
+                    CustomToast.showAlert(this, "This user name or number already exist", CustomToast._TYPE_ERROR);
+                }
+
             }
         }
     }
@@ -220,11 +229,11 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
             //LinearLayout tab1 = getTab(R.drawable.ic_action_monitors_white, R.string.navigation_status);
             //tabLayout.getTabAt(1).setCustomView(tab1);
             LinearLayout tab2 = getTab(R.drawable.ic_action_upload_to_cloud_white, R.string.navigation_upload_to_cloud);
-            tabLayout.getTabAt(2).setCustomView(tab2);
+            tabLayout.getTabAt(1).setCustomView(tab2);
             LinearLayout tab3 = getTab(R.drawable.ic_support, R.string.support_option);
-            tabLayout.getTabAt(3).setCustomView(tab3);
+            tabLayout.getTabAt(2).setCustomView(tab3);
             LinearLayout tab4 = getTab(R.drawable.ic_action_contact, R.string.sms_option);
-            tabLayout.getTabAt(4).setCustomView(tab4);
+            tabLayout.getTabAt(3).setCustomView(tab4);
         }
         else {
             LinearLayout tab0 = getTab(R.drawable.ic_action_heart_monitor_white, R.string.navigation_sensors);

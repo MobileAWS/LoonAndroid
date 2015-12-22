@@ -23,6 +23,7 @@ import com.maws.loonandroid.R;
 import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.dao.DeviceEnabledPropertyDao;
 import com.maws.loonandroid.dao.LogDao;
+import com.maws.loonandroid.models.Contact;
 import com.maws.loonandroid.models.Customer;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceEnabledProperty;
@@ -255,5 +256,18 @@ public class Util {
         User.instance = null;
         User.setCurrent(userLogout, context);
         Toast.makeText(context, context.getText(R.string.Logout_message), LENGTH_SHORT).show();
+    }
+
+    public static Boolean searchNameAndName(List<Contact> contactlistFb, Contact contact){
+        boolean result = false;
+        for(Contact posContact:contactlistFb){
+         if(posContact.getName().equalsIgnoreCase(contact.getName())){
+             return true;
+         }
+          if(posContact.getNumber().equalsIgnoreCase(contact.getNumber())){
+              return true;
+          }
+        }
+        return  result;
     }
 }

@@ -1,9 +1,10 @@
 package com.maws.loonandroid.fragments;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,8 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.adapters.ContactListAdapter;
 import com.maws.loonandroid.dao.ContactDao;
@@ -31,6 +35,7 @@ public class SmsFragment extends Fragment implements EventReceiver<Object> {
     private ContactListAdapter adapter;
     private  RecyclerView contactRv;
     private LinearLayout emptyMessageLV;
+    private FloatingActionsMenu fabMenu;
     private ContactDao contactDao = new ContactDao(this.getActivity());
 
     public static SmsFragment newInstance() {
@@ -66,7 +71,6 @@ public class SmsFragment extends Fragment implements EventReceiver<Object> {
                              Bundle savedInstanceState) {
         final Context context = this.getActivity();
         View rootView = inflater.inflate(R.layout.fragment_sms, container, false);
-
         emptyMessageLV = (LinearLayout) rootView.findViewById(R.id.emptyMessageLV);
         contactRv= (RecyclerView) rootView.findViewById(R.id.contactRV);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
@@ -90,14 +94,73 @@ public class SmsFragment extends Fragment implements EventReceiver<Object> {
             emptyMessageLV.setVisibility(View.VISIBLE);
             contactRv.setVisibility(View.GONE);
         }
-        FloatingActionButton fabScanButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        fabScanButton.setOnClickListener(new View.OnClickListener() {
+        fabMenu = (FloatingActionsMenu) rootView.findViewById(R.id.fabMenu);
+       FloatingActionButton fabScanButton1 = (FloatingActionButton) rootView.findViewById(R.id.smsOption1);
+        fabScanButton1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                fabMenu.collapse();
                  List<Contact> contactlistFb = contactDao.getAll();
                 if(contactlistFb.size() < 5) {
                     EventBus.postEvent(Util.CONTACT_INTEND);
                 }else {
-                    CustomToast.showAlert(context,"Only 5 contact are possible to add. ",CustomToast._TYPE_WARNING);
+                    CustomToast.showAlert(context, "Only 5 contact are possible to add. ", CustomToast._TYPE_WARNING);
+                }
+            }
+        });
+        FloatingActionButton fabScanButton2 = (FloatingActionButton) rootView.findViewById(R.id.smsOption2);
+        fabScanButton2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                fabMenu.collapse();
+                List<Contact> contactlistFb = contactDao.getAll();
+                if(contactlistFb.size() < 5) {
+                    LayoutInflater li = LayoutInflater.from(context);
+                    View promptsView = li.inflate(R.layout.add_contact_dialogbox, null);
+
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                            context);
+
+                    alertDialogBuilder.setView(promptsView);
+
+                    final EditText nameContact = (EditText) promptsView.findViewById(R.id.nameET);
+                    final EditText numberContact = (EditText) promptsView
+                            .findViewById(R.id.numberET);
+
+                    // set dialog message
+                    alertDialogBuilder
+                            .setCancelable(false)
+                            .setPositiveButton("Add",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog,int id) {
+                                            List<Contact> contactlistFb = contactDao.getAll();
+                                            if(nameContact.getText().toString() != null && !nameContact.getText().toString().isEmpty() &&
+                                                numberContact.getText().toString() != null && !numberContact.getText().toString().isEmpty()) {
+                                                Contact contact = new Contact();
+                                                contact.setName(nameContact.getText().toString());
+                                                contact.setNumber(numberContact.getText().toString());
+                                                if(!Util.searchNameAndName(contactlistFb,contact)) {
+                                                    ContactDao contactDao = new ContactDao(context);
+                                                    contactDao.create(contact);
+                                                    refreshAdapter();
+                                                    dialog.cancel();
+                                                }else {
+                                                    CustomToast.showAlert(context, "This user name or number already exist", CustomToast._TYPE_ERROR);
+                                                }
+                                            }else {
+                                                    CustomToast.showAlert(context, "You need to fillout all the fields.", CustomToast._TYPE_WARNING);
+                                            }
+                                        }
+                                    })
+                            .setNegativeButton("Cancel",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    // show it
+                    alertDialog.show();
+                }else {
+                    CustomToast.showAlert(context, "Only 5 contact are possible to add. ", CustomToast._TYPE_WARNING);
                 }
             }
         });
@@ -131,4 +194,5 @@ public class SmsFragment extends Fragment implements EventReceiver<Object> {
                 break;
         }
     }
+
 }

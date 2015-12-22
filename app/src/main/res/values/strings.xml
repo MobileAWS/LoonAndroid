@@ -189,4 +189,6 @@
 
     <!-- Contact fragment -->
     <string name="confirmation_delete_contact">Do you want to delete the contact?</string>
+    <string name="sms_option1">Select User from address book</string>
+    <string name="sms_option2">Create User in the app</string>
 </resources>
