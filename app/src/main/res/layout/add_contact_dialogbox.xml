@@ -3,18 +3,26 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_gravity="center">
-    <TextView android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            android:textSize="20dp"
-            android:layout_weight="0"
-            android:textStyle="bold"
-            android:text="Add Contact"/>
+        <LinearLayout android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:background="@color/light_blue"
+            >
+            <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
+                    android:paddingTop="15dp"
+                    android:textSize="20dp"
+                    android:layout_weight="0"
+                    android:textStyle="bold"
+                    android:text="Add Contact"
+                    android:textColor="@color/white"
+                />
+            </LinearLayout>
         <LinearLayout
             android:layout_marginTop="10dp"
             android:layout_weight="0"
@@ -30,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="Name"
-                android:gravity="center"/>
+                android:gravity="left"/>
         </LinearLayout>
         <LinearLayout
             android:layout_height="wrap_content"
@@ -45,7 +53,7 @@
                 android:layout_weight="1"
                 android:inputType="number"
                 android:hint="Number"
-                android:gravity="center"/>
+                android:gravity="left"/>
             </LinearLayout>
     </LinearLayout>
 
