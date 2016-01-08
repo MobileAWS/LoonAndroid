@@ -32,6 +32,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    productFlavors {
+        switches {
+            buildConfigField "boolean", "demo", "false"
+            buildConfigField "boolean", "switches", "true"
+        }
+        demo {
+            buildConfigField "boolean", "demo", "true"
+            buildConfigField "boolean", "switches", "false"
+        }
+        prod {
+            buildConfigField "boolean", "demo", "false"
+            buildConfigField "boolean", "switches", "false"
+        }
+    }
 }
 
 dependencies {

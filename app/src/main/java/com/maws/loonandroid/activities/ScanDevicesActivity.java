@@ -1,7 +1,6 @@
 package com.maws.loonandroid.activities;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -47,7 +46,7 @@ import java.util.List;
 /**
  * Created by Andrexxjc on 27/05/2015.
  */
-@TargetApi(21)
+
 public class ScanDevicesActivity extends AppCompatActivity {
 
         // Stops scanning after 10 seconds.
@@ -64,7 +63,7 @@ public class ScanDevicesActivity extends AppCompatActivity {
         private BluetoothLeScanner mLEScanner;
         private ScanSettings settings;
         private List<ScanFilter> filters;
-
+        private FloatingActionButton fab;
         private BluetoothDeviceAdapter scanAdapter;
         private BluetoothAdapter mBluetoothAdapter;
 
@@ -107,10 +106,11 @@ public class ScanDevicesActivity extends AppCompatActivity {
             toolbar.setLogo(R.mipmap.ic_launcher);
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
             final Drawable upArrow = getResources().getDrawable(R.drawable.ic_action_back_arrow);
             getSupportActionBar().setHomeAsUpIndicator(upArrow);
-            FloatingActionButton myFab = (FloatingActionButton) this.findViewById(R.id.fab);
-            myFab.setOnClickListener(new View.OnClickListener() {
+            fab = (FloatingActionButton) this.findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     startScanning();
                 }
@@ -118,25 +118,35 @@ public class ScanDevicesActivity extends AppCompatActivity {
 
         }
 
-    private ScanCallback mScanCallback = new ScanCallback() {
-        @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-            BluetoothDevice btDevice = result.getDevice();
-            processDevice(btDevice, result.getRssi());
-        }
+    private Object getScanCallback(){
+        if(Build.VERSION.SDK_INT >= 21) {
+            return new ScanCallback() {
+                @Override
+                @TargetApi(21)
+                public void onScanResult(int callbackType, ScanResult result) {
+                    BluetoothDevice btDevice = result.getDevice();
+                    processDevice(btDevice, result.getRssi());
+                }
 
-        @Override
-        public void onBatchScanResults(List<ScanResult> results) {
-            for (ScanResult sr : results) {
-                processDevice(sr.getDevice(), sr.getRssi());
-            }
-        }
+                @Override
+                @TargetApi(21)
+                public void onBatchScanResults(List<ScanResult> results) {
+                    for (ScanResult sr : results) {
+                        processDevice(sr.getDevice(), sr.getRssi());
+                    }
+                }
 
-        @Override
-        public void onScanFailed(int errorCode) {
-            stopScanning();
+                @Override
+                public void onScanFailed(int errorCode) {
+                    stopScanning();
+                }
+            };
+        }else{
+            return null;
         }
-    };
+    }
+
+    private Object mScanCallback = getScanCallback();
 
     private void processDevice(BluetoothDevice device, int rssi){
 
@@ -153,9 +163,12 @@ public class ScanDevicesActivity extends AppCompatActivity {
         }
         scanAdapter.add(mDevice);
         scanAdapter.notifyDataSetChanged();
-
     }
 
+    @TargetApi(21)
+    private void startScan( ){
+        mLEScanner.startScan(filters, settings, (ScanCallback) mScanCallback );
+    }
 
     public void startScanning(){
         scanAdapter.clear();
@@ -193,14 +206,16 @@ public class ScanDevicesActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT < 21 && !mBluetoothAdapter.isDiscovering()) {
                 mBluetoothAdapter.startDiscovery();
             } else {
-                mLEScanner.startScan(filters, settings, mScanCallback);
+                startScan();
             }
             Util.log(this, "Started Scan");
         }
+
         discovering = true;
         invalidateOptionsMenu();
         scanTV.setText(getString(R.string.scanning));
         scanPB.setVisibility(View.VISIBLE);
+        fab.setVisibility(View.GONE);
 
         // Stops scanning after a pre-defined scan period.
         mHandler.postDelayed(new Runnable() {
@@ -210,13 +225,12 @@ public class ScanDevicesActivity extends AppCompatActivity {
                 invalidateOptionsMenu();
             }
         }, SCAN_PERIOD);
-
-
     }
 
     private void stopScanning(){
+        fab.setVisibility(View.VISIBLE);
         Util.log(this, "Finished Scan");
-        if(LoonAndroid.demoMode && !isFinishing()){
+        if(LoonAndroid.demoMode && !isFinishing() && discovering){
             discovering = false;
             scanAdapter.add(com.maws.loonandroid.models.Device.createFakeDevice());
             scanPB.setVisibility(View.GONE);
@@ -236,7 +250,7 @@ public class ScanDevicesActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT < 21) {
                 mBluetoothAdapter.cancelDiscovery();
             } else {
-                mLEScanner.stopScan(mScanCallback);
+                mLEScanner.stopScan((ScanCallback)mScanCallback);
             }
             scanPB.setVisibility(View.GONE);
 
@@ -290,7 +304,7 @@ public class ScanDevicesActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+        if ((mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) && !LoonAndroid.demoMode) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         } else {

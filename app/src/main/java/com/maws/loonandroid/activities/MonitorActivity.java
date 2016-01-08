@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
@@ -36,7 +37,7 @@ import com.maws.loonandroid.util.Util;
 /**
  * Created by Andrexxjc on 15/05/2015.
  */
-public class MonitorActivity extends ActionBarActivity
+public class MonitorActivity extends AppCompatActivity
         implements  View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "MONITOR";

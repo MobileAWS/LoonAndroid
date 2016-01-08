@@ -3,14 +3,14 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp">
-
+    android:background="@drawable/white_card"
+>
     <LinearLayout
         android:id="@+id/sensorLL"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
+        android:padding="10dp"
     >
         <TextView
             android:id="@+id/nameTV"
@@ -29,44 +29,52 @@
             android:textSize="@dimen/font_medium"
             android:text="123456"
         />
-
     </LinearLayout>
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/light_gray"
+        android:layout_below="@+id/sensorLL"></View>
 
     <TextView
         android:id="@+id/alreadyAddedTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/sensorLL"
-        android:layout_centerVertical="true"
-        android:textColor="@color/green"
+        android:textColor="@color/hint_gray"
         android:textStyle="italic"
         android:text="@string/device_already_added"
-        android:visibility="gone"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
     />
 
-    <Button
-        style="@style/Button.dark_green"
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/addBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:layout_gravity="right"
         android:text="@string/use_it"
-        android:layout_marginRight="10dp"
+        android:elevation="0dp"
+        android:textColor="@color/colorAccent"
+        android:background="@color/transparent"
         android:layout_below="@+id/sensorLL"
-        android:textSize="@dimen/font_big"
-        android:layout_toLeftOf="@+id/ignoreBtn"
-        android:drawableLeft="@drawable/ic_stat_ok"
+        android:layout_alignParentRight="true"
     />
 
-    <Button
-        style="@style/Button.orange"
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/ignoreBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="right"
         android:text="@string/ignore"
-        android:layout_alignParentRight="true"
-        android:textSize="@dimen/font_big"
+        android:elevation="0dp"
+        android:textColor="@color/dark_orange"
+        android:background="@color/transparent"
         android:layout_below="@+id/sensorLL"
-        android:drawableLeft="@drawable/ic_stat_cancel"
+        android:layout_marginLeft="5dp"
     />
 
 </RelativeLayout>

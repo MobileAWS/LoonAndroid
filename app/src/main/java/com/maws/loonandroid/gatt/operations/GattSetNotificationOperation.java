@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
+
+import com.maws.loonandroid.BuildConfig;
 import com.maws.loonandroid.gatt.GattManager;
 import java.util.UUID;
 
@@ -32,8 +34,11 @@ public class GattSetNotificationOperation extends GattOperation {
             e.printStackTrace();
         }
         BluetoothGattDescriptor descriptor = characteristic.getDescriptor(mDescriptorUuid);
-        //descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-        descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
+        if(BuildConfig.switches) {
+            descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
+        }else{
+            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+        }
         gatt.writeDescriptor(descriptor);
     }
 
