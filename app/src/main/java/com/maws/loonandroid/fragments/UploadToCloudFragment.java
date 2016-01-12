@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -71,7 +72,7 @@ public class UploadToCloudFragment extends Fragment implements EventReceiver<Obj
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_upload, container, false);
-        containerLY = (LinearLayout) rootView.findViewById(R.id.containerLY);
+        containerLY = rootView.findViewById(R.id.coordinator);
         sensorsLV = (ListView) rootView.findViewById(R.id.sensorsLV);
         final Context context = this.getActivity();
         List<Device> devicesWithAlarm = verificationDevicesWithProperties(context);

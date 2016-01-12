@@ -1,81 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.maws.loonandroid.fragments.DeviceFragment">
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/containerNSV"
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:orientation="vertical"
+        android:layout_gravity="top"
+        android:visibility="visible"
+        >
         <LinearLayout
+            android:id="@+id/emptyLayoutUpload"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_gravity="top"
+            android:gravity="center"
+            android:layout_centerInParent="true"
             android:visibility="visible"
+            android:padding="10dp"
             >
-            <LinearLayout
-                android:id="@+id/emptyLayoutUpload"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_centerInParent="true"
+            <ImageView
+                android:src="@drawable/heart_monitor"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:tint="@color/background_floating_material_dark"
                 android:visibility="visible"
-                >
-                <ImageView
-                    android:src="@drawable/heart_monitor"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:tint="@color/background_floating_material_dark"
-                    android:visibility="visible"
-                    />
-                <TextView
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:text="@string/no_sensors_found_upload"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_gravity="center_horizontal"
-                    />
-                <TextView
-                    android:textSize="18sp"
-                    android:text="@string/empty_sensor_upload"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:gravity="center"
-                    android:layout_gravity="center_horizontal"
-                    />
+                />
+            <TextView
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:text="@string/no_sensors_found_upload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                />
+            <TextView
+                android:textSize="18sp"
+                android:text="@string/empty_sensor_upload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                />
 
-        </LinearLayout>
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/containerLY"
-            android:orientation="vertical"
+    </LinearLayout>
+    <ListView
+            android:id="@+id/sensorsLV"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:layout_gravity="top">
-
-                <ListView
-                    android:id="@+id/sensorsLV"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:visibility="visible"
-                    >
-                </ListView>
-            </LinearLayout>
-        </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="visible">
+        </ListView>
+    </LinearLayout>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -83,6 +72,8 @@
         android:layout_margin="16dp"
         android:clickable="true"
         android:src="@drawable/ic_action_upload_arrow"
-        app:layout_anchor="@id/containerNSV"
-        app:layout_anchorGravity="bottom|right"/>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+    />
+    </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

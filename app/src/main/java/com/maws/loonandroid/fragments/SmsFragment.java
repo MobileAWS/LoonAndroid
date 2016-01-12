@@ -97,7 +97,7 @@ public class SmsFragment extends Fragment implements EventReceiver<Object> {
             contactRv.setVisibility(View.GONE);
         }
         fabMenu = (FloatingActionsMenu) rootView.findViewById(R.id.fabMenu);
-       FloatingActionButton fabScanButton1 = (FloatingActionButton) rootView.findViewById(R.id.smsOption1);
+        FloatingActionButton fabScanButton1 = (FloatingActionButton) rootView.findViewById(R.id.smsOption1);
         fabScanButton1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 addAddressBook(context);
