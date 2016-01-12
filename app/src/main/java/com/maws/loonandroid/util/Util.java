@@ -54,7 +54,13 @@ public class Util {
     public static final String CUSTOMER_ID_PREFERENCE = "customerId";
     public static final String SITE_ID_PREFERENCE = "siteId";
     public static final String EVENT_CONTACT_CREATED = "eventContact";
+    public static final String EVENT_MAIN_ADDRESS_BOOK = "eventMainAddressBook";
+    public static final String EVENT_MAIN_NEW_CONTACT = "eventMainContactNew";
+    public static final String EVENT_CONTACT_ADDRESS_BOOK = "eventAddressBook";
+    public static final String EVENT_CONTACT_NEW = "eventContactNew";
+    public static final String EVENT_UPLOAD_DATA = "eventoUploadData";
     public static final String CONTACT_INTEND = "contactIntend";
+    public static  final String LOGIN_INTENT_SMS = "loginIntentSms";
     public static final String REFRESH_ADAPTER_DEVICE_FRAGMENT = "refreshdviceFragmetn";
 
     public static String MD5(String md5) {
@@ -270,4 +276,7 @@ public class Util {
         }
         return  result;
     }
+
+
+
 }

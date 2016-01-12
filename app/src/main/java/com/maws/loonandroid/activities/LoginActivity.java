@@ -7,12 +7,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import com.maws.loonandroid.BuildConfig;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.CustomerDao;
@@ -28,6 +30,7 @@ import com.maws.loonandroid.models.User;
 import com.maws.loonandroid.requests.UserRequestHandler;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomToast;
+
 import org.json.JSONObject;
 
 /**
@@ -39,14 +42,24 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     private static final String TAG = "LOGIN";
     private EditText emailET, passwordET, siteIdET, customerIdET;
     private TextView forgotPasswordTV, newUserTV;
-    private Button loginBtn, loginNoCloudBtn;
+    private Button loginBtn, loginNoCloudBtn , cancel;
     private int CODE_RESULT_NEW_USER = 100;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         // Set up the login form.
+        Toolbar toolbar = (Toolbar) findViewById(R.id.LogginToolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         emailET = (EditText) findViewById(R.id.emailET);
         passwordET = (EditText) findViewById(R.id.passwordET);
         siteIdET = (EditText) findViewById(R.id.siteIdET);
@@ -67,6 +80,8 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
         createDefaultProperties();
 
     }
+
+
 
     private StringBuilder validateFields(){
         String email = emailET.getText().toString();
@@ -101,6 +116,14 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
                 pDao.create(Property.defaultProperties[i]);
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+         super.onBackPressed();
+
+
+        finish();
     }
 
     private void attemptLogin(){
@@ -220,7 +243,6 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
         }else if(v == newUserTV){
             Intent newUserIntent = new Intent(LoginActivity.this, NewUserActivity.class);
             Bundle bundle = new Bundle();
-
             startActivityForResult(newUserIntent, CODE_RESULT_NEW_USER);
 
         }else if(v == loginBtn){
@@ -228,6 +250,9 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
 
         }else if(v == loginNoCloudBtn){
             attemptOfflineLogin();
+        }else if(v == cancel) {
+            Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(mainIntent);
         }
     }
 

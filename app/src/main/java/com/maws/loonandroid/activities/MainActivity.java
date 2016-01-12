@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
     public final static int REQUEST_MONITOR_ACTIVITY = 1034;
     public final static int REQUEST_SCAN_ACTIVITY = 132074;
     public final static int RESQUET_LOGIN_ACTIVITY=2040;
+    public final static int RESQUET_LOGIN_ACTIVITY_SMS_BOOK=2041;
+    public final static int RESQUET_LOGIN_ACTIVITY_SMS_NEW=2042;
     public final static int REQUEST_CONTACT_ACTIVITY=197611;
     public final static int REQUEST_SCAN = 1002;
     public final static int PICK_CONTACT_REQUEST = 013;
@@ -112,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
         switch (item.getItemId()) {
             case R.id.action_Log_out:
                 Util.logout(this);
-                setUpToolBar();
+                //setUpToolBar();
                 item.setVisible(false);
 
                 return true;
@@ -142,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
 
         //for now, let's just refresh the monitors fragment if it's visible
         Log.e("request code: ", String.valueOf(requestCode));
+        if(mOptionsMenu != null)
+            validateLogout(mOptionsMenu);
         if(requestCode == this.REQUEST_SCAN_ACTIVITY){
             Fragment f = getSupportFragmentManager().findFragmentByTag(TAG_SENSOR);
             if(f != null && f instanceof DeviceFragment && f.isVisible()){
@@ -155,7 +159,15 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
             }
             if(mOptionsMenu != null)
             validateLogout(mOptionsMenu);
-            setUpToolBar();
+        }
+        if(requestCode == this.RESQUET_LOGIN_ACTIVITY_SMS_BOOK){
+            viewPager.setCurrentItem(3);
+        }
+        if(requestCode == this.RESQUET_LOGIN_ACTIVITY_SMS_NEW){
+            viewPager.setCurrentItem(3);
+        }
+        if(requestCode == RESULT_CANCELED+20){
+            viewPager.setCurrentItem(3);
         }
         if(requestCode == PICK_CONTACT_REQUEST ) {
 
@@ -223,7 +235,6 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
         }
     }
     private void setupTabLayout(TabLayout tabLayout) {
-        if(Util.isLoginOnline(this)) {
             LinearLayout tab0 = getTab(R.drawable.ic_action_heart_monitor_white, R.string.navigation_sensors);
             tabLayout.getTabAt(0).setCustomView(tab0);
             //LinearLayout tab1 = getTab(R.drawable.ic_action_monitors_white, R.string.navigation_status);
@@ -234,33 +245,18 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
             tabLayout.getTabAt(2).setCustomView(tab3);
             LinearLayout tab4 = getTab(R.drawable.ic_action_contact, R.string.sms_option);
             tabLayout.getTabAt(3).setCustomView(tab4);
-        }
-        else {
-            LinearLayout tab0 = getTab(R.drawable.ic_action_heart_monitor_white, R.string.navigation_sensors);
-            tabLayout.getTabAt(0).setCustomView(tab0);
-            //LinearLayout tab1 = getTab(R.drawable.ic_action_monitors_white, R.string.navigation_status);
-            //tabLayout.getTabAt(1).setCustomView(tab1);
-            LinearLayout tab2 = getTab(R.drawable.ic_support, R.string.support_option);
-            tabLayout.getTabAt(1).setCustomView(tab2);
 
-        }
+
     }
     private void setupViewPager(ViewPager viewPager) {
         adapterViewPager = new ViewPagerAdapter(getSupportFragmentManager());
-        if(Util.isLoginOnline(this)) {
-            adapterViewPager.addFrag(DeviceFragment.newInstance(), getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor);
-            //adapterViewPager.addFrag(SensorsFragment.newInstance(), "Status", R.drawable.ic_action_status);
-            adapterViewPager.addFrag(UploadToCloudFragment.newInstance(), getString(R.string.navigation_upload_to_cloud), R.drawable.ic_action_upload_to_cloud);
-            adapterViewPager.addFrag(SupportFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_support);
-            adapterViewPager.addFrag(SmsFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_action_contact);
-
-        }else {
-            adapterViewPager.addFrag(DeviceFragment.newInstance(), getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor);
-            //adapterViewPager.addFrag(SensorsFragment.newInstance(), "Status", R.drawable.ic_action_status);
-            adapterViewPager.addFrag(SupportFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_support);
-        }
-            viewPager.setAdapter(adapterViewPager);
-            viewPager.setCurrentItem(0);
+        adapterViewPager.addFrag(DeviceFragment.newInstance(), getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor);
+        //adapterViewPager.addFrag(SensorsFragment.newInstance(), "Status", R.drawable.ic_action_status);
+        adapterViewPager.addFrag(UploadToCloudFragment.newInstance(), getString(R.string.navigation_upload_to_cloud), R.drawable.ic_action_upload_to_cloud);
+        adapterViewPager.addFrag(SupportFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_support);
+        adapterViewPager.addFrag(SmsFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_action_contact);
+        viewPager.setAdapter(adapterViewPager);
+        viewPager.setCurrentItem(0);
     }
     private LinearLayout  getNewlayout(Context context) {
         LayoutInflater inflater;
@@ -279,11 +275,9 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
     private void validateLogout(Menu menu){
         if(Util.isLoginOnline(this)){
             menu.findItem(R.id.action_Log_out).setVisible(true);
-            menu.findItem(R.id.action_Login).setVisible(false);
         }
         else {
             menu.findItem(R.id.action_Log_out).setVisible(false);
-            menu.findItem(R.id.action_Login).setVisible(true);
         }
     }
     private void setUpToolBar(){
@@ -301,7 +295,6 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
-
             }
 
             @Override
@@ -320,6 +313,8 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
     public void onResume(){
         super.onResume();
         EventBus.registerReceiver(this, Util.CONTACT_INTEND);
+        EventBus.registerReceiver(this, Util.EVENT_MAIN_ADDRESS_BOOK);
+        EventBus.registerReceiver(this, Util.EVENT_MAIN_NEW_CONTACT);
     }
 
     @Override
@@ -329,25 +324,33 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
 
     }
     private  void getAllFragments(){
-        if(Util.isLoginOnline(this)) {
+
             deviceFragment = (DeviceFragment) adapterViewPager.getItem(0);
             //sensorsFragment = (SensorsFragment) adapterViewPager.getItem(1);
             uploadToCloudFragment = (UploadToCloudFragment) adapterViewPager.getItem(1);
             smsFragment = (SmsFragment) adapterViewPager.getItem(3);
-        }else {
-            deviceFragment = (DeviceFragment) adapterViewPager.getItem(0);
-            //sensorsFragment = (SensorsFragment) adapterViewPager.getItem(1);
-        }
     }
 
-
+    private void showContactList(){
+        Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
+        pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
+        startActivityForResult(pickContactIntent, this.PICK_CONTACT_REQUEST);
+    }
     @Override
     public void onEvent(String name, Object data) {
         switch (name){
             case Util.CONTACT_INTEND:
-                Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
-                pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
-                startActivityForResult(pickContactIntent, this.PICK_CONTACT_REQUEST);
+                showContactList();
+                break;
+            case Util.EVENT_MAIN_NEW_CONTACT:
+                Intent  loginIntent = new Intent(this.getApplicationContext(),LoginActivity.class);
+                loginIntent.putExtra("requestCode", RESQUET_LOGIN_ACTIVITY_SMS_NEW);
+                startActivityForResult(loginIntent, MainActivity.RESQUET_LOGIN_ACTIVITY_SMS_NEW);
+                break;
+            case Util.EVENT_MAIN_ADDRESS_BOOK:
+                Intent loginIntentBook = new Intent(this.getApplicationContext(),LoginActivity.class);
+                loginIntentBook.putExtra("requestCode", RESQUET_LOGIN_ACTIVITY_SMS_BOOK);
+                startActivityForResult(loginIntentBook, MainActivity.RESQUET_LOGIN_ACTIVITY_SMS_BOOK);
                 break;
             default:
                 break;

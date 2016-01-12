@@ -1,6 +1,7 @@
 package com.maws.loonandroid.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,6 +18,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.activities.LoginActivity;
+import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.adapters.UploadSensorListAdapter;
 import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.DevicePropertyDao;
@@ -27,6 +30,8 @@ import com.maws.loonandroid.requests.UpLoadRequestHandler;
 import com.maws.loonandroid.util.Util;
 import com.maws.loonandroid.views.CustomToast;
 
+import org.droidparts.bus.EventBus;
+import org.droidparts.bus.EventReceiver;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,7 +41,7 @@ import java.util.List;
 /**
  * Created by Andrexxjc on 12/04/2015.
  */
-public class UploadToCloudFragment extends Fragment {
+public class UploadToCloudFragment extends Fragment implements EventReceiver<Object> {
 
     private ListView sensorsLV;
     private View emptyLayoutUpload,containerLY;
@@ -54,6 +59,11 @@ public class UploadToCloudFragment extends Fragment {
     }
 
     public UploadToCloudFragment() {
+    }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        EventBus.registerReceiver(this, Util.EVENT_UPLOAD_DATA);
     }
 
     @Override
@@ -117,43 +127,47 @@ public class UploadToCloudFragment extends Fragment {
         ArrayList<List<DeviceProperty>> listToUpload = selectDevicesWithAlarm( devicePropertyDao,  context ,listDevices);
 
         int countDevices = 0;
-        for(List<DeviceProperty> devicePropertyList:listToUpload ){
-            View itemView = Util.getViewByPosition(countDevices,sensorsLV);
-            UpLoadRequestHandler uploadRequestHandler = new UpLoadRequestHandler();
-            User user =  User.getCurrent(this.getView().getContext());
-            uploadRequestHandler.sendDevicePropertiesToServer(this.getView().getContext(), new UpLoadRequestHandler.UploadListener() {
-                @Override
-                public void onFailure(String error,Context context, View progressBarView) {
-                    try {
-                        JSONObject object = new JSONObject(error);
-                        setUpMessageUpload(progressBarView, Color.RED, "Fail");
-                        CustomToast.showAlert(context, getString(R.string.upload_server_error), CustomToast._TYPE_ERROR);
-                    } catch (Exception ex) {
-                        CustomToast.showAlert(context, getString(R.string.default_request_error_message), CustomToast._TYPE_ERROR);
-                    }
-                }
-
-                @Override
-                public void onSuccess(JSONObject response, List<DeviceProperty> listDeviceProperties,Context context,View progressBarView) {
-                    String responseServer = "";
-                    try {
-                         responseServer = response.getString("response");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    setUpMessageUpload(progressBarView, Color.green(45),"Done");
-                    if("done".equalsIgnoreCase(responseServer)){
-                        DevicePropertyDao dPDao = new DevicePropertyDao(context);
-                        for(DeviceProperty deviceProperty:listDeviceProperties) {
-                            dPDao.delete(deviceProperty);
+        if(listToUpload.size() > 0) {
+            for (List<DeviceProperty> devicePropertyList : listToUpload) {
+                View itemView = Util.getViewByPosition(countDevices, sensorsLV);
+                UpLoadRequestHandler uploadRequestHandler = new UpLoadRequestHandler();
+                User user = User.getCurrent(this.getView().getContext());
+                uploadRequestHandler.sendDevicePropertiesToServer(this.getView().getContext(), new UpLoadRequestHandler.UploadListener() {
+                    @Override
+                    public void onFailure(String error, Context context, View progressBarView) {
+                        try {
+                            JSONObject object = new JSONObject(error);
+                            setUpMessageUpload(progressBarView, Color.RED, "Fail");
+                            CustomToast.showAlert(context, getString(R.string.upload_server_error), CustomToast._TYPE_ERROR);
+                        } catch (Exception ex) {
+                            CustomToast.showAlert(context, getString(R.string.default_request_error_message), CustomToast._TYPE_ERROR);
                         }
-                        List<Device> listDevicesAlarm =  verificationDevicesWithProperties(context);
-                        refreshDevicesAdapter( verificationDevicesWithProperties(context));
-                        loadEmptyPage(listDevicesAlarm);
                     }
-                }
-            },devicePropertyList,user.getToken(),listDevices.get(countDevices),itemView);
-            countDevices++;
+
+                    @Override
+                    public void onSuccess(JSONObject response, List<DeviceProperty> listDeviceProperties, Context context, View progressBarView) {
+                        String responseServer = "";
+                        try {
+                            responseServer = response.getString("response");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        setUpMessageUpload(progressBarView, Color.green(45), "Done");
+                        if ("done".equalsIgnoreCase(responseServer)) {
+                            DevicePropertyDao dPDao = new DevicePropertyDao(context);
+                            for (DeviceProperty deviceProperty : listDeviceProperties) {
+                                dPDao.delete(deviceProperty);
+                            }
+                            List<Device> listDevicesAlarm = verificationDevicesWithProperties(context);
+                            refreshDevicesAdapter(verificationDevicesWithProperties(context));
+                            loadEmptyPage(listDevicesAlarm);
+                        }
+                    }
+                }, devicePropertyList, user.getToken(), listDevices.get(countDevices), itemView);
+                countDevices++;
+            }
+        }else {
+            CustomToast.showAlert(this.getActivity(),getString(R.string.no_sensors_found_upload),CustomToast._TYPE_WARNING);
         }
     }
 
@@ -227,12 +241,30 @@ public class UploadToCloudFragment extends Fragment {
         return this.adapter;
     }
     private void validationUpload(){
-        Context context = getActivity();
-        if(!Util.isLoginOnline(context)) {
-            CustomToast.showAlert(context,context.getString(R.string.notification_upload_warn),CustomToast._TYPE_WARNING);
+        if(!Util.isLoginOnline(this.getView().getContext())) {
+            Intent LoginIntent= null;
+            LoginIntent = new Intent(this.getActivity().getApplicationContext(),LoginActivity.class);
+            getActivity().startActivityForResult(LoginIntent, MainActivity.RESQUET_LOGIN_ACTIVITY);
         }
         else{
             this.uploadInfoToServer(adapter);
         }
+    }
+
+    @Override
+    public void onEvent(String name, Object data) {
+        switch (name){
+            case Util.EVENT_UPLOAD_DATA:
+                uploadInfoToServer(adapter);
+                adapter.notifyDataSetChanged();
+                break;
+            default:
+                break;
+        }
+    }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        EventBus.unregisterReceiver(this);
     }
 }
