@@ -341,14 +341,26 @@ public class BLEService extends Service
 
                     //once i have discovered the services i need to read a couple of them for information on the device
 
-                    //here, i read the initial status of the switches
-                    GattCharacteristicReadOperation readInitialCare = new GattCharacteristicReadOperation(
-                            bluetoothDevice,
-                            DeviceService.UUID_CARE_SENTINEL_SERVICE,
-                            DeviceCharacteristic._CHAR_CARE_SENTINEL,
-                            null
-                    );
-                    manager.queue(readInitialCare);
+
+                    if(device.getType() == Device._TYPE_MONITOR) {
+                        //here, i read the initial status of the sensors
+                        GattCharacteristicReadOperation readInitialCare = new GattCharacteristicReadOperation(
+                                bluetoothDevice,
+                                DeviceService.UUID_CARE_SENTINEL_SERVICE,
+                                DeviceCharacteristic._CHAR_CARE_SENTINEL,
+                                null
+                        );
+                        manager.queue(readInitialCare);
+                    }else{
+                        //here, i read the initial status of the sensors
+                        GattCharacteristicReadOperation readInitialCare = new GattCharacteristicReadOperation(
+                                bluetoothDevice,
+                                DeviceService.UUID_CARECOM_SERVICE,
+                                DeviceCharacteristic._CHAR_CARECOM,
+                                null
+                        );
+                        manager.queue(readInitialCare);
+                    }
 
                     //here, i read the device information if i hadn't read it before
                     //read the hardware id
@@ -403,13 +415,24 @@ public class BLEService extends Service
                     manager.queue(readTemperature);*/
 
                     //lastly, i subscribe to the notification service
-                    GattSetNotificationOperation operation = new GattSetNotificationOperation(
-                            bluetoothDevice,
-                            DeviceService.UUID_CARE_SENTINEL_SERVICE,
-                            DeviceCharacteristic._CHAR_CARE_SENTINEL,
-                            DeviceCharacteristic._DESCRIPTOR_CARE_SENTINEL_NOTIFICATIONS
-                    );
-                    manager.queue(operation);
+                    if(device.getType() == Device._TYPE_MONITOR) {
+                        GattSetNotificationOperation operation = new GattSetNotificationOperation(
+                                bluetoothDevice,
+                                DeviceService.UUID_CARE_SENTINEL_SERVICE,
+                                DeviceCharacteristic._CHAR_CARE_SENTINEL,
+                                DeviceCharacteristic._DESCRIPTOR_CARE_SENTINEL_NOTIFICATIONS
+                        );
+                        manager.queue(operation);
+                    }else{
+                        GattSetNotificationOperation operation = new GattSetNotificationOperation(
+                                bluetoothDevice,
+                                DeviceService.UUID_CARECOM_SERVICE,
+                                DeviceCharacteristic._CHAR_CARECOM,
+                                DeviceCharacteristic._DESCRIPTOR_CARECOM_NOTIFICATIONS
+                        );
+                        manager.queue(operation);
+                    }
+
 
                     //and to the indication service
                     /*GattSetIndicationOperation ioperation = new GattSetIndicationOperation(
@@ -434,7 +457,8 @@ public class BLEService extends Service
                     break;
 
                 case GattEvent.GATT_CHARACTERISTIC_READ:
-                    if(data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_CARE_SENTINEL) ){
+                    if(data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_CARE_SENTINEL) ||
+                            data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_CARECOM ) ){
                         String result = Integer.toBinaryString( data.characteristic.getValue()[0] );
                         updateDeviceState(data.address,
                                 Integer.toBinaryString( data.characteristic.getValue()[0] ),
@@ -491,6 +515,8 @@ public class BLEService extends Service
         }
         catch(Exception ex){
             //ignore this, we just need the service never to crash
+            String a = ex.getMessage();
+            ex.toString();
         }
     }
 

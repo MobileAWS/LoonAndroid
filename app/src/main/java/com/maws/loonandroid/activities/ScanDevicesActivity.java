@@ -151,7 +151,7 @@ public class ScanDevicesActivity extends AppCompatActivity {
     private void processDevice(BluetoothDevice device, int rssi){
 
         String name = device.getName();
-        if(TextUtils.isEmpty(name) || !name.equalsIgnoreCase("Sensor CS01")){
+        if(TextUtils.isEmpty(name) || !(name.equalsIgnoreCase("Sensor CS01") || name.equalsIgnoreCase("CareCom CS02")) ){
             return;
         }
         //i need to know if this device is already on our database
@@ -159,6 +159,7 @@ public class ScanDevicesActivity extends AppCompatActivity {
         Device mDevice = sDao.findByMacAddress(device.getAddress());
         if(mDevice == null){
             mDevice = new Device(device);
+            mDevice.setType( name.equalsIgnoreCase("Sensor CS01") ? Device._TYPE_MONITOR : Device._TYPE_CARECOM );
             mDevice.setSignalStrength(rssi);
         }
         scanAdapter.add(mDevice);

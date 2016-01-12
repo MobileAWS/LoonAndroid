@@ -11,6 +11,9 @@ import java.util.Date;
  */
 public class Device implements Parcelable {
 
+    public static int _TYPE_MONITOR = 0;
+    public static int _TYPE_CARECOM = 1;
+
     private long id = -1;
     private String name;
     private String hardwareId;
@@ -21,6 +24,7 @@ public class Device implements Parcelable {
     private String hardwareVersion;
     private String description;
     private String macAddress;
+    private int type = 0;
     private boolean connected = false;
     private boolean active = true;
     private int batteryStatus;
@@ -34,6 +38,7 @@ public class Device implements Parcelable {
     public Device(BluetoothDevice device){
         this.name = device.getName();
         this.macAddress = device.getAddress();
+        this.type = _TYPE_MONITOR;
     }
 
     public String getName() {
@@ -160,6 +165,7 @@ public class Device implements Parcelable {
         pc.writeInt(this.connected ? 1: 0);
         pc.writeInt(this.connecting ? 1: 0);
         pc.writeInt(this.manualDisconnect ? 1: 0);
+        pc.writeInt(this.type);
     }
 
     /** Static field used to regenerate object, individually or as arrays */
@@ -192,6 +198,7 @@ public class Device implements Parcelable {
         this.connected = pc.readInt() == 1;
         this.connecting = pc.readInt() == 1;
         this.manualDisconnect = pc.readInt() == 1;
+        this.type = pc.readInt();
     }
 
     public static Device createFakeDevice(){
@@ -218,4 +225,11 @@ public class Device implements Parcelable {
         return 0f;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 }

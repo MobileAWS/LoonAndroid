@@ -192,7 +192,8 @@ public class DeviceContentProvider extends ContentProvider {
                 DeviceDao.KEY_TEMPERATURE,
                 DeviceDao.KEY_SIGNAL,
                 DeviceDao.KEY_CONNECTING,
-                DeviceDao.KEY_MANUAL_DISCONNECT
+                DeviceDao.KEY_MANUAL_DISCONNECT,
+                DeviceDao.KEY_TYPE
         };
         if (projection != null) {
             HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));

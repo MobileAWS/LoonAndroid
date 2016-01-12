@@ -11,6 +11,7 @@ import java.util.UUID;
 public class DeviceCharacteristic {
 
     public static final UUID _CHAR_CARE_SENTINEL = UUID.fromString("64695F25-2326-430A-985F-AA4AE90DA42F");
+    public static final UUID _CHAR_CARECOM = UUID.fromString("51aa80bf-bc06-43bb-979c-fb4722d4c4e1");
     public static final UUID _CHAR_SERIAL_NUMBER = UUID.fromString("00002a25-0000-1000-8000-00805f9b34fb");
     public static final UUID _CHAR_MANUFACTURER = UUID.fromString("00002a29-0000-1000-8000-00805f9b34fb");
     public static final UUID _CHAR_FIRMWARE_REVISION = UUID.fromString("00002a26-0000-1000-8000-00805f9b34fb");
@@ -19,6 +20,7 @@ public class DeviceCharacteristic {
     public static final UUID _CHAR_THERMOMETER = UUID.fromString("00002a1c-0000-1000-8000-00805f9b34fb");
     public static final UUID _DESCRIPTOR_THERMOMETER = UUID.fromString("00002901-0000-1000-8000-00805f9b34fb");
     public static final UUID _DESCRIPTOR_CARE_SENTINEL_NOTIFICATIONS = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
+    public static final UUID _DESCRIPTOR_CARECOM_NOTIFICATIONS = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
     private static final int ALARM_SOUND_1 = 0;
     private static final int ALARM_SOUND_2 = 1;
