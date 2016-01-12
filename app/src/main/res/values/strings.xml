@@ -8,6 +8,7 @@
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Login</string>
     <string name="action_sign_in_no_cloud">Login (No Cloud)</string>
+    <string name="action_cancel">Cancel</string>
     <string name="new_user_question">Create account</string>
     <string name="forgot_password_question">Forgot Password?</string>
     <string name="reset_password">Reset Password</string>
