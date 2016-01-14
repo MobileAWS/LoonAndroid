@@ -9,15 +9,12 @@
     android:tag="ss1"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.maws.loonandroid.fragments.DeviceFragment">
-
-    <RelativeLayout
-        android:id="@+id/emptyLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/emptyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="vertical"
+            android:gravity="center"
             android:layout_centerInParent="true"
             android:padding="20dp"
         >
@@ -47,8 +44,6 @@
                 android:layout_gravity="center_horizontal"
             />
         </LinearLayout>
-    </RelativeLayout>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/sensorsLV"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
