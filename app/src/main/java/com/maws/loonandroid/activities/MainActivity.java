@@ -161,13 +161,13 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
             validateLogout(mOptionsMenu);
         }
         if(requestCode == this.RESQUET_LOGIN_ACTIVITY_SMS_BOOK){
-            viewPager.setCurrentItem(3);
+            viewPager.setCurrentItem(2);
         }
         if(requestCode == this.RESQUET_LOGIN_ACTIVITY_SMS_NEW){
-            viewPager.setCurrentItem(3);
+            viewPager.setCurrentItem(2);
         }
         if(requestCode == RESULT_CANCELED+20){
-            viewPager.setCurrentItem(3);
+            viewPager.setCurrentItem(2);
         }
         if(requestCode == PICK_CONTACT_REQUEST ) {
 
@@ -239,12 +239,13 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
             tabLayout.getTabAt(0).setCustomView(tab0);
             //LinearLayout tab1 = getTab(R.drawable.ic_action_monitors_white, R.string.navigation_status);
             //tabLayout.getTabAt(1).setCustomView(tab1);
-            LinearLayout tab2 = getTab(R.drawable.ic_action_upload_to_cloud_white, R.string.navigation_upload_to_cloud);
-            tabLayout.getTabAt(1).setCustomView(tab2);
+            LinearLayout tab1 = getTab(R.drawable.ic_action_upload_to_cloud_white, R.string.navigation_upload_to_cloud);
+            tabLayout.getTabAt(1).setCustomView(tab1);
+            LinearLayout tab2 = getTab(R.drawable.ic_action_contact, R.string.sms_option);
+            tabLayout.getTabAt(2).setCustomView(tab2);
             LinearLayout tab3 = getTab(R.drawable.ic_support, R.string.support_option);
-            tabLayout.getTabAt(2).setCustomView(tab3);
-            LinearLayout tab4 = getTab(R.drawable.ic_action_contact, R.string.sms_option);
-            tabLayout.getTabAt(3).setCustomView(tab4);
+            tabLayout.getTabAt(3).setCustomView(tab3);
+
 
 
     }
@@ -253,8 +254,8 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
         adapterViewPager.addFrag(DeviceFragment.newInstance(), getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor);
         //adapterViewPager.addFrag(SensorsFragment.newInstance(), "Status", R.drawable.ic_action_status);
         adapterViewPager.addFrag(UploadToCloudFragment.newInstance(), getString(R.string.navigation_upload_to_cloud), R.drawable.ic_action_upload_to_cloud);
-        adapterViewPager.addFrag(SupportFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_support);
         adapterViewPager.addFrag(SmsFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_action_contact);
+        adapterViewPager.addFrag(SupportFragment.newInstance(), getString(R.string.support_option), R.drawable.ic_support);
         viewPager.setAdapter(adapterViewPager);
         viewPager.setCurrentItem(0);
     }
@@ -328,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements EventReceiver
             deviceFragment = (DeviceFragment) adapterViewPager.getItem(0);
             //sensorsFragment = (SensorsFragment) adapterViewPager.getItem(1);
             uploadToCloudFragment = (UploadToCloudFragment) adapterViewPager.getItem(1);
-            smsFragment = (SmsFragment) adapterViewPager.getItem(3);
+            smsFragment = (SmsFragment) adapterViewPager.getItem(2);
     }
 
     private void showContactList(){
