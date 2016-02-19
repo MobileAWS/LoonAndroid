@@ -2,14 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="com.maws.loonandroid.fragments.SupportFragment">
 
-
-
     <!-- TODO: Update blank fragment layout -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:orientation="horizontal">
      <LinearLayout
          android:layout_width="match_parent"
          android:layout_height="match_parent"
@@ -151,12 +144,7 @@
                      android:textSize="13dp"/>
              </LinearLayout>
          </LinearLayout>
-
      </LinearLayout>
-    </RelativeLayout>
-
-
-
 </FrameLayout>
 
 
