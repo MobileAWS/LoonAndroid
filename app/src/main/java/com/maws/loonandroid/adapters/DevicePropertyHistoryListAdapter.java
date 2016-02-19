@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.maws.loonandroid.R;
 import com.maws.loonandroid.dao.DevicePropertyDao;
+import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.util.Util;
@@ -20,14 +21,16 @@ public class DevicePropertyHistoryListAdapter extends BaseAdapter{
 
     private final Context context;
     private final List<DeviceProperty> items;
+    private final Device device;
 
     static class ViewHolder {
         TextView descAlertHv, alertDismiss, alertDateHv, dismissDateHv, timeAlertHv, alertDateTV;
     }
 
-    public DevicePropertyHistoryListAdapter(List<DeviceProperty> items, Context context) {
+    public DevicePropertyHistoryListAdapter(Device device, List<DeviceProperty> items, Context context) {
         this.items = items;
         this.context = context;
+        this.device = device;
     }
 
     @Override
@@ -63,7 +66,7 @@ public class DevicePropertyHistoryListAdapter extends BaseAdapter{
             viewHolder = (ViewHolder) convertView.getTag();
         }
         DeviceProperty thisAlert = items.get(position);
-        Property property = Property.getDefaultProperty(thisAlert.getPropertyId());
+        Property property = Property.getDefaultProperty( thisAlert.getPropertyId(), device.getType());
 
         viewHolder.alertDateTV.setText(Util.longDateFormat.format(thisAlert.getCreatedAt()));
         viewHolder.descAlertHv.setText( context.getString(property.getDisplayId()) );

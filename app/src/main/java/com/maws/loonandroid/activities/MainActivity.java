@@ -43,8 +43,7 @@ import org.droidparts.bus.EventReceiver;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements EventReceiver
-        {
+public class MainActivity extends AppCompatActivity implements EventReceiver{
 
     public static final int REQUEST_ENABLE_BT = 30921;
     public final static int REQUEST_MONITOR_ACTIVITY = 1034;

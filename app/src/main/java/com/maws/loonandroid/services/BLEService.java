@@ -447,7 +447,7 @@ public class BLEService extends Service
 
                 case GattEvent.GATT_CHARACTERISTIC_CHANGED:
                     //the care sentinel characteristic has changed
-                    if(data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_CARE_SENTINEL) ){
+                    if(data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_CARE_SENTINEL) || data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_CARECOM) ){
                         updateDeviceState(data.address,
                                 Integer.toBinaryString(data.characteristic.getValue()[0]),
                                 Integer.toBinaryString(data.characteristic.getValue()[1]),
@@ -564,7 +564,7 @@ public class BLEService extends Service
                 for (int i = 0; i < previousState.length(); i++) {
                     if ( previousState.charAt(i) != newTotalState.charAt(i)) {
 
-                        Property thisProp = Property.getDefaultProperty(i);
+                        Property thisProp = Property.getDefaultProperty(i, device.getType());
                         if(thisProp == null){
                             continue;
                         }

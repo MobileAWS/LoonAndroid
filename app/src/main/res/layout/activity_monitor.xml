@@ -41,6 +41,7 @@
                 >
 
                 <ImageView
+                    android:id="@+id/devicePictureIV"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/device_picture"
                     android:layout_width="100dp"

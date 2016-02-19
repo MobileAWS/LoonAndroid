@@ -158,6 +158,11 @@
     <string name="property_pri">Portal</string>
     <string name="property_pri_on">Doorway Motion Detected</string>
     <string name="property_pri_off"></string>
+
+    <string name="property_fall_button">Fall Button</string>
+    <string name="property_fall_button_on"></string>
+    <string name="property_fall_button_off">Fall Button Alert</string>
+
     <string name="device_deleted">Device Deleted</string>
     <string name="undo">Undo</string>
     <string name="device_removed">Device succesfully removed</string>

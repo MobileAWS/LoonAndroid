@@ -47,7 +47,7 @@ public class MonitorActivity extends AppCompatActivity
     private long deviceId;
     private TextView nameTV, serialTV, versionTV, temperatureTV, nameUnconnectedTV;
     private Button viewHistory,disconnectBtn,renameDeviceBtn;
-    private ImageView signalIV, batteryIV;
+    private ImageView signalIV, batteryIV, devicePictureIV;
     private ListView propertiesLV;
     private PropertyAdapter adapter;
     private Device currentDevice;
@@ -73,6 +73,7 @@ public class MonitorActivity extends AppCompatActivity
         renameDeviceBtn = (Button) findViewById(R.id.renameDeviceBtn);
         notConnectedLL = findViewById(R.id.notConnectedLL);
         infoLL = findViewById(R.id.infoLL);
+        devicePictureIV = (ImageView)findViewById(R.id.devicePictureIV);
 
         viewHistory.setOnClickListener(this);
         disconnectBtn.setOnClickListener(this);
@@ -151,8 +152,15 @@ public class MonitorActivity extends AppCompatActivity
             temperatureTV.setText( String.format(getString(R.string.device_temperature), Util.celsiusToFahrenheit( currentDevice.getTemperature() ), currentDevice.getTemperature()) );
             Util.setUpBatteryView(this, batteryIV, currentDevice );
             Util.setUpSignalView(this, signalIV, currentDevice);
+
             //i need to create a device enabled and delay controls for each property
-            adapter = new PropertyAdapter(this, Property.defaultProperties, currentDevice);
+            if(currentDevice.getType() == Device._TYPE_MONITOR) {
+                adapter = new PropertyAdapter(this, Property.defaultProperties, currentDevice);
+            }else{
+                adapter = new PropertyAdapter(this, Property.carecomProperties, currentDevice);
+                devicePictureIV.setImageResource(R.drawable.carecom);
+            }
+
             propertiesLV.setAdapter(adapter);
 
             if(currentDevice.isConnected()){

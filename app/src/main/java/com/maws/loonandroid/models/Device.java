@@ -11,8 +11,8 @@ import java.util.Date;
  */
 public class Device implements Parcelable {
 
-    public static int _TYPE_MONITOR = 0;
-    public static int _TYPE_CARECOM = 1;
+    public final static int _TYPE_MONITOR = 0;
+    public final static int _TYPE_CARECOM = 1;
 
     private long id = -1;
     private String name;

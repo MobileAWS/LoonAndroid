@@ -45,10 +45,10 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
 
     public static class DeviceViewHolder extends RecyclerView.ViewHolder {
         AppCompatButton connectBtn, activateBtn;
-        TextView nameTV, connectingTV, alertTV, sensorToiletTV, sensorIncontinenceTV, sensorChairTV, sensorBedTV, sensorCallTV, sensorPriTV;
+        TextView nameTV, connectingTV, alertTV, sensorToiletTV, sensorIncontinenceTV, sensorChairTV, sensorBedTV, sensorCallTV, sensorPriTV, sensorFallTV;
         ImageView signalIV, batteryIV;
         LinearLayout cardLL;
-        View mainView, loadingPB, divider1, divider2, sensorsLL1, sensorsLL2, statusV;
+        View mainView, loadingPB, divider1, divider2, sensorsLL1, sensorsLL2, careComSensorsLL, statusV;
 
         public DeviceViewHolder(View v) {
             super(v);
@@ -81,6 +81,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
         viewHolder.divider2 = convertView.findViewById(R.id.divider2);
         viewHolder.sensorsLL1 = convertView.findViewById(R.id.sensorsLL1);
         viewHolder.sensorsLL2 = convertView.findViewById(R.id.sensorsLL2);
+        viewHolder.careComSensorsLL = convertView.findViewById(R.id.careComSensorsLL);
         viewHolder.statusV = convertView.findViewById(R.id.statusV);
         viewHolder.sensorToiletTV = (TextView)convertView.findViewById(R.id.sensorToiletTV);
         viewHolder.sensorIncontinenceTV = (TextView)convertView.findViewById(R.id.sensorIncontinenceTV);
@@ -88,6 +89,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
         viewHolder.sensorBedTV = (TextView)convertView.findViewById(R.id.sensorBedTV);
         viewHolder.sensorCallTV = (TextView)convertView.findViewById(R.id.sensorCallTV);
         viewHolder.sensorPriTV = (TextView)convertView.findViewById(R.id.sensorPriTV);
+        viewHolder.sensorFallTV = (TextView)convertView.findViewById(R.id.sensorFallButtonTV);
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,6 +147,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
                 viewHolder.divider1.setVisibility(View.GONE);
                 viewHolder.sensorsLL1.setVisibility(View.GONE);
                 viewHolder.sensorsLL2.setVisibility(View.GONE);
+                viewHolder.careComSensorsLL.setVisibility(View.GONE);
                 viewHolder.activateBtn.setVisibility(View.VISIBLE);
                 viewHolder.statusV.setVisibility(View.GONE);
 
@@ -155,11 +158,13 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
                 viewHolder.signalIV.setVisibility(View.VISIBLE);
                 viewHolder.batteryIV.setVisibility(View.VISIBLE);
                 viewHolder.statusV.setBackgroundResource(R.drawable.circle_green);
+                setupSensors( thisDevice.getType(), viewHolder );
                 break;
             case _MODE_CONNECTING:
                 viewHolder.loadingPB.setVisibility(View.VISIBLE);
                 viewHolder.connectingTV.setVisibility(View.VISIBLE);
                 viewHolder.statusV.setBackgroundResource(R.drawable.circle_orange);
+                setupSensors(thisDevice.getType(), viewHolder);
                 break;
             case _MODE_NOT_CONNECTED:
                 viewHolder.connectBtn.setVisibility(View.VISIBLE);
@@ -194,8 +199,10 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
                         }
                     }
                 });
+                setupSensors( thisDevice.getType(), viewHolder );
                 break;
         }
+
         paintProperties(paintMode, viewHolder, thisDevice);
 
         //i need to look for this item's last alert
@@ -204,7 +211,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
 
         if (dProperty != null && dProperty.getDismissedAt() == null) {
 
-            Property alertProperty = Property.getDefaultProperty(dProperty.getPropertyId());
+            Property alertProperty = Property.getDefaultProperty(dProperty.getPropertyId(), thisDevice.getType());
             String propertyMessage = dProperty.getValue().equalsIgnoreCase("on")?
                     context.getString(alertProperty.getOnTextId()):
                     context.getString(alertProperty.getOffTextId());
@@ -229,42 +236,76 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
         }
     }
 
+    private void setupSensors(int deviceType, DeviceViewHolder viewHolder){
+        switch(deviceType){
+            case Device._TYPE_MONITOR:
+                viewHolder.sensorsLL1.setVisibility(View.VISIBLE);
+                viewHolder.sensorsLL2.setVisibility(View.VISIBLE);
+                viewHolder.careComSensorsLL.setVisibility(View.GONE);
+                break;
+            case Device._TYPE_CARECOM:
+                viewHolder.sensorsLL1.setVisibility(View.GONE);
+                viewHolder.sensorsLL2.setVisibility(View.GONE);
+                viewHolder.careComSensorsLL.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
     private void paintProperties(int status, DeviceViewHolder viewHolder, Device device){
 
         if(status == _MODE_CONNECTED && BLEService.switchValues.containsKey(device.getMacAddress()) ){
             String currentValue = BLEService.switchValues.get(device.getMacAddress());
 
             //now i need to paint the status of the switches
-            for(int i = 0; i < Property.defaultProperties.length; i++){
-                Property property = Property.defaultProperties[i];
-                boolean isOn = false;
-                if (currentValue.charAt(Integer.valueOf(String.valueOf(property.getId()))) == '1') {
-                    isOn = true;
-                }
-                if(property.getName().equalsIgnoreCase("Call")){
-                    isOn = !isOn;
-                }
-                int color = isOn? ContextCompat.getColor(context, R.color.green) : ContextCompat.getColor(context, R.color.dark_orange);
-                switch (i){
-                    case 0:
-                        viewHolder.sensorToiletTV.setTextColor(color);
-                        break;
-                    case 1:
-                        viewHolder.sensorIncontinenceTV.setTextColor(color);
-                        break;
-                    case 2:
-                        viewHolder.sensorChairTV.setTextColor(color);
-                        break;
-                    case 3:
-                        viewHolder.sensorBedTV.setTextColor(color);
-                        break;
-                    case 4:
-                        viewHolder.sensorCallTV.setTextColor(color);
-                        break;
-                    case 5:
-                        viewHolder.sensorPriTV.setTextColor(color);
-                        break;
-                }
+            switch (device.getType()) {
+                case Device._TYPE_MONITOR:
+                    for (int i = 0; i < Property.defaultProperties.length; i++) {
+                        Property property = Property.defaultProperties[i];
+                        boolean isOn = false;
+                        if (currentValue.charAt(Integer.valueOf(String.valueOf(property.getId()))) == '1') {
+                            isOn = true;
+                        }
+                        if (property.getName().equalsIgnoreCase("Call")) {
+                            isOn = !isOn;
+                        }
+                        int color = isOn ? ContextCompat.getColor(context, R.color.green) : ContextCompat.getColor(context, R.color.dark_orange);
+                        switch (i) {
+                            case 0:
+                                viewHolder.sensorToiletTV.setTextColor(color);
+                                break;
+                            case 1:
+                                viewHolder.sensorIncontinenceTV.setTextColor(color);
+                                break;
+                            case 2:
+                                viewHolder.sensorChairTV.setTextColor(color);
+                                break;
+                            case 3:
+                                viewHolder.sensorBedTV.setTextColor(color);
+                                break;
+                            case 4:
+                                viewHolder.sensorCallTV.setTextColor(color);
+                                break;
+                            case 5:
+                                viewHolder.sensorPriTV.setTextColor(color);
+                                break;
+                        }
+                    }
+                    break;
+                case Device._TYPE_CARECOM:
+                    for (int i = 0; i < Property.carecomProperties.length; i++) {
+                        Property property = Property.carecomProperties[i];
+                        boolean isOn = false;
+                        if (currentValue.charAt(Integer.valueOf(String.valueOf(property.getId()))) == '1') {
+                            isOn = true;
+                        }
+                        int color = isOn ? ContextCompat.getColor(context, R.color.green) : ContextCompat.getColor(context, R.color.dark_orange);
+                        switch (i) {
+                            case 0:
+                                viewHolder.sensorFallTV.setTextColor(color);
+                                break;
+                        }
+                    }
+                    break;
             }
         }else{
             viewHolder.sensorToiletTV.setTextColor( ContextCompat.getColor(context, R.color.hint_gray) );
@@ -273,6 +314,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
             viewHolder.sensorBedTV.setTextColor( ContextCompat.getColor(context, R.color.hint_gray) );
             viewHolder.sensorCallTV.setTextColor( ContextCompat.getColor(context, R.color.hint_gray) );
             viewHolder.sensorPriTV.setTextColor( ContextCompat.getColor(context, R.color.hint_gray) );
+            viewHolder.sensorFallTV.setTextColor( ContextCompat.getColor(context, R.color.hint_gray) );
         }
     }
 

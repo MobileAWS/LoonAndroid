@@ -12,13 +12,18 @@ import com.maws.loonandroid.contentproviders.DevicePropertyContentProvider;
 import com.maws.loonandroid.dao.DevicePropertyDao;
 import com.maws.loonandroid.dao.DeviceDao;
 import com.maws.loonandroid.dao.UserDao;
+import com.maws.loonandroid.listener.StandardRequestListener;
 import com.maws.loonandroid.models.Customer;
 import com.maws.loonandroid.models.Device;
 import com.maws.loonandroid.models.DeviceProperty;
 import com.maws.loonandroid.models.Property;
 import com.maws.loonandroid.models.Site;
 import com.maws.loonandroid.models.User;
+import com.maws.loonandroid.requests.UpLoadRequestHandler;
 import com.maws.loonandroid.util.Util;
+
+import org.json.JSONObject;
+
 import java.util.Date;
 
 /**
@@ -27,15 +32,18 @@ import java.util.Date;
 public class DevicePropertyReceiver extends BroadcastReceiver {
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
         long deviceId = bundle.getLong("deviceId");
         long propertyId = bundle.getLong("propertyId");
         String value = bundle.getString("value");
         long alarmDateMillis = bundle.getLong("dateMillis");
 
+        DeviceDao sDao = new DeviceDao(context);
+        Device device = sDao.get(deviceId);
+
         //ignore the alarm if it has no ON or OFF text
-        Property thisProp = Property.getDefaultProperty(propertyId);
+        Property thisProp = Property.getDefaultProperty(propertyId, device.getType());
         String propertyMessage = "";
         if(value.equalsIgnoreCase("on") ){
             propertyMessage = context.getString(thisProp.getOnTextId());
@@ -47,8 +55,6 @@ public class DevicePropertyReceiver extends BroadcastReceiver {
             return;
         }
 
-        DeviceDao sDao = new DeviceDao(context);
-        Device device = sDao.get(deviceId);
         if( deviceId > 0 && propertyId > -1 && alarmDateMillis >= 0 && device != null ) {
 
             //when i receive an alarm, i want to do 2 things: Save it to the db and show a notification
@@ -67,6 +73,19 @@ public class DevicePropertyReceiver extends BroadcastReceiver {
             //let's show the notification
             String title = TextUtils.isEmpty(device.getDescription())? device.getName() : device.getDescription();
             Util.generateNotification(context, title, propertyMessage);
+
+            //if the device it's a carecom, send the sms
+            UpLoadRequestHandler.sendSMS(context, propertyMessage, null, null, new UpLoadRequestHandler.SendSMSListener() {
+                @Override
+                public void onSuccess(String result) {
+                    Util.log(context, "SMS sent successfully");
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    Util.log(context, "SMS couldn't be send");
+                }
+            });
         }
     }
 

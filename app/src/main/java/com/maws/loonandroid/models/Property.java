@@ -9,6 +9,7 @@ public class Property {
 
     //this will hold the default properties
     public static final Property[] defaultProperties;
+    public static final Property[] carecomProperties;
 
     public static final int CODE_TOILET = 0; //these indexes are mapped to the sensor bit on the device characteristic value.
     public static final int CODE_INCONTINENCE = 1; //these indexes are mapped to the sensor bit on the device characteristic value.
@@ -16,6 +17,7 @@ public class Property {
     public static final int CODE_BED = 3; //these indexes are mapped to the sensor bit on the device characteristic value.
     public static final int CODE_CALL = 15; //these indexes are mapped to the sensor bit on the characteristic value
     public static final int CODE_PRI = 12; //these indexes are mapped to the sensor bit on the characteristic value
+    public static final int CODE_FALL_BUTTON = 1;
 
     public static final String DEVICE_TOILET = "Toilet";
     public static final String DEVICE_INCONTINENCE = "Incontinence";
@@ -23,6 +25,7 @@ public class Property {
     public static final String DEVICE_BED = "Bed";
     public static final String DEVICE_CALL = "Call";
     public static final String DEVICE_PRI = "Pri";
+    public static final String DEVICE_FALL_BUTTON = "fall button";
 
     static{
         defaultProperties = new Property[6];
@@ -32,13 +35,27 @@ public class Property {
         defaultProperties[3] = new Property(CODE_BED, R.string.property_bed, DEVICE_BED, "boolean", R.string.property_bed_on, R.string.property_bed_off );
         defaultProperties[4] = new Property(CODE_CALL, R.string.property_call, DEVICE_CALL, "boolean", R.string.property_call_on, R.string.property_call_off );
         defaultProperties[5] = new Property(CODE_PRI, R.string.property_pri, DEVICE_PRI, "boolean", R.string.property_pri_on, R.string.property_pri_off );
+
+        carecomProperties = new Property[1];
+        carecomProperties[0] = new Property(CODE_FALL_BUTTON, R.string.property_fall_button, DEVICE_FALL_BUTTON, "boolean", R.string.property_fall_button_on, R.string.property_fall_button_off );
     }
 
-    public static Property getDefaultProperty(long id){
-        for(int i = 0; i < defaultProperties.length; i++){
-            if(defaultProperties[i].getId() == id){
-                return defaultProperties[i];
-            }
+    public static Property getDefaultProperty(long id, int deviceType){
+        switch (deviceType) {
+            case Device._TYPE_MONITOR:
+                for (int i = 0; i < defaultProperties.length; i++) {
+                    if (defaultProperties[i].getId() == id) {
+                        return defaultProperties[i];
+                    }
+                }
+                break;
+            case Device._TYPE_CARECOM:
+                for (int i = 0; i < carecomProperties.length; i++) {
+                    if (carecomProperties[i].getId() == id) {
+                        return carecomProperties[i];
+                    }
+                }
+                break;
         }
         return null;
     }
