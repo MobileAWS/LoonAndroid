@@ -1,6 +1,7 @@
 package com.maws.loonandroid.requests;
 
 import android.content.Context;
+import android.location.Location;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -12,6 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.maws.loonandroid.R;
+import com.maws.loonandroid.activities.MainActivity;
 import com.maws.loonandroid.dao.ContactDao;
 import com.maws.loonandroid.listener.StandardRequestListener;
 import com.maws.loonandroid.models.Contact;
@@ -135,8 +137,6 @@ public class UpLoadRequestHandler {
     }
     public static void sendSMS(final Context context,
                     final String message,
-                    final String latitude,
-                    final String longitude,
                     final SendSMSListener listener){
 
         ContactDao cDao = new ContactDao(context);
@@ -144,6 +144,11 @@ public class UpLoadRequestHandler {
         if(contacts.size() <= 0 || TextUtils.isEmpty(message)){
             return;
         }
+
+        Location lastKnownLocation = MainActivity.lastKnownLocation;
+        final String latitude = lastKnownLocation == null ? null : String.valueOf(lastKnownLocation.getLatitude());
+        final String longitude = lastKnownLocation == null ? null : String.valueOf(lastKnownLocation.getLongitude());
+
         VolleySingleton vs = VolleySingleton.getInstance();
         RequestQueue queue = vs.getRequestQueue();
         String url = VolleySingleton.SERVER_URL + URL_SMS ;

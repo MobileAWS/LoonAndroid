@@ -75,7 +75,8 @@ public class DevicePropertyReceiver extends BroadcastReceiver {
             Util.generateNotification(context, title, propertyMessage);
 
             //if the device it's a carecom, send the sms
-            UpLoadRequestHandler.sendSMS(context, propertyMessage, null, null, new UpLoadRequestHandler.SendSMSListener() {
+            String smsMessage = String.format( context.getString(R.string.carecom_message), title, android.os.Build.MODEL );
+            UpLoadRequestHandler.sendSMS(context, smsMessage, new UpLoadRequestHandler.SendSMSListener() {
                 @Override
                 public void onSuccess(String result) {
                     Util.log(context, "SMS sent successfully");

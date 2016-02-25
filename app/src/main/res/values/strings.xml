@@ -197,4 +197,7 @@
     <string name="confirmation_delete_contact">Do you want to delete the contact?</string>
     <string name="sms_option1">Select User from address book</string>
     <string name="sms_option2">Create User in the app</string>
+    <string name="no_location_services_found">No location services were found.</string>
+    <string name="request_location_permission_explanation">CareSentinel uses your location to send it to your contacts on alerts sent via SMS</string>
+    <string name="carecom_message">A CareCom alert occurred at %1$s on device %2$s.</string>
 </resources>
