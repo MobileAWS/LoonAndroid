@@ -157,6 +157,10 @@ public class MainActivity extends AppCompatActivity implements EventReceiver{
             case R.id.action_remove_sensors:
                 deviceFragment.removeSensors();
                 return true;
+            case R.id.action_log:
+                Intent logIntent= new Intent(this.getApplicationContext(),LogActivity.class);
+                startActivityForResult(logIntent, MainActivity.RESQUET_LOGIN_ACTIVITY);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
