@@ -272,10 +272,8 @@ public class MainActivity extends AppCompatActivity implements EventReceiver{
             tabLayout.getTabAt(2).setCustomView(tab2);
             LinearLayout tab3 = getTab(R.drawable.ic_support, R.string.support_option);
             tabLayout.getTabAt(3).setCustomView(tab3);
-
-
-
     }
+
     private void setupViewPager(ViewPager viewPager) {
         adapterViewPager = new ViewPagerAdapter(getSupportFragmentManager());
         adapterViewPager.addFrag(DeviceFragment.newInstance(), getString(R.string.navigation_sensors), R.drawable.ic_action_heart_monitor);
