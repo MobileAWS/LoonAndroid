@@ -447,12 +447,19 @@ public class BLEService extends Service
 
                 case GattEvent.GATT_CHARACTERISTIC_CHANGED:
                     //the care sentinel characteristic has changed
-                    if(data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_CARE_SENTINEL) || data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_CARECOM) ){
+                    if(data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_CARE_SENTINEL) ){
                         updateDeviceState(data.address,
                                 Integer.toBinaryString(data.characteristic.getValue()[0]),
                                 Integer.toBinaryString(data.characteristic.getValue()[1]),
                                 true);
                         //Log.d(TAG, "The new value of this chara is " + result);
+                    }
+                    if ( data.characteristic.getUuid().equals(DeviceCharacteristic._CHAR_CARECOM) )
+                    {
+                        updateCareComDeviceStateChanged(data.address,
+                                Integer.toBinaryString(data.characteristic.getValue()[0]),
+                                Integer.toBinaryString(data.characteristic.getValue()[1]),
+                                true);
                     }
                     break;
 
@@ -582,6 +589,60 @@ public class BLEService extends Service
         }
         switchValues.put(address, newTotalState);
     }
+
+    private void updateCareComDeviceStateChanged(String address, String newState, String newState2, boolean fireNotification){
+
+        if(TextUtils.isEmpty(address) || TextUtils.isEmpty(newState)) {
+            return;
+        }
+
+        StringBuilder builder = new StringBuilder(newState);
+        if(builder.length() > 8){
+            builder.delete(0, builder.length() - 8);
+        }
+        while(builder.length() < 8){
+            builder.insert(0, 0);
+        }
+        newState = builder.toString();
+        builder = new StringBuilder(newState2);
+        if(builder.length() > 8){
+            builder.delete(0, builder.length() - 8);
+        }
+        while(builder.length() < 8){
+            builder.insert(0, 0);
+        }
+        newState2 = builder.toString();
+
+        String newTotalState = newState + newState2;
+        Util.log(this, "State on " +address+ " changed to " + newTotalState);
+
+        if(fireNotification && switchValues.containsKey(address))
+        {
+
+            DeviceDao sDao = new DeviceDao(this);
+            Device device = sDao.findByMacAddress(address);
+
+            if(device != null) {
+
+                if(!device.isConnected()){
+                    device.setConnected(true);
+                    sDao.update(device);
+                }
+
+                switchValues.remove( address );
+
+                //send an alarm to the broadcast receiver
+                DeviceProperty realAlert = new DeviceProperty();
+                realAlert.setDeviceId(device.getId());
+                realAlert.setValue(  "Off");
+                realAlert.setPropertyId(1);
+                Util.generateAlarm(this, realAlert);
+                return;
+            }
+        }
+        switchValues.put(address, newTotalState);
+    }
+
 
     //let's use this broadcast receiver to listen to bluetooth on and off
     private final BroadcastReceiver AdapterOnOffReceiver = new BroadcastReceiver(){
